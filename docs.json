@@ -4,11 +4,11 @@
   "name": "1mind Documentation",
   "description": "Documentation for the 1mind AI engagement platform and its Superhuman agents.",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#9A7AEB",
+    "light": "#B9A3F0",
+    "dark": "#7C5FD9"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon-1mind.svg",
   "navigation": {
     "tabs": [
       {
@@ -123,8 +123,8 @@
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg",
+    "light": "/logo/1mind-light.svg",
+    "dark": "/logo/1mind-dark.svg",
     "href": "https://1mind.com"
   },
   "navbar": {

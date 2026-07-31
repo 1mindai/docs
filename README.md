@@ -86,7 +86,14 @@ npm i -g mint
 mint dev            # http://localhost:3000
 ```
 
-## Assets to replace before launch
+## Branding
 
-- `logo/light.svg`, `logo/dark.svg`, `favicon.svg` — Mintlify starter placeholders.
-- `colors` in `docs.json` — Mintlify starter greens; swap for 1mind brand.
+- Brand color: `#9A7AEB` (1mind lavender), set as `colors.primary` in `docs.json`.
+- Logo: `logo/1mind-light.svg` (light mode) and `logo/1mind-dark.svg` (dark mode).
+- Favicon: `favicon-1mind.svg` (lavender isologo mark).
+- Assets sourced from the 1mind brand kit. The unused Mintlify starter files
+  (`logo/light.svg`, `logo/dark.svg`, `favicon.svg`) can be removed.
+
+## Remaining before launch
+
+- Custom domain (e.g., `docs.1mind.com`) — point at the site at go-live.
