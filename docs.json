@@ -87,7 +87,13 @@
           },
           {
             "group": "Integrations",
-            "pages": ["configuring/integrations/overview"]
+            "pages": [
+              "configuring/integrations/overview",
+              {
+                "group": "Salesforce",
+                "pages": ["configuring/integrations/salesforce/oauth-setup"]
+              }
+            ]
           },
           {
             "group": "Administration",
