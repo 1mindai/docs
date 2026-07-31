@@ -37,7 +37,13 @@
           },
           {
             "group": "Superhumans",
-            "pages": ["using/superhumans/overview"]
+            "pages": [
+              "using/superhumans/overview",
+              {
+                "group": "Ride-Along",
+                "pages": ["using/superhumans/ride-along/conferencing"]
+              }
+            ]
           },
           {
             "group": "Deployments",
