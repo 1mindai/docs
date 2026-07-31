@@ -1,0 +1,104 @@
+---
+title: "Integration workshop preparation"
+description: "What to prepare before the 1mind integration workshop — the questions we'll work through to connect your CRM, MAP, and web infrastructure."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  **Migrated from the developer-docs Integration Workshop Preparation (source Jul
+  2025).** Faithful port pending review. The backlog flags this as a long
+  questionnaire that may be reformatted into a decision guide — reconcile with the
+  CRM/MAP guide before publish.
+</Info>
+
+## Objective
+
+Align on the technical and integration requirements for the Superhuman platform to
+interact with your CRM, Marketing Automation Platform (MAP), and web
+infrastructure. 1mind is responsible for **pre-processing** data into the
+Superhuman session and **post-processing** conversation outcomes — enabling
+personalized interactions, engagement tracking, and insights back into your
+systems, focused on sales qualification, demand generation, and nurture.
+
+## Session goals
+
+- **Pre-processing data flow (CRM & MAP):** how existing data is pre-loaded to personalize interactions.
+- **User identification & de-anonymization:** mapping web visitors to CRM/MAP IDs via web session, and third-party enrichment (ZoomInfo, Demandbase, 6sense).
+- **Integration methods:** API endpoints, webhooks, and authentication for CRM and MAP.
+- **Qualification determination:** your Sales Qualified Lead (SQL) criteria.
+- **Transcript & insights delivery:** how transcripts, summaries, and topics post back to CRM/MAP or export as flat files.
+- **Object understanding:** relevant CRM/MAP objects, fields, and structures for read and write.
+- **Feasibility & next steps, testing/deployment process, and lead routing** (1mind adapts to your routing; ideally routes qualified leads straight to AEs).
+
+## Preparation questions
+
+Please prepare responses to the following before the session.
+
+### I. Current systems & data landscape
+
+**CRM**
+
+- Primary objects storing lead/contact/account/opportunity data the Superhuman should know for pre-processing (Lead, Contact, Account, Opportunity, Custom Objects)?
+- Key fields per object for: pre-processing personalization; post-processing/qualification (BANT fields, status picklists, budget/timeline/authority/need); demand-gen tracking; sales ownership/assignment.
+- Essential custom objects/fields (purpose and data types)?
+- Current lead creation and assignment process?
+- CRM API limits and current usage?
+- Supported CRM API authentication (OAuth 2.0, Connected Apps, username/password)?
+
+**Marketing Automation Platform (MAP)**
+
+- Key objects storing prospect data, campaign membership, and engagement history (Persons, Programs, Activities)? How do leads flow MAP → CRM (automated sync or manual)?
+- Most critical MAP data points for personalization (recent web activity, email opens/clicks, content downloads, program membership)? Is there a summarized version?
+- How you segment audiences for nurture campaigns?
+- MAP API limits, current usage, and supported authentication?
+
+**Data warehouse (Snowflake, Databricks, etc.)**
+
+- Which warehouse(s) are in use?
+- What historical customer/engagement data could enrich conversations or receive post-processing output?
+- Preferred ingestion method (flat files, streaming APIs, connectors)?
+- Security protocols and access mechanisms?
+
+### II. Web session & user identification (pre-processing)
+
+- Website platform (WordPress, custom CMS, Shopify, …)?
+- How cookies/local storage/web variables capture and store user info today (user ID, email, prior visits, form submissions)?
+- Any data layers or JS variables containing identifiable info (CRM Lead/Contact ID, MAP Person ID) our pre-processing layer can access?
+- Third-party de-anonymization vendors in use (ZoomInfo, Demandbase, 6sense, Clearbit)? How is that data integrated, and are there API keys/integration points we can leverage in real time?
+
+### III. Sales qualification (post-processing)
+
+- Current lead qualification process from inquiry to sales acceptance?
+- Precise SQL criteria (BANT fields, picklist values, budget/timeline range, decision-maker, pain points)?
+- Who qualifies leads today (SDR/BDR/sales/marketing)?
+- What's captured during qualification that the Superhuman should gather?
+- How qualification status is tracked (Lead Status field, custom checkboxes)?
+- On "qualified," what actions should fire when posted to MAP/CRM, and which derived fields are essential for follow-up?
+
+### IV. Demand generation & nurture (pre & post-processing)
+
+- Current demand-gen channels and how leads are captured/ingested?
+- How the Superhuman can support demand gen (landing-page capture → MAP, visitor engagement, content sign-ups)?
+- Data needed for campaign attribution (Campaign IDs, Source fields)?
+- How leads are segmented/enrolled into nurture, key triggers, and how the Superhuman should influence nurture (topic-based segmentation, real-time recommendations, opt-in capture, track changes)?
+- Specific data points post-processing should push back (e.g., "Superhuman Engaged," "Expressed Interest in Product X," qualification status)?
+
+### V. Data ingestion & reporting (post-processing)
+
+- Desired format for transcripts/summaries in CRM (long-text field) or MAP (custom activity/fields)?
+- Which system receives the full transcript vs. summaries/data points?
+- Keywords/phrases to extract and map for reporting/segmentation?
+- Key metrics to track (leads qualified by Superhuman, conversation-to-opportunity conversion, engagement time, popular topics)?
+- Prefer raw flat files to your warehouse, or are CRM/MAP fields sufficient?
+
+### VI. Security, compliance & governance
+
+- Preferred API authentication/authorization for CRM and MAP (Connected Apps + OAuth, Custom Services + API keys, dedicated integration users)?
+- Minimum access needed for pre-processing reads and post-processing writes across CRM (Leads, Contacts, Accounts, Opportunities, Custom Objects) and MAP (Persons, Programs, Custom Activities)?
+
+### VII. Technical environment & development process
+
+- Dedicated sandbox/staging for CRM, MAP, and website?
+- Process for promoting changes to production?
+- Key technical stakeholders (CRM/MAP admins, web devs, data engineers) and typical lead time for allocating resources?

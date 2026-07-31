@@ -89,10 +89,17 @@
             "group": "Integrations",
             "pages": [
               "configuring/integrations/overview",
+              "configuring/integrations/website-embed",
+              "configuring/integrations/crm-map-setup",
+              "configuring/integrations/workshop-preparation",
               {
                 "group": "Salesforce",
-                "pages": ["configuring/integrations/salesforce/oauth-setup"]
+                "pages": [
+                  "configuring/integrations/salesforce/overview",
+                  "configuring/integrations/salesforce/oauth-setup"
+                ]
               },
+              "configuring/integrations/marketo",
               "configuring/integrations/chili-piper",
               "configuring/integrations/leandata-bookit"
             ]
@@ -107,6 +114,19 @@
           {
             "group": "Troubleshooting",
             "pages": ["configuring/troubleshooting"]
+          }
+        ]
+      },
+      {
+        "tab": "Developers",
+        "groups": [
+          {
+            "group": "Developers",
+            "pages": [
+              "developers/sdk-reference",
+              "developers/tool-calls",
+              "developers/pre-post-processing"
+            ]
           }
         ]
       },

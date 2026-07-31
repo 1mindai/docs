@@ -1,0 +1,173 @@
+---
+title: "SDK reference (OnemindSDK)"
+description: "JavaScript SDK methods and lifecycle events for the 1mind widget, available on window.onemind.v1."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  **Migrated from the developer-docs "Using the OnemindSDK" (source Apr 2026).**
+  Faithful port pending review — confirm method signatures are current before publish.
+</Info>
+
+The OnemindSDK is automatically embedded into your site's global `window` object.
+Access SDK methods via `window.onemind.v1.[methodName]` or directly
+`onemind.v1.[methodName]`.
+
+## Methods
+
+### `sendSessionContextEvent`
+
+Sends context events to the discourse widget.
+
+```javascript
+await onemind.v1.sendSessionContextEvent({
+  event: "event name",
+  payload: {
+    // ...any payload object...
+  }
+})
+```
+
+**Parameters** — `options`: an object containing the event name and payload. The
+payload can be any valid object. Both the payload and event name are forwarded
+as-is to the `v1/session-events` endpoint.
+
+**Response** — on success:
+
+```javascript
+{ "success": true, "message": "Event processed successfully", "logId": "[log id]" }
+```
+
+On error: `Error: An error occured while executing the function`
+
+**Example:**
+
+```javascript
+try {
+  const response = await onemind.v1.sendSessionContextEvent({
+    event: "user-form",
+    payload: { username: "jane doe", age: 25, address: "float street" }
+  })
+} catch (error) {
+  // ...handle error...
+}
+```
+
+You can also send events periodically:
+
+```javascript
+const intervalId = setInterval(async () => {
+  try {
+    await onemind.v1.sendSessionContextEvent({
+      event: "user-form",
+      payload: { username: "jane doe", age: 25, address: "float street" }
+    });
+  } catch (error) {
+    // ...handle error...
+  }
+}, 5000);
+
+// To stop the periodic calls later:
+clearInterval(intervalId);
+```
+
+### `setWidgetZIndex`
+
+Sets the z-index of the discourse widget.
+
+```javascript
+onemind.v1.setWidgetZIndex({ zIndex: 9999 })
+```
+
+**Parameters** — `zIndex` must be a valid integer; the value is applied directly
+to the widget container.
+
+**Response** — on success: `void`. On error: `Error: onemind: widget is not loaded yet`
+
+**Example** — raise above a modal, then reset:
+
+```javascript
+function openModal() {
+  onemind.v1.setWidgetZIndex({ zIndex: 99999 })
+  // ...open modal...
+}
+function closeModal() {
+  onemind.v1.setWidgetZIndex({ zIndex: 9999 })
+  // ...close modal...
+}
+```
+
+### `startConversation`
+
+Programmatically starts a conversation with the discourse widget.
+
+```javascript
+onemind.v1.startConversation()
+```
+
+**Parameters** — none. It triggers the widget to start a conversation flow directly.
+
+**Response** — on success: `void`. On error: `Error: onemind: widget is not loaded yet`
+
+**Example:**
+
+```javascript
+<button onClick={() => {
+  try {
+    onemind.v1.startConversation()
+  } catch (error) {
+    // ...handle error...
+  }
+}}>
+  Start Conversation
+</button>
+```
+
+## Events
+
+Lifecycle events you can attach callbacks to. Each takes a callback that fires when
+the event occurs; an object with event-relevant data is passed in.
+
+| Event | Fires when | Event data |
+| --- | --- | --- |
+| `onConversationStarted` | A chat room is created with the Superhuman and the user | `{ timestamp }` |
+| `onConversationEnded` | The user session ends | `{ timestamp, conversationStartTimestamp, conversationEndTimestamp, conversationId, userMessagesCount, userVoiceMessagesCount, agentRepliesCount }` |
+| `onChatMessageSent` | The user sends a message (voice or text) | `{ timestamp, conversationStartTimestamp, conversationId, userMessagesCount, userVoiceMessagesCount, agentRepliesCount }` |
+| `onChatMessageReceived` | The user receives a message from the Superhuman | `{ timestamp }` |
+| `onUrlClicked` | The user clicks a URL in the chat | — |
+
+**Syntax:**
+
+```javascript
+onemind.v1.eventName((event) => {
+  // ...any action...
+})
+```
+
+**Example:**
+
+```javascript
+await onemind.v1.onConversationStarted(async (event) => {
+  const response = await api.post('www.api.com/post')
+  if (response.success) {
+    // ...do something...
+  } else {
+    // ...do something else...
+  }
+})
+```
+
+Polling within an event, with cleanup:
+
+```javascript
+let intervalId = undefined;
+await onemind.v1.onConversationStarted(async (event) => {
+  intervalId = setInterval(() => {
+    // ...do something...
+  }, 5000) // every 5 seconds
+})
+
+// stop polling whenever you want to
+if (intervalId) { clearInterval(intervalId) }
+```

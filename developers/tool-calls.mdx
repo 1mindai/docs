@@ -1,0 +1,168 @@
+---
+title: "Tool Calls"
+description: "How the 1mind AI invokes external systems during conversations — local handlers, external tool servers, processors, and async Temporal workflows."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  **Migrated from the developer-docs "Tool Calls: A Customer Guide" (source Jan
+  2026).** Faithful port pending review. Audience is a customer's own developer
+  team (JSON-RPC schemas, processor config) — confirm scope/placement before publish.
+</Info>
+
+## Overview
+
+Tool calls let the AI interact with external systems and APIs during
+conversations. The system supports several types, from simple local operations to
+complex async workflows.
+
+## Types of tool calls
+
+### 1. Local tool handlers
+
+Run in the interaction service and return results immediately.
+
+- Fast execution (no network calls), synchronous responses
+- Built-in functions like `present_content`, `set_goal`, `end_conversation`
+- Direct access to session data and conversation context
+- Use cases: UI controls, session management, knowledge-base searches, internal state
+- Examples: `present_content`, `set_goal`, `search_knowledge_embeddings`, `set_session_variable`
+
+### 2. External tool server calls
+
+When a tool isn't handled locally, the system forwards it to your external tool
+server (customer-connector-service) via a JSON-RPC API.
+
+1. AI requests a tool call
+2. System checks for a local handler
+3. If none, sends a JSON-RPC request to your tool server
+4. Tool server executes the method and returns the result
+5. Result is passed back to the AI for response generation
+
+**Request (JSON-RPC 2.0):**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "unique-request-id",
+  "method": "tools/call",
+  "params": {
+    "tool": "tool_name",
+    "arguments": { "param1": "value1", "param2": "value2" }
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "unique-request-id",
+  "result": { "data": "returned value" }
+}
+```
+
+- **Endpoint:** `POST {tools-url}/call?session={sessionId}`
+- **Authentication:** API key via `x-api-key` header
+
+### 3. Processor-based tool calls
+
+Processors are customer-specific implementations that handle tool calls for your
+account, enabling custom business logic and external API integrations.
+
+1. Tool call arrives at customer-connector-service
+2. System identifies your processor from account configuration
+3. Processor executes the requested method with session context
+4. The method can call external APIs, query databases, or run business logic
+5. Result is returned to the AI
+
+Processors are configured per account/flow via launcher settings, expose methods
+callable as tools, and have access to session data, conversation context, and
+integration configs. Example methods: `getMeetingLink`, `createLead`,
+`lookupAccount`, plus custom methods.
+
+## External APIs as tool calls
+
+External API calls are handled through the processor system:
+
+1. Define the tool in your AI model configuration
+2. Configure the processor in account settings
+3. Implement a processor method that calls your API
+4. The AI can now invoke the tool during conversations
+
+**Flow:** AI conversation → tool-call request → customer-connector-service →
+processor (your logic) → external API call → result processing → response to AI.
+
+Credentials are stored securely in account settings; configuration is per-account;
+authorization is session-based; API keys and OAuth tokens are managed by the system.
+
+## Async tool calls via Temporal workflows
+
+For long-running or complex operations, the system supports async execution
+through Temporal workflows.
+
+**When to use:** operations over a few seconds, multi-step workflows, operations
+needing retries/recovery, or background processing that shouldn't block the
+conversation.
+
+**How it works:** a tool call triggers a workflow that orchestrates activities;
+the conversation continues while it runs; results are stored and retrievable, and
+workflow status can be checked.
+
+**Workflow types:** Integration, Conversation Extraction, Pre-processing,
+Post-processing. **Features:** automatic retries with configurable policies,
+timeout handling, activity orchestration, state management, error recovery.
+
+**Example — async lead creation:** the AI calls `create_lead` → processor starts a
+workflow that validates data, enriches it, creates the CRM lead, sends a
+notification, and updates session context → the AI acknowledges immediately while
+the workflow completes in the background. Workflows are defined in account settings
+(stored in DB, versioned, dry-run mode, per-flow config).
+
+## Best practices
+
+- **Tool design:** descriptive consistent names, clear parameter descriptions, graceful error handling, structured/predictable results.
+- **Performance:** local handlers for fast ops, async workflows for long tasks, cache external responses where appropriate, set timeouts.
+- **Security:** never expose credentials in responses, validate all inputs, use session-based authorization, log calls for audit.
+- **Error handling:** meaningful messages, retry transient failures, handle rate limits, provide fallbacks.
+
+## Configuration examples
+
+**Add a tool to the AI model** (functions JSON field):
+
+```json
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "get_meeting_link",
+      "description": "Retrieve a personalized meeting scheduling link",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "companyName": { "type": "string", "description": "The company name" },
+          "email": { "type": "string", "description": "Contact email address" }
+        },
+        "required": ["companyName", "email"]
+      }
+    }
+  }
+]
+```
+
+**Processor configuration** (account launcher settings):
+
+```json
+{ "toolCallProcessor": "phenom", "flow": "default" }
+```
+
+## Summary
+
+The tool-call system supports **local handlers** (fast, synchronous), **external
+tool servers** (custom integrations via JSON-RPC), **processors**
+(customer-specific business logic), and **Temporal workflows** (async, complex
+operations) — enabling real-time interactions, custom integrations, and reliable
+background processing. For implementation details or support, contact your
+technical representative.

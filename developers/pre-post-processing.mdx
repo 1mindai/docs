@@ -1,0 +1,60 @@
+---
+title: "Pre & Post Processing"
+description: "What the Superhuman reads before a conversation and writes back after — across Salesforce, Marketo, third-party data, and your warehouse."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  **Migrated from the developer-docs Pre & Post Processing guide (source Jul
+  2025).** Faithful port pending review. Overlaps with the CRM/MAP integration
+  guide (same read/write object lists) — reconcile before publish.
+</Info>
+
+## Pre-processing (read access)
+
+Load existing customer and lead data into Superhuman conversations for
+personalization and context.
+
+- **Salesforce (read):** Lead, Contact, Account, Opportunity, Custom Objects — contact info, qualification status, lead source, company details, engagement history, active deals/stage, qualification criteria.
+- **Marketo (read):** Persons, Programs, Activities, Custom Objects — lead/prospect data, engagement scores, behavioral data, campaign membership, content downloads, segmentation/nurture status.
+- **Third-party data (read):** ZoomInfo / Demandbase / 6sense (firmographics and intent via browser cookies/local cache).
+- **Website data layer (read):** URL parameters and website variables injected into 1mind's launcher JavaScript.
+
+**Key pre-processing data points:** existing product ownership, recent
+activity/engagement, company size and industry, BANT qualification status,
+marketing program membership, website behavioral data.
+
+## Post-processing (write access)
+
+Push conversation outcomes, insights, and qualification data back to business
+systems.
+
+- **Salesforce (write):** Lead, Contact, Account, Opportunity, Task, Custom Objects — update qualification/BANT, add conversation notes/summaries, create opportunities and follow-up Tasks, log Superhuman interactions and scores.
+- **Marketo (write):** Persons, Programs, Custom Activities, Custom Objects — update lead scores and qualification, enroll in nurture based on topics, log interactions and summaries, update segmentation/triggers.
+
+**Key post-processing data points:** qualification data (BANT, SQL status,
+decision-maker), conversation insights (topics, pain points, product interest),
+campaign attribution, nurture triggers, and sales handoff (transcripts, next steps,
+contact preferences).
+
+**Post-processing actions:** update status/assign qualified leads and trigger
+alerts; segment into nurture tracks by topic; extract metrics for reporting; export
+flat files to the data warehouse for BI.
+
+## Access requirements summary
+
+| System | Pre-processing | Post-processing |
+| --- | --- | --- |
+| Salesforce | Read | Write |
+| Marketo | Read | Write |
+| Third-party data | Read | N/A |
+| Website / data layer | Read | N/A |
+| Data warehouse | N/A | Write |
+
+## Integration methods
+
+- **Authentication:** OAuth 2.0 for Salesforce, API keys for Marketo.
+- **APIs:** REST for real-time data exchange.
+- **Webhooks:** event-driven updates for immediate processing.
+- **Flat files:** batch exports for data-warehouse integration.
