@@ -1,55 +1,92 @@
-# Mintlify Starter Kit
+# 1mind Customer Documentation
 
-Use the starter kit to get your docs deployed and ready to customize.
+Source of truth for 1mind customer-facing technical documentation. Authored in
+Markdown/MDX, rendered by [Mintlify](https://mintlify.com). Docs-as-code: every
+page is a file in this repo, and the diff is the review.
 
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
+> Separate from the product monorepo so docs PRs don't gate on code review.
 
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
+## How docs get written
 
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
+This site is the publishing layer of the AI-driven release workflow: a Feature
+phase change in Jira triggers an orchestration layer (n8n + Claude agents), a
+docs-drafting agent generates base documentation, humans review and approve in
+Mintlify, and it publishes on merge. Draft and publish are always separate steps —
+nothing publishes externally without the named approver.
 
-## AI-assisted writing
+## Information architecture
 
-Set up your AI coding tool to work with Mintlify:
+The nav mirrors the **1mind product stack** (the same model customers buy against),
+so the docs double as the map of what a customer owns and can add.
+
+```
+Get Started        What 1mind is, how Superhumans work, first build, glossary
+Using 1mind        What you buy and operate:
+                     Superhumans · Deployments · Sub-Agents · Skills ·
+                     Analytics & Attribution · Best Practices
+Configuring 1mind  What you set up once:
+                     Platform · Knowledge · Integrations · Administration · Troubleshooting
+Guides             Step-by-step paths across features (by goal)
+Changelog          Release notes, tied to Release Operations
+```
+
+Design principles are documented on the Notion workspace page (Mintlify: Best
+Practice Guide & Project Plan). Highlights: write for the customer's task not our
+architecture; disclosure discipline (document what a capability does, not how it's
+engineered); one canonical home per topic; Diátaxis page types; one naming system
+aligned to the product + glossary; build when ready.
+
+## Repo layout
+
+```
+docs.json                       nav + config
+index.mdx                       home
+get-started/                    concepts, quickstart, glossary
+using/
+  superhumans/                  the roles you buy
+  deployments/                  the surfaces
+  sub-agents/                   tier-gated capabilities (e.g., calendar-routing)
+  skills/                       modular add-ons
+  analytics-attribution.mdx
+  best-practices/
+configuring/
+  platform/ · knowledge/ · integrations/ · administration/ · troubleshooting.mdx
+guides/                         by-goal, step-by-step paths
+changelog/
+templates/                      Diátaxis page templates (not published)
+```
+
+## Conventions
+
+- **Content types (Diátaxis):** every page declares `contentType` in front-matter —
+  `tutorial`, `how-to`, `reference`, or `explanation`.
+- **Tier / entitlement (Sub-Agents & Skills):** these are paid, tier-gated items,
+  so each such page declares `tier` and `availability` in front-matter and shows a
+  short entitlement callout at the top (Included in [tier] / Add-on; Live / Coming
+  soon). Use Mintlify's `tag:` front-matter to show a nav badge once confirmed.
+- **No invented content.** Bracketed `[...]` prompts and `<Info>` callouts mark
+  what needs product validation. Nothing ships with a placeholder.
+- **One canonical home per topic.** Overviews and guides link to it; they don't
+  re-document it.
+- **Navigation is defined in `docs.json`,** not derived from folders.
+
+## v1 build set vs. target map
+
+v1 (in the repo now): Get Started (real drafts), section overviews for every group,
+and the first real reference doc — **Calendar & Routing** under Sub-Agents
+(pending PM validation). Each section overview lists the pages planned for that
+area — the **target map**. Feature/Skill/Integration pages are added as content is
+written and validated (use the product deck's LIVE TODAY vs. COMING SOON to
+prioritize). We deliberately don't stub every page empty.
+
+## Local preview
 
 ```bash
-npx skills add https://mintlify.com/docs
-```
-
-This command installs Mintlify's documentation skill for your configured AI tools like Claude Code, Cursor, Windsurf, and others. The skill includes component reference, writing standards, and workflow guidance.
-
-See the [AI tools guides](/ai-tools) for tool-specific setup.
-
-## Development
-
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
-
-```
 npm i -g mint
+mint dev            # http://localhost:3000
 ```
 
-Run the following command at the root of your documentation, where your `docs.json` is located:
+## Assets to replace before launch
 
-```
-mint dev
-```
-
-View your local preview at `http://localhost:3000`.
-
-## Publishing changes
-
-Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
-
-## Need help?
-
-### Troubleshooting
-
-- If your dev environment isn't running: Run `mint update` to ensure you have the most recent version of the CLI.
-- If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
-
-### Resources
-- [Mintlify documentation](https://mintlify.com/docs)
+- `logo/light.svg`, `logo/dark.svg`, `favicon.svg` — Mintlify starter placeholders.
+- `colors` in `docs.json` — Mintlify starter greens; swap for 1mind brand.

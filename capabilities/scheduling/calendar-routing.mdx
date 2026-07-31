@@ -1,0 +1,158 @@
+---
+title: "Calendar routing"
+description: "How 1mind routes inbound prospects to the right rep and books meetings on their real calendar — inside the Superhuman conversation."
+contentType: "reference"
+owner: "Tom Bowcut"
+status: "draft"
+---
+
+{/* ────────────────────────────────────────────────────────────────
+REVIEWER NOTE — REMOVE BEFORE PUBLISH
+Status: DRAFT, pre-launch. Native scheduling is In Dev, targeting
+2026-07-15 per PRD; timing can shift. Do NOT publish externally or
+commit to a launch date until the Calendar routing PM (PRD owner;
+Michael Bissani per recent syncs) signs off.
+
+Drafted from internal sources (not yet customer-approved):
+- Services Onboarding Guide (customer-facing setup)
+- Native Scheduling Sales Guide (launch scope + guardrails)
+- Workflow Calendar Routing Node PRD (routing/availability logic)
+
+OPEN ITEMS TO CONFIRM WITH PM before publish:
+1. Meeting-link providers at launch. Sales Guide: Zoom + Google Meet
+   only (Teams/Webex are Phase 2). Services Onboarding Guide lists
+   Microsoft Teams as a supported meeting provider. Reconcile — this
+   doc currently follows the Sales Guide (Zoom + Google Meet at launch).
+2. Confirm final GA scope vs. Phase 2 split before this goes live.
+3. Confirm whether routing config is still Services-only at GA (no
+   customer self-serve) — Onboarding Guide FAQ says yes as of drafting.
+──────────────────────────────────────────────────────────────── */}
+
+## Capability statement
+
+1mind's native Calendar Routing & Scheduling lets prospects and customers book a
+meeting with the right rep, at the right time, without leaving the Superhuman
+conversation. The same Superhuman that qualifies a prospect resolves the correct
+owner from your CRM, reads that rep's real-time calendar availability, presents
+open times inline, and books the meeting — with the conversation summary
+automatically included in the calendar invite. Routing follows your business
+rules (CRM account ownership, with team round-robin and named-individual
+fallbacks), so inbound leads are booked in one flow rather than handed off to a
+separate scheduling tool.
+
+## How it works
+
+When a prospect signals meeting intent, the Superhuman runs a routing and
+booking sequence in a single step:
+
+<Steps>
+  <Step title="Resolve the right rep">
+    Looks up the account owner matched to the prospect in your CRM. If there is
+    no owner match — or the owner has no availability in the configured window —
+    routing advances to the fallback chain.
+  </Step>
+  <Step title="Fetch real availability">
+    Queries the resolved rep's live calendar (Google or Microsoft 365 / Outlook),
+    respecting working hours, buffer time, minimum notice, and out-of-office.
+  </Step>
+  <Step title="Present the scheduler">
+    Surfaces available time slots to the prospect inline in the conversation,
+    with the prospect's time zone auto-detected.
+  </Step>
+  <Step title="Confirm the booking">
+    Creates the calendar invite, attaches the virtual meeting link, embeds the
+    conversation summary, and sends it to both parties — typically in under 30
+    seconds.
+  </Step>
+</Steps>
+
+### Routing resolution order
+
+Availability is resolved top-to-bottom; the first step that returns open slots is
+shown to the prospect.
+
+| Priority | Source | Type | Availability window |
+| --- | --- | --- | --- |
+| 1 | CRM account owner | Individual | Configurable 1–14 days (default 14) |
+| 2 | Fallback 1 | Team (round-robin) or named individual | Configurable 1–14 days (default 3) |
+| 3+ | Additional fallbacks | Team (round-robin) or named individual | Configurable 1–14 days (default 3) |
+
+If every step is exhausted with no availability, the workflow's terminal
+fallback behavior applies. Out-of-office reps are automatically read as busy and
+excluded from round-robin for that period, with no admin action required.
+
+## Specifications
+
+| Attribute | Value |
+| --- | --- |
+| Calendar providers | Google Calendar, Microsoft 365 / Outlook (via OAuth) |
+| Meeting-link auto-attach | Zoom, Google Meet (at launch) |
+| Routing basis | CRM account ownership, with team round-robin and named-individual fallbacks |
+| Availability windows | Configurable 1–14 days per step |
+| Meeting types | Configurable durations: 15 / 30 / 45 / 60 min |
+| Time zone | Auto-detected for the prospect |
+| Booking confirmation | Typically under 30 seconds |
+| Invite contents | Virtual meeting link + auto-included conversation summary |
+| Reschedule / cancel | Via link in the confirmation email |
+| Per-rep availability controls | Working hours, buffer time, minimum notice, same-day booking |
+| Scheduling links | Personal (per rep × meeting type); team links with Strict or Flexible Round Robin |
+| Tracking | Availability-shown and booking events captured in the conversation transcript; exportable |
+
+## Support matrix
+
+| Scenario | Supported | Notes |
+| --- | --- | --- |
+| Route by CRM account ownership | Yes | Owner matched via CRM lookup |
+| Team round-robin fallback | Yes | Strict (next-in-queue) or Flexible (combined availability) |
+| Named-individual fallback | Yes | Any number of ordered fallback steps |
+| Real-time availability (Google, Microsoft 365 / Outlook) | Yes | Via OAuth; respects working hours, buffer, OOO |
+| Conversation summary in invite | Yes | Auto-included on every booking |
+| Reschedule / cancel | Yes | Link in confirmation email |
+| Additional attendees + prospect context field | Yes | Optional |
+| Microsoft Teams / Webex meeting links | Roadmap (Phase 2) | Zoom + Google Meet at launch |
+| Advanced routing (account size, industry, custom fields) | Roadmap (Phase 2) | Launch routing is CRM-ownership-based |
+| Group meetings with multiple reps on one invite | Not at launch | — |
+| Customer-branded scheduling UI (logo / colors) | Not at launch | Uses 1mind defaults; embedded in your Superhuman |
+| Multiple calendar providers within one customer org | Not at launch | — |
+| Abandoned-booking / no-show follow-up emails | Roadmap (Phase 2) | — |
+| Self-serve routing configuration | Not at launch | Configured by the 1mind Services team |
+
+## Configuration
+
+Setup spans three areas with distinct owners (see the Services Onboarding Guide
+for the full walkthrough):
+
+<Steps>
+  <Step title="Workspace & rep setup (admin + each rep)">
+    Admin invites reps in **Settings → User Management**. Each rep connects their
+    calendar (Google or Microsoft 365 / Outlook) and meeting provider, and sets
+    working hours and time zone. Reps without a connected calendar and meeting
+    provider cannot receive bookings.
+  </Step>
+  <Step title="Meeting types, teams & routing logic (admin / RevOps)">
+    Admin creates meeting types (title, duration, description) and teams (e.g., by
+    region or segment) that power round-robin distribution, then documents the
+    routing rules and fallbacks.
+  </Step>
+  <Step title="Implementation & validation (1mind Services)">
+    The 1mind Services team implements the routing logic and coordinates
+    validation. Customer self-serve routing configuration is planned but not
+    available at launch.
+  </Step>
+</Steps>
+
+## Limits & constraints
+
+- Routing workflows are configured by the 1mind Services team; customer
+  self-serve configuration is not available at launch.
+- One calendar provider per customer org at launch.
+- No group meetings with multiple reps on a single invite at launch.
+- Scheduler uses 1mind default styling at launch (no custom branding).
+- Reps must connect both a calendar and a meeting provider before they can
+  receive bookings.
+
+## Related
+
+- Services Onboarding Guide — end-to-end customer setup
+- [Book meetings](/guides/overview) — outcome guide (link once published)
+- Integrations — Google Calendar, Microsoft 365 (link once published)

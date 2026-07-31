@@ -1,0 +1,50 @@
+---
+title: "Glossary"
+description: "Canonical definitions of 1mind terms used throughout the documentation."
+contentType: "explanation"
+status: "draft"
+---
+
+<Info>
+  **Canonical naming source.** Every term is defined once here; other pages link
+  to it. Keep names aligned with what customers see in the product. Confirm any
+  in-flux terms with Product.
+</Info>
+
+## Core objects
+
+<ParamField path="Account" type="object">
+  The top-level organizational container; holds one or more workspaces.
+</ParamField>
+
+<ParamField path="Workspace" type="object">
+  A shared building area holding Superhumans, personas, Knowledge Hub content, and integrations.
+</ParamField>
+
+<ParamField path="Superhuman" type="object">
+  The shared AI configuration (Brain + enabled knowledge) behind one or more deployments. The unit you buy, by role.
+</ParamField>
+
+<ParamField path="Deployment" type="object">
+  A configured customer-facing experience for a channel, campaign, or surface, powered by one Superhuman.
+</ParamField>
+
+<ParamField path="Persona" type="object">
+  The public-facing identity (name, appearance, voice) selected on a deployment; created at workspace scope.
+</ParamField>
+
+## The five layers
+
+<ParamField path="Platform" type="layer">
+  The always-on intelligence layer — Context Graph, Knowledge Hub, attribution, and enterprise security/RBAC/workspaces.
+</ParamField>
+
+<ParamField path="Sub-Agent" type="layer">
+  A tier-gated capability that extends what a Superhuman can do (e.g., Calendar & Routing).
+</ParamField>
+
+<ParamField path="Skill" type="layer">
+  A modular add-on you attach to any Superhuman (e.g., ROI Calculator).
+</ParamField>
+
+<Note>Add terms as pages are written. Keep definitions short; deep detail lives on the capability page.</Note>
