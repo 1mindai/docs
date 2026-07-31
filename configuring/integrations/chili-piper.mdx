@@ -1,0 +1,127 @@
+---
+title: "Chili Piper"
+description: "Route and book meetings from a Superhuman conversation into Chili Piper, then log them to your CRM."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  **Migrated from the developer-docs Chili Piper Integration (source Oct 2025).**
+  Faithful port pending review. This asset had near-duplicate copies elsewhere —
+  confirm this is the canonical version before publish.
+</Info>
+
+## Overview
+
+With 1mind's Superhumans + Chili Piper, a website visitor can talk, qualify, and
+book a meeting in a single flow — accelerating pipeline, routing intelligently on
+CRM/MAP data, and handing off seamlessly from digital conversation to a human rep.
+
+**Who does what:**
+
+- **1mind** hosts the Superhuman on your site, generates unique Smart Booking Links, and passes CRM/MAP/account data into Chili Piper for routing.
+- **You (customer)** configure routing/assignment in Chili Piper (queues, owner rules, round-robin, territory), provide your router/queue URL and required parameters, and keep your CRM (Salesforce, HubSpot, Dynamics) integration active for booking + activity sync.
+- **Chili Piper** applies your queue/owner rules from the identifiers provided (primarily email), presents availability, books the meeting, and updates the CRM.
+
+## How the flow works
+
+1. A visitor engages with a Superhuman on your website.
+2. The Superhuman runs lightweight qualification (name, email, company, region, use case).
+3. Based on the conversation, 1mind constructs your Chili Piper router/queue link with the right identifiers.
+4. The visitor clicks the link → Chili Piper routes to the correct rep/team and books directly.
+5. Chili Piper logs the meeting back into your CRM.
+
+## Link construction
+
+**Base router/queue link (you provide):** `https://calendar.chilipiper.com/router/inbound-bdr` *(example — use your actual router/queue URL).*
+
+**Minimum parameter (required):**
+
+- `id=<prospect_email>` — the primary identifier Chili Piper uses to match/create the record and apply routing.
+
+**Common optional parameters:**
+
+- `meetingTypeId=<UUID>` — selects a specific meeting template/flow (e.g., Demo, Discovery). *Legacy workspaces may use `type=<name>` instead.*
+- `by=<name-or-id>` — credits the booker (e.g., SDR→AE handoff reporting).
+
+**Example (BDR demo):**
+
+```text
+https://calendar.chilipiper.com/router/inbound-bdr?id=john.smith@acme.com&meetingTypeId=<your_meeting_type_uuid>&by=superhuman
+```
+
+<Note>In a prospecting flow we typically don't rely on Account or Opportunity IDs gathered in-chat — Chili Piper routes correctly from the email plus your configured rules.</Note>
+
+## What the Superhuman collects
+
+First & last name (rep context), email (required for routing/CRM match), company
+name, country/region (for territory rules), and use case/request type (can inform
+`meetingTypeId`). These are gathered conversationally and can be echoed to the rep
+via the calendar description or CRM notes.
+
+## Updating Data Fields
+
+The values the Superhuman collects must match the values in Chili Piper's **Data
+Fields** page:
+
+<Steps>
+  <Step title="Open Data Fields">Navigate to **Data Fields** in your workspace.</Step>
+  <Step title="Add Smart Parameters">
+    For each field being used (e.g., First Name), add a value under **Smart
+    Parameter** — e.g., `firstName`. Continue for all collected fields
+    (`lastName`, `email`, `company`, …), using camelCase where applicable.
+    {/* screenshot: Data Fields Smart Parameter config */}
+  </Step>
+</Steps>
+
+<Note>Under **Meeting Type**, enabling **"Skip the Form when possible"** lets the user bypass the form and just pick a time when the Superhuman has passed all fields. If disabled, the form is shown pre-filled for the user to edit before booking.</Note>
+
+## Routing patterns (configured in Chili Piper)
+
+- **Owner-based** (email matches Lead/Contact/Account owner)
+- **Round-robin** across a team/queue
+- **Territory-based** queues (country/region/state)
+- **Meeting-type** queues (Demo vs. Discovery vs. Onboarding)
+
+1mind doesn't change your routing logic — we pass the right identifiers so your
+Chili Piper configuration applies cleanly.
+
+## What we need from you
+
+| Item | Example | Notes |
+| --- | --- | --- |
+| Router/Queue URL | `https://calendar.chilipiper.com/router/inbound-bdr` | Your actual link |
+| Meeting Type | `meetingTypeId=<UUID>` | Or legacy `type=<name>` |
+| Routing Mode | Owner / Round-robin / Territory | Configured in Chili Piper |
+| Credit Booker (optional) | `by=superhuman` | SDR/BDR attribution |
+| CRM | SFDC / HubSpot / Dynamics | Ensure Chili Piper CRM sync is active |
+
+## Deliverables from 1mind
+
+- Workshop to align routing needs and data capture
+- Link-construction logic aligned to your router/queue configuration
+- Conversation prompts for Superhumans to capture required details smoothly
+- Validation in your staging/test queue before going live
+
+## Security & data handling
+
+1mind collects only the minimal fields needed for scheduling; links are generated
+per interaction and include only approved parameters; meeting outcomes and CRM
+writes occur within your Chili Piper + CRM connection.
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Do we need forms?">
+    No additional forms are required. The Superhuman gathers the details conversationally and passes the identifiers to Chili Piper.
+  </Accordion>
+  <Accordion title="What's the minimum data needed to route?">
+    The prospect email (`id=`) so Chili Piper can match in CRM and apply your rules.
+  </Accordion>
+  <Accordion title="Can we enforce a specific meeting type?">
+    Yes — include `meetingTypeId=<UUID>` (or `type=<name>` in legacy setups).
+  </Accordion>
+  <Accordion title="What if we want territories or custom queues?">
+    Configure that in Chili Piper; 1mind passes identifiers so those rules apply.
+  </Accordion>
+</AccordionGroup>

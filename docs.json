@@ -92,12 +92,17 @@
               {
                 "group": "Salesforce",
                 "pages": ["configuring/integrations/salesforce/oauth-setup"]
-              }
+              },
+              "configuring/integrations/chili-piper",
+              "configuring/integrations/leandata-bookit"
             ]
           },
           {
             "group": "Administration",
-            "pages": ["configuring/administration/overview"]
+            "pages": [
+              "configuring/administration/overview",
+              "configuring/administration/sso"
+            ]
           },
           {
             "group": "Troubleshooting",

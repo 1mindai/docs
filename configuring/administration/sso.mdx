@@ -1,0 +1,107 @@
+---
+title: "SSO configuration"
+description: "Configure SAML 2.0 Single Sign-On with Okta, Azure AD (Microsoft Entra ID), or Google Workspace."
+contentType: "how-to"
+status: "draft"
+---
+
+<Info>
+  **Migrated from the developer-docs SSO Configuration Guide (source updated Jun
+  2026).** Faithful port pending review; screenshots noted inline for re-add.
+</Info>
+
+## Overview
+
+This guide helps 1mind customers configure SAML 2.0 Single Sign-On (SSO) with
+Identity Providers such as Okta, Azure AD (Microsoft Entra ID), or Google
+Workspace. SSO lets your team authenticate through your organization's existing
+Identity Provider (IdP), providing centralized access control, enhanced security,
+and simplified user management.
+
+## Prerequisites
+
+**What the 1mind team completes first** (before sending your invitation):
+
+- Creates your organization's account
+- Basic initial configuration of your 1mind Superhuman
+- Sends the invitation to your Genesis User (your first 1mind Console admin)
+- Enables the SSO feature
+
+**What you need (customer):**
+
+- Administrative access to your Identity Provider (Okta, Azure AD, Google Workspace, etc.)
+- Ability to create and configure enterprise applications in your IdP
+- The invitation email from 1mind (sent after account setup is complete)
+
+<Note>
+  **What is a Genesis User?** The first administrator who configures the initial
+  SSO setup. They are the only user who signs in for the first time with a
+  password. If you're an existing 1mind customer with password-credentialed users,
+  those users will be prompted to sign in via SSO once an admin configures it.
+</Note>
+
+## Setup process
+
+<Steps>
+  <Step title="Initial account setup">
+    The Genesis User signs up with **email** and **password** before SSO can be
+    configured: open the invitation email, click the signup link, create your
+    account (first name, last name, password), and verify your email with the
+    activation code. You'll land on the 1mind Console.
+
+    <Warning>The password you create is your fallback login if SSO has issues. Keep it secure.</Warning>
+  </Step>
+  <Step title="Access SSO configuration">
+    In the 1mind Console, go to **Settings** (left sidebar) → **SSO** tab.
+  </Step>
+  <Step title="Enter your email domain">
+    Click **Configure SSO**, enter your organization's **domain only** (correct:
+    `company.com`; incorrect: `user@company.com`), then **Generate Onboarding
+    Link**. You'll get a configuration link (valid for 1 hour); click **Log out &
+    open link** to reach the configuration portal, then **Configure Single
+    Sign-On**.
+    {/* screenshot: onboarding link modal + configuration portal */}
+  </Step>
+  <Step title="Configure your Identity Provider">
+    Choose your IdP — Microsoft Entra ID (Azure AD), Okta, Google, or Generic SAML
+    IdP — and follow the wizard, which guides you through creating an application,
+    configuring Service Provider (SP) values in your IdP, setting up the SAML
+    connection, and attribute mapping.
+    {/* screenshot: IdP options + Entra ID wizard */}
+  </Step>
+  <Step title="Test your SSO configuration">
+    Click **Test sign-in** in the last step of the wizard. You'll be redirected to
+    the 1mind sign-in page; enter your company email, choose **Sign in with
+    [your IdP]**, and authenticate. As the Genesis User, you'll be prompted once to
+    enter your existing 1mind password to link your SSO credentials to your account
+    — this is only required once; all subsequent logins use your IdP.
+    {/* screenshot: test sign-in + credential-merge prompt */}
+  </Step>
+  <Step title="Invite users to 1mind">
+    In the Console, go to **Settings → User Management → Add User**, enter each
+    teammate's work email (the one they use with your IdP), and send. They click
+    the invitation link to sign in via SSO for the first time.
+
+    <Note>Existing password-credentialed users are prompted to set their password once as part of a credential merge, like the Genesis User.</Note>
+  </Step>
+</Steps>
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="The configuration link expired. How do I get a new one?">
+    Configuration links are valid for 1 hour. In the Console go to Settings → SSO → Configure SSO to generate a new link, and complete setup within the time limit.
+  </Accordion>
+  <Accordion title="I can't see the SSO tab in Settings. Why not?">
+    Either SSO isn't enabled for your account, or you don't have Admin permissions. Contact your 1mind CSM or Services contact to enable the feature.
+  </Accordion>
+  <Accordion title="SSO was working but now it's not. What happened?">
+    The most common cause is an expired IdP certificate. Check your Identity Provider's certificate expiration date and upload a new one if needed.
+  </Accordion>
+  <Accordion title="What should I do if SSO login fails?">
+    Confirm the ACS URL and SP Entity ID in your IdP match exactly what's shown in the 1mind wizard (watch for extra spaces/typos), and verify the IdP metadata (certificate, SSO URL, Issuer) matches your current configuration. If it persists, contact your 1mind representative with screenshots and details of when the failure occurs.
+  </Accordion>
+  <Accordion title="Users can sign in through SSO but get &quot;access denied&quot; / &quot;unauthorized.&quot;">
+    They authenticated with your IdP, but their account isn't assigned to 1mind yet. An IT admin needs to assign them to the 1mind application in your IdP (Okta/Azure AD/Google Workspace). Ask IT to add the users to the 1mind application group.
+  </Accordion>
+</AccordionGroup>
