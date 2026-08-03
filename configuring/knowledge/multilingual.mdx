@@ -1,0 +1,62 @@
+---
+title: "Multilingual support"
+description: "How 1mind Superhumans handle non-English languages — what we can adjust, what we can't, and how to set expectations."
+contentType: "explanation"
+status: "draft"
+---
+
+<Info>
+  **Distilled from the Services doc "Multi-Language Support: What We Can & Can't
+  Do" (marked draft for review).** Pending review. Timelines for "coming soon"
+  items intentionally omitted — confirm current availability before quoting dates.
+</Info>
+
+## The one thing to remember
+
+Superhumans are trained in **English only**. When a Superhuman speaks another
+language, the underlying language model translates the English response into that
+language **in real time**. There's no stored translated version, so there's
+**nothing to manually edit at the translation level** — which is the reason behind
+almost every "we can't do that."
+
+## How it works today
+
+- Training and the Brain are in English; there's no separate per-language training.
+- Non-English output is generated on the fly by the model at conversation time.
+- We don't keep a Dutch / German / French / etc. copy of the content to edit.
+- Translation quality is tied to the model and improves as newer models ship.
+
+**A helpful way to think about it:** English is the **master document** — change it
+and it stays changed. Other languages are like a **live interpreter** reading that
+document aloud each time: you can't edit the interpreter's phrasing (and it may
+word things slightly differently each time), though you can hand them a short
+glossary for specific terms (which is how brand names and acronyms are handled).
+
+## What we can do
+
+- **Number and currency pronunciation** in the target language (spoken words vs. reading out decimals, correct currency phrasing) — supported.
+- **Language-specific CTA / links** (e.g., a Dutch free-trial link vs. the English one) — coming soon; confirm it's live before promising it to a customer.
+
+## What we can't do (today)
+
+- **Edit or correct a translation** — word choice, swapping a phrase, or changing tone/formality (e.g., forcing "Hola" over "Buenos días"). It happens at the model level, so there's nothing stored to edit.
+- **Match a specific regional dialect on request** (e.g., Spain vs. Mexican Spanish) — under investigation.
+- **Per-language training** — we won't build a separate Dutch/French/Spanish Superhuman.
+- **Word-by-word translation corrections** — even where a one-off fix is technically possible, we don't support it (it adds latency, instability, and an open-ended queue).
+
+## In progress
+
+- Language-specific link/CTA overrides.
+- Dialect-level control (passing regional dialect to the model) — no committed date.
+- Newer models — many of today's rough edges resolve as models advance, with no manual work.
+
+## How to set expectations with a customer
+
+- "Translations are generated in real time by the underlying language model. We can't manually edit the wording, phrasing, or tone of a translation today — that's controlled at the model level, not configured word by word."
+- "In English we're editing the actual source your assistant is built on, so we can fine-tune wording. Other languages are translated and spoken live — more like a real-time interpreter — so there's no fixed version to edit yet."
+- "The models keep improving, and we're evaluating newer versions plus more regional/dialect control."
+- Where we *can* help: number/currency formatting, and (soon) language-specific links.
+
+## Related
+
+- [Knowledge overview](/configuring/knowledge/overview)

@@ -1,0 +1,118 @@
+---
+title: "Create & configure a deployment"
+description: "Create a deployment in the 1mind Console and configure its appearance, content, privacy, tracking, and launcher — then test and promote to production."
+contentType: "how-to"
+status: "draft"
+---
+
+<Info>
+  **Distilled from the Services "Creating a Deployment in the 1mind Console"
+  guide.** Customer-facing configuration steps; internal-only tooling references
+  were removed. Pending review. Covers the "console widget content & branding
+  inputs" checklist.
+</Info>
+
+A **deployment** is a configured instance of a Superhuman — same brain, knowledge,
+and integrations, wrapped in its own appearance, greeting, colors/fonts, widget or
+embed configuration, privacy policy, suggested topics, UTM tracking, and launcher
+script. It's the presentation layer.
+
+Every deployment has two states: **Sandbox** (safe editing; changes isolated) and
+**Production** (live; tabs become read-only after promotion).
+
+<Note>Rule of thumb: same role + same knowledge base = one Superhuman, add a deployment. If either differs, create a new Superhuman.</Note>
+
+## Prerequisites
+
+- Access to your 1mind Console (`app.1mind.com`) with permission to create/manage deployments.
+- The Superhuman already created (its Brain and knowledge configured).
+
+## 1. Create the deployment
+
+In the Console, select the **Superhuman**, click **Deployments** → **Create New Deployment**.
+
+## 2. Basics tab
+
+**About**
+
+- **Deployment name** — use a clear convention: `[Customer] [Use case] [Widget/Embed]` (e.g., "LaunchDarkly Website BDR Widget").
+- **Persona** — select the persona for this deployment.
+
+**Preferences**
+
+- **Allowed domains** — whitelist the domains this deployment can run on, or `*` for all.
+- **Remember user** — remember returning users across sessions.
+- **Page context** — let the Superhuman know where the visitor is on the site.
+- **ZoomInfo enrichment** — toggle per your requirements.
+
+## 3. Experience Builder — styling & content
+
+<Tip>
+  Before styling, gather the customer's brand colors and fonts (from their site or
+  brand kit).
+</Tip>
+
+**Layout**
+
+- **Display** — Embedded or Widget.
+- **Embedded landing layout** — Descriptive or Minimal.
+- **Widget template** — Full, Circular, Compact, In-Product, and more.
+- **Widget size & positioning** — dimensions and placement (left/right).
+
+**Appearance**
+
+- **UI theme** — Dark or Light.
+- **Font** — 25+ options to match the brand.
+- **Primary colors** — three values for gradient control.
+- **Custom border gradient** — to complement the palette.
+- **Brand Kit overrides (advanced):** surface background, panel background, AI chat bubble color, AI chat text color, outer glow.
+
+**Content**
+
+- **Display name, heading, sub-heading, CTA button text** for the widget/embed.
+- **Loader messages** — shown while the Superhuman loads.
+- **Intro message** — the initial greeting the user sees.
+
+## 4. Experience Builder — behavior
+
+- **Privacy policy** — enter your customer-specific privacy policy text (widget and/or in-experience/persistent disclaimer, with optional dismissal).
+- **Action buttons** — next steps the Superhuman offers mid-conversation (book a meeting, open a demo, send a download). Each deployment has its own set.
+- **Suggested topics** — conversation-starter chips that guide the conversation.
+- **Session settings** — display mode, inactivity/warning/idle timers (defaults are usually fine).
+- **Language & greeting** — off by default. Enable **Multilingual support** if needed (greeting must be Dynamic when on). **Greeting override** lets you replace the trained greeting (Static = exact phrase; Dynamic = instructions).
+
+## 5. UTM tracking
+
+- **Campaign** and **placement** tracking parameters if you use UTMs; preview the reporting filters to confirm.
+- **Outbound link tracking** — a per-deployment toggle that appends a unique deployment identifier to every outbound link the Superhuman shares (solves multi-team attribution when several deployments share one Superhuman).
+
+## 6. Launcher codes
+
+The **Launcher Codes** tab (auto-activates the deployment) gives you:
+
+- **Deployment code** — the unique identifier.
+- **Launcher script** — the JavaScript embed for your website (see [Website embed & script installation](/configuring/integrations/website-embed)).
+- **Testing link** — a live preview URL, no HTML test page needed.
+
+## 7. Test
+
+Open the **Testing link** and verify: branding (colors, fonts, theme), widget
+template/position, privacy policy shows your name (not "1mind"), chat works and
+history is enabled, welcome message displays, and action buttons/suggested topics
+behave as configured. Adjust in the relevant tab and re-test as needed.
+
+## 8. Promote to production
+
+On the **Launcher Codes** tab, click **Promote to Production** to move from Sandbox
+to live.
+
+<Warning>
+  Promoting a deployment does **not** promote the Superhuman's Brain — that's a
+  separate release. Production tabs are read-only; to iterate, edit in Sandbox,
+  test, and promote again.
+</Warning>
+
+## Related
+
+- [Deployments overview](/using/deployments/overview) · [Face & Voice customization](/using/deployments/face-and-voice)
+- [Website embed & script installation](/configuring/integrations/website-embed)

@@ -47,7 +47,11 @@
           },
           {
             "group": "Deployments",
-            "pages": ["using/deployments/overview"]
+            "pages": [
+              "using/deployments/overview",
+              "using/deployments/create-and-configure",
+              "using/deployments/face-and-voice"
+            ]
           },
           {
             "group": "Sub-Agents",
@@ -85,7 +89,8 @@
             "group": "Knowledge",
             "pages": [
               "configuring/knowledge/overview",
-              "configuring/knowledge/website-crawling"
+              "configuring/knowledge/website-crawling",
+              "configuring/knowledge/multilingual"
             ]
           },
           {
