@@ -61,8 +61,29 @@ viewport height**.
 </div>
 ```
 
-**Widget deployments:** no `<div>` needed — the widget automatically appears as an
-overlay once the launcher script is present.
+**Widget deployments:** no `<div>` placement is needed — the widget automatically
+appears as an overlay on your site. The launcher `<script>` from Getting Started is
+all that's required:
+
+```html
+<script>
+var s = document.createElement('script');
+s.defer = true;
+s.src = '{YOUR_LAUNCHER_SCRIPT}';
+document.head.appendChild(s);
+</script>
+```
+
+For example, with `YOUR_LAUNCHER_SCRIPT` = `https://launcher.1mind.com/ABC1234?flow=default`:
+
+```html
+<script>
+var s = document.createElement('script');
+s.defer = true;
+s.src = 'https://launcher.1mind.com/ABC1234?flow=default';
+document.head.appendChild(s);
+</script>
+```
 
 ## Customizing with attributes
 
