@@ -1,0 +1,71 @@
+---
+title: "Website crawling"
+description: "Bring your website content into the Knowledge Hub — what to decide and provide so 1mind can crawl the right pages."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  **Customer-facing distillation of an internal Services runbook (Website &
+  Subdomain Crawling — Submission Process, updated Jul 2026).** This page covers
+  what the customer decides and provides; the internal console/operations steps
+  stay in the Services SOP. Pending review — confirm scope with Services before publish.
+</Info>
+
+Website crawling brings your site's content — your primary domain, subdomains, and
+their pages — into the 1mind **Knowledge Hub**. 1mind crawls the site to discover
+every URL, scrapes the content from each page, and feeds it into the Superhuman's
+Brain. On a refresh schedule, the Hub re-crawls to keep content current — no manual
+export or re-upload.
+
+## Key concepts
+
+- **Domain vs. subdomain.** The **domain** is the root site (`hubspot.com`). A **subdomain** is a separate section under its own prefix (`knowledge.hubspot.com`). Crawling the domain doesn't automatically capture subdomains — each is crawled independently (the "Include subdomains" option handles this). Individual page URLs (`hubspot.com/products`) are picked up automatically.
+- **Crawl vs. scrape.** *Crawl* discovers all the URLs on a site; *scrape* extracts the actual content from each. 1mind does both in one step.
+
+## What we crawl by default
+
+For most customers, the standard approach is:
+
+- **Crawl:** the full primary domain plus help / support / knowledge subdomains.
+- **Exclude:** blogs, news & press, events & webinars, legal / privacy / terms, and career pages.
+- **Language:** English only.
+- **Auto-refresh:** monthly (weekly on request).
+
+## What we need from you
+
+To set up your crawl, provide:
+
+- **Primary domain** (e.g., `acme.com`).
+- **Subdomains to include** (or confirm the default of including help/support/knowledge subdomains).
+- **Exclusions** beyond the defaults — any paths you don't want crawled (e.g., `/careers`).
+- **Language(s)** — English by default; tell us if you need others.
+- **Refresh frequency** — monthly by default, or weekly.
+
+<Note>
+  Share any custom exclusions **before** the crawl starts. Removing URLs after the
+  fact takes significantly longer than excluding them up front.
+</Note>
+
+## Gated content and files
+
+Gated or login-only content can't be crawled. For that material, either un-gate the
+pages and share the URLs, or provide the files (PDFs, docs) to your 1mind Google
+Drive folder so they can be added to the Knowledge Hub directly.
+
+## Keeping content current
+
+The Hub re-crawls on your refresh schedule (monthly by default), so ongoing site
+changes are picked up automatically. If you relaunch or substantially update your
+site, let your 1mind contact know so the source can be re-ingested — this creates a
+new version while preserving the prior one.
+
+## Optional: page images
+
+If your content relies on images, diagrams, or screenshots (common for CS or
+developer content), ask to enable image capture so those display in the
+conversation. It's off by default and best left off for inbound marketing sites.
+
+## Related
+
+- [Knowledge overview](/configuring/knowledge/overview)

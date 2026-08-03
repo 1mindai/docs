@@ -83,13 +83,19 @@
           },
           {
             "group": "Knowledge",
-            "pages": ["configuring/knowledge/overview"]
+            "pages": [
+              "configuring/knowledge/overview",
+              "configuring/knowledge/website-crawling"
+            ]
           },
           {
             "group": "Integrations",
             "pages": [
               "configuring/integrations/overview",
               "configuring/integrations/website-embed",
+              "configuring/integrations/behind-the-form",
+              "configuring/integrations/embedding-forms-calendars",
+              "configuring/integrations/iframe-embedding",
               "configuring/integrations/crm-map-setup",
               "configuring/integrations/workshop-preparation",
               {
