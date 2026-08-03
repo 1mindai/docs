@@ -136,7 +136,8 @@
             "pages": [
               "developers/sdk-reference",
               "developers/tool-calls",
-              "developers/pre-post-processing"
+              "developers/pre-post-processing",
+              "developers/event-listeners"
             ]
           }
         ]

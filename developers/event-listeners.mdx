@@ -1,0 +1,104 @@
+---
+title: "Event listeners"
+description: "Let a Superhuman react to vendor-emitted window events on your page — configured in the Console, no code deploy required."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  **Distilled from the Services & CS "Event Listeners" implementation guide.**
+  Customer/developer-facing reference; internal enablement framing removed. Pending
+  review — confirm final placement (Developers vs. Configuring) with the team.
+</Info>
+
+## What it is
+
+Event Listeners let a Superhuman listen for and respond to **vendor-emitted window
+events** on your page — configured entirely in the Console, with no engineering or
+code changes. When something meaningful happens (a meeting is booked, a form is
+submitted, a trial step is completed), the Superhuman is made aware instantly and
+told how to respond.
+
+Find it in the Console under **Integrations → Event Listeners**, where you can add,
+edit, or delete listeners per environment (Production or Staging).
+
+<Note>This is separate from the **External Events** webhook tab, which handles inbound webhooks. Event Listeners are specifically for vendor-emitted window events on the page.</Note>
+
+## Setting up a listener
+
+Each listener has these fields:
+
+- **Event name** — the exact string the vendor's JavaScript emits as a window event. It must match **exactly**, including case (e.g., `BOOKIT_MEETING_BOOKED`, `CHILIPIPER_MEETING_SCHEDULED`). A typo or case mismatch means it never fires — confirm the name against the vendor docs or your developers.
+- **Vendor / source** — a label for organization/reporting (e.g., `Chili Piper`, `ZoomInfo`, `BookIt`, or your product name).
+- **Allowed origin domains** — the domain(s) permitted to emit this event (typically your web app domain). Be specific; don't leave it overly broad.
+- **Superhuman instruction** *(most important)* — plain-language context injected into the Superhuman's Brain when the event fires. Brief it like you'd brief a rep, and explain each payload parameter.
+- **Description** *(optional)* — an internal note on when the event fires.
+
+**Instruction template:**
+
+```
+[Plain-language description of what just happened.]
+
+Event parameters:
+[param_name]: [what this parameter represents]
+[param_name]: [what this parameter represents]
+```
+
+**Example — Chili Piper meeting booked:**
+
+```
+The prospect has just booked a meeting via Chili Piper. Stop offering booking
+links and shift to confirming next steps and prep.
+
+Event parameters:
+meeting_type: the type of meeting booked (e.g. demo, onboarding)
+attendee_email: the email of the prospect who booked
+scheduled_time: the datetime the meeting is set for
+```
+
+## Testing a listener
+
+There's no in-Console simulation yet, so test manually via the browser console:
+
+1. Configure the listener in the Console.
+2. Visit the site where the Superhuman widget is deployed.
+3. Open the browser dev console (right-click → Inspect → Console).
+4. Run the snippet, replacing the placeholders:
+
+```javascript
+window.postMessage({ event: '[EVENT_NAME]', payload: [EVENT_PAYLOAD_OBJECT] }, window.location.origin)
+```
+
+Example:
+
+```javascript
+window.postMessage({ event: 'test_event', payload: { sample: true, timestamp: Date.now() } }, window.location.origin)
+```
+
+If the listener is configured and the current domain is in Allowed Origins, the
+Superhuman responds based on your instruction.
+
+## Common use cases
+
+| Scenario | Vendor | What to configure |
+| --- | --- | --- |
+| Prospect books a meeting | Chili Piper / BookIt | Fires on booking confirmation; instruct the Superhuman to stop offering booking links and shift to prep |
+| User completes a sign-up step | Custom product event | Fires per step; instruct with step context and what to offer next |
+| Trial milestone hit | Custom product event | Fires on activation/milestone; instruct to acknowledge and guide to the next value moment |
+| Form submitted | Any | Fires on submit; instruct on what was submitted and what comes next |
+
+## What to watch for
+
+- **Event name must match exactly** — verify against vendor docs or a developer.
+- **Write the instruction like a rep briefing** — plain language, with each parameter clearly described.
+- **Scope Allowed Origins carefully** — don't leave it too broad.
+
+## Known limitations (V1)
+
+- No in-Console event simulation/testing tool yet.
+- No autocomplete for known vendor event names.
+- No automatic discovery of vendor event schemas.
+
+## Related
+
+- [SDK reference](/developers/sdk-reference) · [Tool Calls](/developers/tool-calls)
