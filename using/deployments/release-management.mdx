@@ -1,0 +1,59 @@
+---
+title: "Release Management"
+description: "How a Superhuman's tested Brain, goals, and Knowledge move from Sandbox to Production — publish, promote, version history, and revert — and how that differs from deployment promotion."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  Distilled from the July 19 Full Documentation Pass (internal Services set, approved by Devon for build). Customer-facing; pending doc-approver sign-off before publish.
+</Info>
+
+**Release Management** controls how a Superhuman's tested Brain, goals, and Knowledge move from Sandbox to Production, and keeps the release history used to restore an earlier version. Open it from the **Release Management** button in the Superhuman header.
+
+## Three lifecycle states
+
+| State | Purpose | Editable? | Customer impact |
+| --- | --- | --- | --- |
+| **Sandbox draft** | Your current saved work in Brain and Superhuman Knowledge | Yes | Not live, not yet a frozen test release |
+| **Sandbox release** | A frozen snapshot created with **Publish to Sandbox** | No (publish another to replace) | Testable in Sandbox |
+| **Production release** | The complete Sandbox release promoted to Production | Read-only | Live for Production experiences |
+
+Three actions: **Publish to Sandbox** creates a frozen testable release from the components you select; **Promote to Production** makes that complete release live; **Revert** makes an earlier release current again in the same environment without overwriting the editable draft.
+
+## The two Production paths
+
+<Warning>
+  **Superhuman Brain/goals/Knowledge** are released through Release Management. **A deployment** has its own inline **Promote to Production** in its editor, which takes effect immediately with no confirmation dialog. Promoting one path does not promote the other, and Release Management does not roll back deployment configuration.
+</Warning>
+
+## Publish to Sandbox
+
+Saving does not create a frozen release. When the draft is ready to become testable: save all Brain and Knowledge edits, complete required Brain fields, wait for Knowledge processing, then **Publish to Sandbox** (from Brain or Superhuman Knowledge) and review the component checklist. A **selected** component contributes its latest draft; an **unselected** component keeps the version from the previous Sandbox release. Always inspect the checklist even when publishing from a component-specific page. Publishing does not change Production.
+
+## Review "READY TO PROMOTE"
+
+Treat **READY TO PROMOTE** as an *availability* indicator — a Sandbox release is eligible for promotion. It is not a test result, an approval, or proof that every intended draft change is included. Confirm the release identity, review its change summary, and complete Sandbox testing before promoting.
+
+## Promote to Production
+
+Promotion copies the **complete frozen Sandbox release** — Brain, goals, and Knowledge together (component selection already happened at publish). Confirm the latest Sandbox card is the release you tested, select **Promote to Production**, review every current-versus-incoming summary, add a concise release note, and complete the confirmation. Wait for the job to finish, then verify the new Production release in **Version History → Production** and run an end-to-end check on the live surface. The review is a release summary, not a field-by-field diff — targeted Sandbox tests remain necessary. The flow has no second-person approval step; complete your team's approval process before the final action.
+
+## Version history and revert
+
+**Version History** has separate **Sandbox** and **Production** tabs; each release card shows identifier, author/timestamp, Brain/Knowledge badges, an optional release note, **Current**, and **Revert** on eligible older releases. **Revert** makes a selected historical release current again in the same environment: it restores that release's Brain, goals, and Knowledge together, creates a new history entry, leaves the editable Sandbox draft unchanged, does not restore deployment configuration, and does not partially restore only Brain or only Knowledge. Use **Production Revert** to recover from a live problem (acts directly on Production history — no need to republish through Sandbox), then fix the underlying issue in Sandbox and promote a corrected release when ready.
+
+## Promote a deployment separately
+
+To release deployment configuration, open the deployment, review every tab, test in Sandbox, and select the inline **Promote to Production** only when you are ready for it to go live immediately. Deployment configuration is not included in Version History Revert — if a deployment promotion is wrong, correct it in Sandbox, retest, and promote the corrected configuration.
+
+## Troubleshooting
+
+- **Publish fails while Knowledge is processing** — wait for every intended document to finish, then reopen the flow.
+- **Brain is selected but does not enter the release** — complete all required Brain fields, save, reopen Publish, and confirm Brain is selected.
+- **Promote/Revert is missing** — your role may not include release control; ask a Workspace Admin or Super Admin. (Workspace Admin and Super Admin are the safest documented roles for managing releases.)
+- **A deployment change is live but the Brain change is not** — the two paths are separate; review Brain/Knowledge here and the deployment in its own editor.
+
+## Related
+
+- [Brain](/using/superhumans/brain) · [Superhuman Knowledge](/configuring/knowledge/superhuman-knowledge) · [Create & configure a deployment](/using/deployments/create-and-configure) · [Build your first Superhuman](/get-started/quickstart)

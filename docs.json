@@ -22,6 +22,7 @@
               "get-started/what-is-a-superhuman",
               "get-started/superhumans-vs-deployments",
               "get-started/five-layers",
+              "get-started/platform-overview",
               "get-started/quickstart",
               "get-started/glossary"
             ]
@@ -39,6 +40,14 @@
             "group": "Superhumans",
             "pages": [
               "using/superhumans/overview",
+              "using/superhumans/manage",
+              "using/superhumans/brain",
+              "using/superhumans/assistant",
+              "using/superhumans/analytics",
+              "using/superhumans/engagement",
+              "using/superhumans/scorecard",
+              "using/superhumans/signal-studio",
+              "using/superhumans/post-conversation-actions",
               {
                 "group": "Ride-Along",
                 "pages": ["using/superhumans/ride-along/conferencing"]
@@ -50,7 +59,9 @@
             "pages": [
               "using/deployments/overview",
               "using/deployments/create-and-configure",
-              "using/deployments/face-and-voice"
+              "using/deployments/personas",
+              "using/deployments/face-and-voice",
+              "using/deployments/release-management"
             ]
           },
           {
@@ -89,6 +100,7 @@
             "group": "Knowledge",
             "pages": [
               "configuring/knowledge/overview",
+              "configuring/knowledge/superhuman-knowledge",
               "configuring/knowledge/website-crawling",
               "configuring/knowledge/multilingual"
             ]

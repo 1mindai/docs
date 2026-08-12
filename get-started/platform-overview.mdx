@@ -1,0 +1,116 @@
+---
+title: "Platform overview & navigation"
+description: "How 1mind is organized — the Account → Workspace → Superhuman → Deployment model, the Workspace vs. Superhuman navigation scopes, and how to pick the right page for a task."
+contentType: "explanation"
+status: "draft"
+---
+
+<Info>
+  Distilled from the July 19 Full Documentation Pass (internal Services set, approved by Devon for build). Customer-facing; pending doc-approver sign-off before publish.
+</Info>
+
+1mind is organized in layers. Knowing which layer you are working in — and whether you are in **Sandbox** or **Production** — helps you make changes in the right place and predict what they affect.
+
+## The 1mind object model
+
+The primary hierarchy is **Account → Workspace → Superhuman → Deployment**. Personas and workspace knowledge connect to that hierarchy at the workspace level.
+
+| Object | What it represents | Scope and relationship |
+| --- | --- | --- |
+| **Account** | The top-level organizational container. | Contains one or more workspaces and organization-level administration. |
+| **Workspace** | A shared building area for a team or initiative. | Contains Superhumans, workspace Personas, Knowledge Hub content, Integrations, and settings. |
+| **Superhuman** | The shared AI configuration behind one or more experiences. | Owns the Brain and enabled knowledge used by its deployments, subject to Sandbox/Production release state. |
+| **Deployment** | A configured customer-facing experience for a channel, campaign, or surface. | Belongs to one Superhuman. Selects a Persona and holds its own experience and launch settings. |
+| **Persona** | The public-facing identity presented during an experience. | Created at workspace scope, then selected on a deployment — not created inside a Superhuman. |
+
+The same Superhuman can power multiple deployments. Its Brain and enabled knowledge stay shared at the Superhuman level, while each deployment has its own Persona selection, experience configuration, context, tracking, and launch settings.
+
+<Note>Names matter here: a Superhuman's name identifies it *inside the console*. The name a visitor sees comes from the **Persona** selected on that visitor's deployment.</Note>
+
+## The two navigation scopes
+
+When the sidebar is expanded, its top has two tabs — **Workspace** and **Superhuman**. The selected tab sets the scope of everything beneath it.
+
+### Workspace navigation
+
+Use the **Workspace** tab for objects and settings that sit above an individual Superhuman.
+
+| Page | What it is for |
+| --- | --- |
+| **Manage Superhumans** | Create, find, open, rename, and permanently delete Superhumans. |
+| **Manage Deployments** | Manage deployment lifecycle across the workspace (Active, Archived, Deletion views). |
+| **Personas** | Create and manage reusable customer-facing identities (name, appearance, voice, languages, behavior). |
+| **Knowledge Hub** | Add and manage workspace knowledge sources. Knowledge must also be enabled per Superhuman in **Superhuman Knowledge**. |
+| **Integrations** | Configure workspace integration surfaces and event listeners. |
+| **Settings** | Workspace and organization administration available to your role. |
+
+### Superhuman navigation
+
+Use the **Superhuman** tab when the task belongs to one selected Superhuman. The header shows a Superhuman selector, **Sandbox**/**Production** tabs, and a **Release Management** button.
+
+| Page | What it is for |
+| --- | --- |
+| **Brain** | Configure the Superhuman's core information, instructions, and behavior. |
+| **Analytics** | Review performance and usage for the selected Superhuman and environment. |
+| **Assistant** | Test and interact with the Superhuman in Sandbox (Sandbox-only). |
+| **Engagement** | Explore conversations and engagement details. |
+| **Scorecard** | Define or review structured conversation evaluation and scoring. |
+| **Signal Studio** | Configure the signals used to identify meaningful conversation events or outcomes. |
+| **Superhuman Knowledge** | Choose which Knowledge Hub items this Superhuman can use, and publish to Sandbox. |
+| **Deployments** | Create, duplicate, open, preview, and configure the Superhuman's deployments. |
+| **Post-Conversation Actions** | Configure actions that run after a conversation, such as follow-up email. |
+| **Settings** | Manage settings for the selected Superhuman. |
+
+**Release Management** is a header-level control, not a sidebar page. Use it to manage the Superhuman's Brain and Knowledge release history between Sandbox and Production. Deployment configuration has a separate promotion control inside the deployment editor.
+
+## Check your scope before editing
+
+1. **Check the sidebar tab.** Workspace = shared objects/administration. Superhuman = one selected Superhuman.
+2. **Check the Superhuman selector.** Confirm the header names the Superhuman you intend to change.
+3. **Check the environment.** Confirm Sandbox or Production. Do not infer it from the page title.
+
+On **Assistant**, the boundary is explicit: it is Sandbox-only, and directs you to switch if Production is selected.
+
+## Sandbox, Production, and release boundaries
+
+Sandbox is for building and testing; Production is live. There is **no single universal promotion action**:
+
+- Brain and Knowledge changes use the Superhuman publishing and **Release Management** flow.
+- A deployment has its own **Promote to Production** action inside the deployment editor.
+- Persona and other workspace-scoped changes begin outside the Superhuman environment tabs but can affect deployments that reference them — test the resulting deployment before relying on it.
+
+<Warning>The deployment editor's **Promote to Production** can take effect immediately and may not present a separate confirmation dialog. Treat selecting it as a live production action.</Warning>
+
+Do not assume saving a Sandbox change updates Production. Follow the page-specific publish/promote steps in Brain, Superhuman Knowledge, Release Management, or the deployment editor, then verify in the intended environment.
+
+## Choose the right starting page
+
+| I want to… | Start here |
+| --- | --- |
+| Create or rename the core AI configuration | **Manage Superhumans** |
+| Change the name/appearance/voice/languages a visitor experiences | **Personas** |
+| Configure instructions or shared core behavior | **Brain** |
+| Add a reusable workspace knowledge source | **Knowledge Hub** |
+| Let one Superhuman use workspace knowledge | **Superhuman Knowledge** |
+| Test the Superhuman conversationally | **Assistant** (Sandbox) |
+| Create a new experience from an existing Superhuman | **Deployments** inside that Superhuman |
+| Find or archive deployments across Superhumans | **Manage Deployments** |
+| Review conversation records | **Engagement** |
+| Review aggregate performance | **Analytics** |
+| Configure evaluation criteria | **Scorecard** |
+| Define detectable outcomes or events | **Signal Studio** |
+| Configure follow-up behavior | **Post-Conversation Actions** |
+| Move Superhuman changes toward Production | **Release Management** |
+
+## Safe navigation checklist
+
+- Confirm the Workspace or Superhuman tab before editing.
+- Confirm the selected Superhuman in the header.
+- Confirm Sandbox or Production before reviewing data or changing configuration.
+- Treat shared workspace objects (Personas, Knowledge Hub content) as reusable dependencies — review which deployments use one before changing it.
+- Treat **Promote to Production** and other release actions as production-impacting.
+- Verify the final behavior in the intended deployment and environment.
+
+## Related
+
+- [Build your first Superhuman](/get-started/quickstart) · [Manage Superhumans](/using/superhumans/manage) · [Personas](/using/deployments/personas) · [Knowledge Hub](/configuring/knowledge/overview)

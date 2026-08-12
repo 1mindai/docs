@@ -1,0 +1,79 @@
+---
+title: "Brain"
+description: "The Superhuman's central authoring area — business context, goals, links, behavior, content, greeting, extensions, and variables — authored in Sandbox and released separately to Production."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  Distilled from the July 19 Full Documentation Pass (internal Services set, approved by Devon for build). Customer-facing; pending doc-approver sign-off before publish.
+</Info>
+
+**Brain** is the Superhuman's central authoring area for business context, goals, links, communication guidance, reusable content, greetings, extensions, and variables. These settings are sometimes called **training blocks** because they configure how the Superhuman behaves — editing them does not retrain the underlying AI model.
+
+Author and test Brain changes in **Sandbox**. The **Production** view is read-only, and moving a tested Brain to Production is a separate release step. Exact fields and required markers vary by Brain template and your access; the controls shown in your Brain are authoritative.
+
+## Drafts, Sandbox releases, and Production
+
+Four distinct concepts govern every change:
+
+1. **Sandbox** is the editable environment.
+2. The **Saved** indicator confirms the current draft persisted.
+3. **Publish to Sandbox** creates a frozen release for formal testing.
+4. **Production** is the read-only live environment; promotion happens later through Release Management.
+
+<Warning>**Saved does not mean published.** A saved change stays in the draft until it is included in a new Sandbox release, and it does not change Production. When publishing, Brain and Knowledge can be included independently — a component left out keeps the version from the previous Sandbox release. Promotion moves the complete tested snapshot; there is no field-by-field cherry-picking.</Warning>
+
+## Open Brain
+
+Open the Superhuman, select **Brain**, and confirm **Sandbox** is selected. The Brain navigation has three groups:
+
+- **Setup** — Superhuman Info, Links, Behavior, Content.
+- **Extend** — Greeting, Custom Blocks, Tools, Skills, Internal Blocks, Debug.
+- **Variables** — AI Context Variables, Deployment Variables, Session Variables.
+
+If Brain is missing from navigation or Sandbox fields are disabled, ask a workspace administrator to review your access. Production Brain is read-only.
+
+## Setup sections
+
+- **Superhuman Info** — core company and audience context: company name, job title/role, company description, **Primary Goal and Success Criteria**, expertise notes, ICP description, and user personas overview. Complete every required field and write one clear primary goal with observable success criteria.
+- **Links** — approved canonical destinations (book a meeting, website, support, portal, trust center, legal, case studies). A populated link is available to the Brain but is not guaranteed to appear in every conversation; test in Sandbox.
+- **Behavior** — communication preferences (humor, emoji, formality, response length) plus dynamic controls: **Demo Sharing Behavior**, **Dynamic Conversation Chips**, and **Dynamic Form Creation**. Remove contradictory guidance and test every enabled dynamic behavior. Do not enable dynamic forms to collect sensitive or regulated data unless the form, storage path, and consent workflow are approved.
+- **Content** — reusable commercial and product guidance (case studies, pricing guidelines, blacklisted topics, products/services, definitions, and "always available" slides/videos/reference/conversation path). "Always available" means available to the Superhuman, not shown in every conversation.
+
+## Extend sections
+
+- **Greeting** — Static or Dynamic Brain-level greeting. A deployment can surface it when its own override is off; multilingual support requires a deployment greeting override in Dynamic mode.
+- **Custom Blocks** — reusable instruction sets when standard fields do not fit. Treat the block name as a stable key; check references before renaming or deleting.
+- **Tools** — the **Web Search** switch when available. Enabling it does not guarantee every answer uses the web or includes a citation.
+- **Skills** — focused instruction sets the Superhuman can enter, change, or exit mid-conversation (name, description, instructions). The **Enable skills** switch controls runtime use. Give each skill a narrow purpose and a clear completion condition.
+- **Internal Blocks** and **Debug** — template-controlled and diagnostic; narrower access. Do not expose their contents in customer-facing screenshots, and do not treat the Debug **Superhuman Name** as the customer-facing identity (use [Personas](/using/deployments/personas)).
+
+## Variables
+
+Three scopes, kept distinct — insert them through the visible picker rather than typing keys from memory:
+
+- **AI Context Variables** — reusable Brain-wide values (display name, key, description, value).
+- **Deployment Variables** — declared in Brain with a **default value**; a deployment can override the value for its sessions.
+- **Session Variables** — supplied per conversation (`{session.name}`, `{session.email}`, `{session.company}`); write surrounding text so it still reads sensibly when a value is absent.
+
+<Warning>Never store passwords, API keys, access tokens, or other secrets in Brain fields or variables. Before changing or deleting a variable key or custom block, search the Brain for every reference and every deployment that uses it.</Warning>
+
+## Using AI fill and Assistant
+
+Individual **Fill** actions overwrite a field — copy anything you need first, then review the result. **Fill All with AI** targets empty fields; review every generated value before publishing. The Superhuman **Assistant** can propose Brain edits: **Approve** writes them to the Sandbox draft only — it does not publish or promote. Keep Assistant **Lightning mode** off unless you are authorized and understand the requested action.
+
+## Publish and release
+
+Confirm the Superhuman and **Sandbox**, complete required fields, remove conflicting guidance, confirm pinned references point to the intended enabled document version, review AI-filled fields, and wait for **Saved**. Then **Publish to Sandbox** (review the Brain/Knowledge components), test the frozen release through a Sandbox deployment preview, and promote the complete snapshot through [Release Management](/using/deployments/release-management). Do not use a deployment's inline **Promote to Production** for Brain changes.
+
+## Troubleshooting
+
+- **Cannot edit a field** — confirm Sandbox (not Production); check whether it belongs to Internal Blocks and is intentionally disabled; otherwise ask an administrator to review access.
+- **"Failed to save draft"** — stop before publishing, confirm required fields are valid, retry, and wait for **Saved**.
+- **Publish did not include my Brain changes** — confirm the draft shows **Saved**, complete required fields, and confirm **Brain** is selected in the component review.
+- **Production does not show my latest edit** — confirm the edit reached **Saved**, was included in a new Sandbox release, was tested, and the complete release was promoted through Release Management.
+
+## Related
+
+- [Superhuman Knowledge](/configuring/knowledge/superhuman-knowledge) · [Assistant](/using/superhumans/assistant) · [Release Management](/using/deployments/release-management) · [Personas](/using/deployments/personas)

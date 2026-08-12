@@ -1,0 +1,40 @@
+---
+title: "Engagement: Conversation Explorer"
+description: "Explore a Superhuman's conversations by account and by conversation — search, filters, turn-count engagement buckets, saved views, and CSV/JSON export."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  **Placement pending — public vs. gated to be confirmed with Product.** Distilled from the July 19 Full Documentation Pass (internal Services set, approved by Devon for build). Customer-facing draft; routes through the standard approval process before publish.
+</Info>
+
+**Engagement** is the conversation-exploration area for a Superhuman, with two views: **Accounts** (records grouped by account) and **Conversations** (individual records with search, date, view, and filter controls). Use [Analytics](/using/superhumans/analytics) for aggregate cards, [Scorecard](/using/superhumans/scorecard) for quality evaluation, and [Signal Studio](/using/superhumans/signal-studio) to configure the topics, pain points, and qualification descriptions used here.
+
+## Record levels
+
+An **Account** is an organization rollup, a **Contact** is an identified person, and a **Conversation** is one completed session. Identification is automatic from launch parameters, information stated in the conversation, and company enrichment; a conversation can remain unidentified when evidence is insufficient, and eligible earlier sessions can be linked to a contact when a person is identified later.
+
+## Explore accounts
+
+The Accounts table shows Account, Domain, Conversations, Contacts, Status, and Last Activity. Filter by account, contact, **Status** (Qualified, Unqualified, No Outcome, Other), **Last Activity** (7/30/90 days), and **Company size**. The status labels match the four Qualification outcomes defined in [Signal Studio](/using/superhumans/signal-studio) — review the wording there when a status is unexpected.
+
+## Explore conversations
+
+The Conversations table shows Date, Contact, Status, Engagement, and Insights, with date controls (7d/30d/90d/All/Custom), Views, Filters, and Export. Search covers keywords, summary content, and contact information and may return related records rather than exact matches — use the Contact or Account filter for precise lookups.
+
+Filters include Account, Contact, Deployment, Engagement, and Status. The **Engagement** buckets are turn-count based: **Very Short** (1–5), **Short** (6–10), **Medium** (11–20), **Long** (>20). A turn is one message from either participant — it counts messages, not pairs or minutes. **Engagement reflects conversation depth, not quality.** **Insights** is AI-generated post-conversation context, separate from the summary. Summaries, insights, identification, and signals are generated after the session ends, so a new conversation's derived fields may lag briefly.
+
+## Saved views and export
+
+Build a filter set, open **Views → Save View**, confirm the active filter pills, enter a required **View Name** (optional description), and reopen it from **Views → My Views**. When collaborating, share the filter criteria separately — another user may not see your saved view. **Export** offers **CSV** (tabular analysis) or **JSON** (preserves nested/multiline content); review the active date range, search, and filters first, and treat the downloaded file as the schema.
+
+## Troubleshooting
+
+- **Search returns no results** — check spelling, try a shorter keyword, remove filter chips, widen the date range, or use the Account/Contact filter.
+- **Account and conversation counts differ** — expected; they are different views (account-level vs. conversation-level).
+- **Status is not what I expected** — review the Qualification descriptions in Signal Studio; the four labels are system-defined and description edits apply only to conversations processed after the change.
+
+## Related
+
+- [Analytics](/using/superhumans/analytics) · [Scorecard](/using/superhumans/scorecard) · [Signal Studio](/using/superhumans/signal-studio)

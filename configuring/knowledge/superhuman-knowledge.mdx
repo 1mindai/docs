@@ -1,0 +1,67 @@
+---
+title: "Superhuman Knowledge"
+description: "The knowledge workspace for one Superhuman — add existing Knowledge Hub documents, review access, inspect versions, publish to Sandbox, and disable sources."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  Distilled from the July 19 Full Documentation Pass (internal Services set, approved by Devon for build). Customer-facing; pending doc-approver sign-off before publish.
+</Info>
+
+**Superhuman Knowledge** is the knowledge workspace for one Superhuman. Use it to add existing workspace documents, review what that Superhuman can access, inspect document versions, and disable access when a source should no longer be available to it.
+
+The source itself is owned in [Knowledge Hub](/configuring/knowledge/overview), the workspace-level library. Superhuman Knowledge does not replace Knowledge Hub — it applies a shared source to one Superhuman.
+
+<Note>
+  Knowledge moves through three separate layers:
+  1. The source and its versions live in **Knowledge Hub**.
+  2. **Enable/Disable** changes the selected Superhuman's editable **draft**.
+  3. **Publish to Sandbox** freezes a snapshot, and **Promote** moves that complete snapshot to Production.
+
+  Processing a source or changing draft access does not automatically change either released environment.
+</Note>
+
+## Add an existing Knowledge Hub document
+
+This is the clearest way to reuse a workspace source.
+
+1. Select **Add document → Add from Knowledge Hub**.
+2. Search for the workspace document and select one or more (or **Select all** when every displayed result belongs here).
+3. Add the intended documents and confirm each appears in the Superhuman Knowledge table.
+
+If the source does not exist yet, add and organize it in Knowledge Hub first, then return to this flow. The **Add document** menu also offers **Upload file**, **Add from URL**, and **Add integrations**, but the recommended pattern for a reusable source is to create it in Knowledge Hub and add it here.
+
+## Read the table and status
+
+The table shows Name, Presentable, Tags, Status, Translation, Source, and Date Modified. Status and release membership answer different questions: **Completed** means ingestion finished, not that the document was published. **Partially Succeeded**, **Failed**, and **Cancelled** describe ingestion outcomes. Open version details for evidence about the current version or environment usage.
+
+## Inspect a document version
+
+Version details show the current version and status, knowledge-entry count, last-updated date, the Superhuman using the source, **Sandbox and Production usage indicators**, download, delete version, and archived versions. Read the indicators on the *exact* version — an archived version can still carry the Production indicator, meaning Production still uses that older version. Indicators confirm release membership, not retrieval quality.
+
+<Warning>Treat **Delete version** as destructive. Deleting an archived version removes its stored knowledge and assets; deleting the only version is effectively a shared-document deletion. Release Management cannot restore a deleted Knowledge Hub source.</Warning>
+
+## Disable access for this Superhuman
+
+Use **Disable** (per row, or **Disable access for selected** for multiple) when the document should remain available in the workspace or to other Superhumans. Delete the source in Knowledge Hub only when the shared document is no longer needed anywhere. Disable changes this Superhuman's draft — an existing published release can retain the prior version until you publish a new Sandbox snapshot and promote it.
+
+## Publish and validate safely
+
+1. Confirm the intended documents appear and check each Status and version.
+2. Select **Publish to Sandbox** and review the **Brain** and **Knowledge** components.
+3. Select **Knowledge** to publish the latest enabled knowledge draft (this covers the component as a whole — it is not a per-document picker; disable any document that should not be included before publishing).
+4. Publish the snapshot, test the intended knowledge behavior, and review the version indicators.
+5. Promote the complete snapshot through [Release Management](/using/deployments/release-management) only after validation.
+
+Do not treat a document's presence here, a Completed status, or the Publish button alone as proof the document is active in Production — the Production indicator on the exact version is the visible evidence.
+
+## Troubleshooting
+
+- **A document appears here but the Superhuman does not use it as expected** — check Status, review the Sandbox/Production indicators, confirm the environment went through its publication/promotion flow, and test with a focused question. If an archived version carries the indicator, publish the current draft and promote after testing.
+- **You added the wrong document** — use the row action **Disable** (does not delete the shared source).
+- **You need to correct the document itself** — use **Open in Knowledge Hub** and edit the shared source; review which other Superhumans use it first.
+
+## Related
+
+- [Knowledge Hub](/configuring/knowledge/overview) · [Brain](/using/superhumans/brain) · [Release Management](/using/deployments/release-management) · [Integrations](/configuring/integrations/overview)

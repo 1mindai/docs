@@ -1,0 +1,43 @@
+---
+title: "Scorecard"
+description: "The Superhuman quality-evaluation view — Style, Accuracy, Safety, and Instructions dimensions, severity views, issue categories, and scored conversation rows."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  Distilled from the July 19 Full Documentation Pass (internal Services set, approved by Devon for build). Customer-facing; pending doc-approver sign-off before publish.
+</Info>
+
+**Scorecard** evaluates completed conversations and organizes findings into four dimensions — **Style**, **Accuracy**, **Safety**, and **Instructions**. Use it to review overall health, trends, issue categories, and evaluated conversation rows for a selected period. Use [Analytics](/using/superhumans/analytics) for aggregate funnels and [Engagement: Conversation Explorer](/using/superhumans/engagement) for the broader record set.
+
+## Evaluations and sampling
+
+Scorecard evaluates conversations after they end, within individual turns or across a conversation. **Evaluation sampling is configurable**, so the number of Scorecard evaluations can be lower than the number of conversations in Engagement — a missing row does not mean the conversation is missing from the platform. Processing is asynchronous.
+
+## Overall Health and trend
+
+**Overall Health** shows the evaluation count and 0–100 scores per dimension (higher is better), weighted by finding type and severity. Use the score together with the count, dimension breakdown, and underlying findings — a raw score alone does not explain what to change. **Score Over Time** overlays the four dimensions; keep the date range fixed while comparing. **0 evaluations** means the scope has no results to summarize — neither passing nor failing.
+
+## Evaluation groups
+
+- **Brand & Style** — Word Choice, Response Format, Style Guidelines, Naming Conventions.
+- **Accuracy & Grounding** — Contradicted Claim, False Refusal, Unsupported Claim, Misleading Precision, Potentially Unsupported.
+- **Safety & Compliance** — Policy Red Flag.
+- **Instruction Following** — Must-Follow Violation, Format Adherence, Missing Required Step.
+
+## Severity and issue filters
+
+Two severity views: **High & Medium only** (focused triage) and **All Severities**. Levels are **Minimal**, **Low**, **Medium**, **High** — evaluator findings, not a universal compliance standard. The conversation table filters by Style Issues, Accuracy & Grounding, Compliance Flags, Instruction Failures, plus four **content issues**: **Knowledge Gap**, **Instruction Gap**, **Knowledge Conflict**, **Instruction Conflict**. Content issues are counted for troubleshooting but **do not reduce the four category scores** — a knowledge gap can exist even when the Superhuman handled the limitation well.
+
+## Turn a finding into an action
+
+Set the environment and date range → review Overall Health and the evaluation count → choose a severity view → identify the dimension/issue group → narrow the conversation table → review the record in [Engagement](/using/superhumans/engagement) for context → update the relevant configuration ([Brain](/using/superhumans/brain) for behavior, [Knowledge Hub](/configuring/knowledge/overview) for content, [Superhuman Knowledge](/configuring/knowledge/superhuman-knowledge) for enablement) → test new conversations in Sandbox → review future evaluations. Configuration changes do not rewrite existing evaluation records — validate with new conversations rather than expecting historical scores to change.
+
+## Export
+
+**Export** immediately downloads an **XLSX** (no format menu), for periods up to 90 days. Confirm the Superhuman, environment, and filters first, and treat the workbook as a point-in-time snapshot — verify the downloaded rows rather than assuming every on-page filter is represented.
+
+## Related
+
+- [Analytics](/using/superhumans/analytics) · [Engagement: Conversation Explorer](/using/superhumans/engagement) · [Brain](/using/superhumans/brain)

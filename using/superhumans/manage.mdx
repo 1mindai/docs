@@ -1,0 +1,68 @@
+---
+title: "Manage Superhumans"
+description: "Create, open, rename, and safely delete the Superhuman objects in a workspace, and decide when to create a new Superhuman versus a new deployment."
+contentType: "how-to"
+status: "draft"
+---
+
+<Info>
+  Distilled from the July 19 Full Documentation Pass (internal Services set, approved by Devon for build). Customer-facing; pending doc-approver sign-off before publish.
+</Info>
+
+A **Superhuman** is the central place where you build the expertise, instructions, knowledge access, and behavior that power one or more customer experiences. Use **Manage Superhumans** (Workspace → Manage Superhumans) to create, identify, rename, open, or permanently delete Superhumans in the current workspace.
+
+<Warning>Deleting a Superhuman also deletes **every deployment beneath it**.</Warning>
+
+The name you enter when creating or renaming a Superhuman is an internal console label. Customers never see it — the customer-facing name comes from the **Persona** selected on the deployment.
+
+## Open a Superhuman
+
+1. In the workspace navigation, select **Manage Superhumans**.
+2. Find the Superhuman and select its card to open it.
+
+Each card shows the console name and creation date, and can show its deployment count.
+
+## Create a Superhuman
+
+1. Select **Create Superhuman**.
+2. Enter a **Superhuman name (console only)** — a clear internal label.
+3. Open **Brain Template** and choose an available template.
+4. Select **Create**.
+
+**Create** stays unavailable until both a name and a template are selected. Available templates vary by organization.
+
+### What to configure next
+
+After creation, open the Superhuman and work through the surfaces available to your role and template: [Brain](/get-started/quickstart) for instructions and behavior; **Assistant** to interact with it in the console; [Superhuman Knowledge](/configuring/knowledge/overview) to enable workspace documents; [Deployments](/using/deployments/create-and-configure) for customer-facing experiences; and Analytics, Engagement, Scorecard, and Signal Studio for performance, conversations, evaluation, and outcomes. Configure and test in Sandbox before any production-facing change.
+
+## Rename a Superhuman
+
+1. Select the pencil icon on the card.
+2. Update **Superhuman name (console only)** and select **Save**.
+
+Renaming changes only the console label. To change what customers see or hear, edit the workspace **Persona**, then confirm the intended Persona is selected in the deployment's **Basics → About**.
+
+## When to create another Superhuman vs. a deployment
+
+- **Create another Superhuman** when the core expertise, instructions, knowledge access, or operating behavior needs to be managed independently.
+- **Create another deployment** when the same core Superhuman should power a different channel, campaign, surface, Persona, or presentation.
+- **Create or reuse a Persona** when only the customer-facing identity is changing.
+
+## Delete a Superhuman
+
+<Warning>Deleting a Superhuman is permanent and removes the Superhuman **and all of its deployments**.</Warning>
+
+Before deleting, confirm you selected the intended Superhuman, review its deployment count, and confirm with the workspace owner that everything beneath it can be removed. If the goal is only to stop one deployment from taking new sessions, **archive** that deployment in Manage Deployments instead.
+
+To delete: select the trash icon on the card, read the scope warning, type `DELETE` exactly, and select **Delete**.
+
+## Troubleshooting
+
+- **Changing the Superhuman name did not change what customers see** — that name is a console label. Edit the Persona, then verify the Persona selected in **Deployment → Basics → About**.
+- **Create is unavailable** — both a name and a Brain Template are required.
+- **Where do I create a deployment?** — open the Superhuman, select **Deployments → Create deployment**. Manage Deployments is for cross-Superhuman lifecycle only.
+- **Should I delete a Superhuman to stop one live experience?** — no; archive the specific deployment instead.
+
+## Related
+
+- [Personas](/using/deployments/personas) · [Create & configure a deployment](/using/deployments/create-and-configure) · [Superhuman Knowledge](/configuring/knowledge/overview) · [Platform overview & navigation](/get-started/platform-overview)
