@@ -125,9 +125,11 @@
                   "configuring/integrations/salesforce/oauth-setup"
                 ]
               },
+              "configuring/integrations/calendars",
               "configuring/integrations/marketo",
               "configuring/integrations/chili-piper",
               "configuring/integrations/leandata-bookit",
+              "configuring/integrations/cookie-behavior",
               "configuring/integrations/widget-placement-troubleshooting"
             ]
           },
@@ -165,7 +167,8 @@
             "group": "Guides",
             "pages": [
               "guides/overview",
-              "guides/getting-live/launch-your-first-superhuman"
+              "guides/getting-live/launch-your-first-superhuman",
+              "guides/getting-live/add-1mind-to-your-website"
             ]
           }
         ]

@@ -1,0 +1,50 @@
+---
+title: "Add 1mind to your website"
+description: "A step-by-step guide to installing your 1mind Superhuman on your site — get the launcher, add it to the page, authorize your domains, and go live."
+contentType: "tutorial"
+status: "draft"
+---
+
+<Info>
+  Getting-live guide. Pending doc-approver sign-off before publish.
+</Info>
+
+This guide walks through putting your Superhuman on your website. It's the step-by-step companion to the [Website embed & script installation](/configuring/integrations/website-embed) reference — start here, and use that page for field-level detail.
+
+## Before you begin
+
+- A **deployment** exists for the Superhuman you want to launch (see [Create & configure a deployment](/using/deployments/create-and-configure)).
+- You can edit your site's HTML, or you have access to your tag manager (e.g., Google Tag Manager).
+- You know which **domains** the Superhuman should run on.
+
+## 1. Get your launcher code
+
+In the Console, open the Superhuman, go to **Deployments**, open the deployment, and open the **Launcher Codes** tab. You'll find:
+
+- The **launcher script** — the JavaScript snippet to add to your site.
+- A **Testing Link** — a live preview you can use before installing anything.
+
+## 2. Add the script to your site
+
+Install the launcher one of two ways:
+
+- **Directly in the page** — paste the launcher script into your site's `<head>` (or just before the closing `</body>`), on the pages where the Superhuman should appear.
+- **Via a tag manager** — add the launcher as a custom HTML tag in Google Tag Manager (or similar) and publish. Confirm your tag-manager consent and firing rules load the script where you expect.
+
+## 3. Authorize your domains
+
+In the deployment's **Launch Settings → Access**, add every production, staging, and preview domain that should be allowed to run the launcher. Use exact domains where possible; use `*` only when running on every domain is intentional.
+
+## 4. Test before you launch
+
+Open the **Testing Link** (or your staged page) and confirm the widget appears in the right place, shows your branding, and starts a conversation. If it doesn't appear, walk through [Widget & embed placement troubleshooting](/configuring/integrations/widget-placement-troubleshooting) — the quickest check is confirming the `launcher.1mind.com` script is present in the page's DOM.
+
+## 5. Promote to production
+
+When the deployment is verified, promote it to Production from the deployment editor, then confirm the live page one more time before sharing.
+
+<Warning>Promoting a deployment takes effect immediately and doesn't promote the Superhuman's Brain or knowledge — that's a separate release. See [Release Management](/using/deployments/release-management).</Warning>
+
+## Related
+
+- [Website embed & script installation](/configuring/integrations/website-embed) · [Create & configure a deployment](/using/deployments/create-and-configure) · [Cookie behavior](/configuring/integrations/cookie-behavior) · [What to prepare for your Superhuman build](/guides/getting-live/launch-your-first-superhuman)

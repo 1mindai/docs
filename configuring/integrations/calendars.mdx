@@ -1,0 +1,41 @@
+---
+title: "Calendar integration (Google & Outlook)"
+description: "Connect rep calendars and meeting providers so 1mind can read real-time availability and book meetings inside the conversation."
+contentType: "how-to"
+status: "draft"
+---
+
+<Info>
+  Distilled from the Calendar Routing & Scheduling Services onboarding guide. **Pre-launch feature — confirm availability, supported providers, and timing with the PM before publish.** Pending doc-approver sign-off.
+</Info>
+
+For a Superhuman to book meetings, each rep connects their calendar and a meeting provider to 1mind. 1mind then reads their **real-time availability** and books on their actual calendar, attaching a virtual meeting link automatically. This page covers the connection; for how availability and routing surface inside the conversation, see [Calendar & Routing](/using/sub-agents/calendar-routing).
+
+## Prerequisites
+
+- A 1mind Superhuman created and configured for your workspace.
+- Each rep who should receive bookings is invited to the Console (Settings → User Management).
+
+## Connect a calendar and meeting provider
+
+Each rep completes this in their own account (about 5 minutes):
+
+1. Sign in to the Console at `app.1mind.com`.
+2. Open the **profile icon** (top right) → **My Profile** → **Scheduling & Meeting** settings.
+3. **Connect your calendar.** Supported providers: **Microsoft Outlook** and **Google** (real-time availability via OAuth).
+4. **Connect your meeting provider.** Supported providers: **Microsoft Teams**, **Google Meet**, and **Zoom**.
+
+<Note>If you connect Microsoft or Google as your calendar, Microsoft Teams or Google Meet (respectively) is already connected as your meeting provider — no extra step unless you prefer Zoom.</Note>
+
+## Set availability preferences
+
+On the same Scheduling & Meeting page, each rep sets their **working hours** and confirms their **working time zone**. Routing combines these preferences with each rep's live calendar availability, so they need to be accurate. Out-of-office blocks are read as busy automatically.
+
+## Frequently asked questions
+
+- **If a rep isn't connected, can prospects still book with them?** No. A rep must have a connected calendar and meeting provider before they can receive bookings — 1mind won't send an invite without a virtual meeting link.
+- **Are booked meetings tracked in the Console?** Yes. When availability is presented or a meeting is booked, the event is captured in the conversation transcript, which can also be exported.
+
+## Related
+
+- [Calendar & Routing](/using/sub-agents/calendar-routing) · [Chili Piper](/configuring/integrations/chili-piper) · [LeanData BookIt](/configuring/integrations/leandata-bookit) · [Integrations](/configuring/integrations/overview)
