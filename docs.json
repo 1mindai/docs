@@ -81,7 +81,10 @@
           },
           {
             "group": "Best Practices",
-            "pages": ["using/best-practices/overview"]
+            "pages": [
+              "using/best-practices/overview",
+              "using/best-practices/live-event-av-setup"
+            ]
           }
         ]
       },
@@ -160,7 +163,10 @@
         "groups": [
           {
             "group": "Guides",
-            "pages": ["guides/overview"]
+            "pages": [
+              "guides/overview",
+              "guides/getting-live/launch-your-first-superhuman"
+            ]
           }
         ]
       },
