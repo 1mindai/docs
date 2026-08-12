@@ -124,7 +124,8 @@
               },
               "configuring/integrations/marketo",
               "configuring/integrations/chili-piper",
-              "configuring/integrations/leandata-bookit"
+              "configuring/integrations/leandata-bookit",
+              "configuring/integrations/widget-placement-troubleshooting"
             ]
           },
           {
