@@ -1,0 +1,78 @@
+---
+title: "Embedding forms & calendars"
+description: "Embed an external form or meeting-booking calendar inside the Superhuman conversation, and what each tool needs to make it work."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  **Migrated from the Services process doc "Embedding Customer Forms or Calendar
+  Experience."** Faithful port; pending review. Per-tool support ("additional setup
+  needed," "to discuss") reflects the source — confirm current state with Services.
+</Info>
+
+## What this means
+
+For all Superhumans (except Ride-Along, as of May 2026), you can dynamically embed
+an external form or meeting-booking page **inside the Superhuman viewport during a
+conversation** — the external content appears in the experience without the user
+navigating away.
+
+## When it's a fit
+
+Consider embedding a form or calendar when you need to:
+
+- Collect more than two inputs at once.
+- Request a meeting or create a contact/lead in a downstream system for sales/marketing.
+- Trigger a form or booking that your existing marketing/sales setup requires.
+
+## Supported options
+
+- **Forms:** Marketo (Forms 2.0), HubSpot, Pardot, Chili Piper Form Concierge. *Other/custom forms → scope with Services.*
+- **Calendars:** HubSpot Meetings, Chili Piper Meetings, LeanData BookIt for Forms. *Other calendaring (Calendly, Groove, Microsoft Bookings) → scope with Services.*
+
+## What to confirm
+
+**Before display**
+
+- How should it appear — an **action button** (a CSM can add) or **within the conversation** (needs a GenAI configuration request)?
+- What inputs are required before showing it? (If the embedded tool can't return data to us, we'll need to collect an email in chat so the conversation can reach your MAP/CRM.)
+- Is a specific form/calendar shown based on routing logic?
+- Should the Superhuman pre-populate the form from the conversation? (Done via URL parameters you set up and share.)
+
+**During display**
+
+- Does the embedded page need **whitelisting** to render inside the Superhuman?
+- Style the form to core brand styles, input fields, and the submit button only — remove everything else.
+- Ideally the form auto-closes on submission.
+
+**After submission**
+
+- Where do the collected values go, and who reviews them?
+- Can 1mind capture the inputs and/or a submission ID to pass to the Superhuman? If not, collect an email **before** showing the embedded experience.
+
+## Per-tool support
+
+For every tool, you provide the link to the form/calendar you want embedded. The
+preferred whitelisting approach (where required) is to whitelist the `*1mind.com`
+domain for that form; sharing the embed code is a last resort and requires Services
+approval.
+
+| Tool | Whitelisting | URL parameters (pre-fill) | 1mind can read data after submission |
+| --- | --- | --- | --- |
+| Marketo Forms (2.0) | Typically yes | Additional setup (customer parses params) | Additional setup (webhook to 1mind) |
+| HubSpot Forms | Typically no | Yes (default) | Additional setup (webhook to 1mind) |
+| Pardot Forms | Typically yes | Additional setup | Additional setup (webhook to 1mind) |
+| Chili Piper Form Concierge | Typically yes | Additional setup (enable smart parameters) | To discuss with Services |
+| HubSpot Meetings | Typically no (public link) | To discuss (routing rules) | Open question — Services investigating |
+| Chili Piper Meetings | Typically no (public link) | Additional setup (customer provides) | Yes (Services configures events in Console) |
+| LeanData BookIt for Forms | Typically no (public link) | Additional setup | Yes (Services configures events in Console) |
+
+<Note>
+  URL-parameter pre-fill example (Calendly): `https://calendly.com/your-team/new-meeting?name=Jane+Doe&email=jane@example.com` — collect name and email in chat first, then pass them so the user doesn't re-enter them.
+</Note>
+
+## Related
+
+- [Behind-the-Form setup](/configuring/integrations/behind-the-form)
+- [Chili Piper](/configuring/integrations/chili-piper) · [LeanData BookIt](/configuring/integrations/leandata-bookit)

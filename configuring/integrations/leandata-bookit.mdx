@@ -1,0 +1,103 @@
+---
+title: "LeanData BookIt"
+description: "Route and book meetings from a Superhuman conversation into LeanData BookIt using Smart Booking Links."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  **Migrated from the developer-docs LeanData BookIt Integration (source Oct
+  2025).** Faithful port pending review. A duplicate/predecessor exists elsewhere —
+  confirm this is the canonical version before publish.
+</Info>
+
+## Overview
+
+With 1mind's Superhumans + LeanData BookIt, a qualified visitor can talk, qualify,
+and book in a single flow — accelerating pipeline and routing intelligently on
+CRM/MAP data.
+
+**Who does what:**
+
+- **1mind** hosts the Superhuman, generates unique Smart Booking Links dynamically, passes CRM/MAP/account data into BookIt, and **constructs the BookIt link once you provide the required inputs** (below).
+- **You (customer)** configure routing logic inside LeanData BookIt (territories, account ownership, verticals) and provide the required inputs, and ensure Salesforce (or other CRM/MAP) can store BookIt Log IDs.
+- **LeanData** executes the scheduling workflow and updates the Salesforce lead/contact with booked meeting details.
+
+<Note>
+  The technical routing is handled inside BookIt. 1mind constructs and delivers the
+  booking link once the **Org ID**, **`nodeName`**, and **all required mapped
+  fields** are provided.
+</Note>
+
+## What you must provide
+
+1. **Org ID** — LeanData BookIt → Settings.
+2. **Trigger Node name (`nodeName`)** — from the FlowBuilder Trigger Node.
+3. **All mapped fields from the LeanData Canvas** that BookIt expects at that Trigger Node — with field label/description, type (string, email, picklist…), required/optional, and an example value.
+4. **SFDC/MAP object & field** where the **BookIt Log ID** should be written.
+
+## Technical setup
+
+### Step 1 — Unique BookIt Log ID
+
+Each session requires a UUID (e.g., `sessionID` + random number) that ties the
+booking event to the correct lead/contact. 1mind generates the UUID and posts it to
+your SFDC or MAP contact/lead record. **You provide** the object and field name
+where it should be written. Example: `session12345-random6789`.
+
+### Step 2 — Smart Booking Link format
+
+```text
+https://app.leandata.com/r?id=<OrgID>&nodeName=<TriggerNode>&chat=1mind&isUsingHerokuId=true&uid=<BookItLogID>
+```
+
+- **OrgID** — LeanData → BookIt → Settings.
+- **nodeName (TriggerNode)** — the exact FlowBuilder Trigger Node name.
+- **BookItLogID** — the generated UUID per session.
+
+<Note>1mind constructs the link only after receiving your Org ID, exact `nodeName`, and full mapped-field list — links can't be finalized without these.</Note>
+
+### Step 3 — Add routing parameters
+
+Append fields that drive BookIt routing. Parameter **keys must match the Trigger
+Node field names** defined in your LeanData Canvas mapping. Example:
+
+```text
+&firstname=John&lastname=Smith&email=john.smith@acme.com&state=CA&country=US&accountName=Acme%20Corp&industry=Technology
+```
+
+Field sources: CRM/MAP, web session, local storage, 6sense, Demandbase, ZoomInfo, etc.
+
+### Sample mapping table
+
+| API Key | Label | Type | Required | Example |
+| --- | --- | --- | --- | --- |
+| `firstname` | First Name | string | Yes | John |
+| `lastname` | Last Name | string | Yes | Smith |
+| `email` | Email | email | Yes | john.smith@acme.com |
+| `state` | State/Region | string | Optional | CA |
+| `country` | Country | string | Optional | US |
+| `accountName` | Account Name | string | Optional | Acme Corp |
+| `industry` | Industry | picklist | Optional | Technology |
+
+## Routing examples
+
+- **By geography:** `state=CA` → West Coast AE; `country=DE` → EMEA DACH team.
+- **By account:** `accountName=Acme Corp` → Account Owner.
+- **By segment/industry:** `industry=Healthcare` → healthcare vertical AE.
+
+## Business use cases
+
+Sales (BDR/AE), Marketing (PLG/MQL flow), Customer Success (CSM onboarding), Tech
+Support, and Ride-Along SE Superhumans can all route qualified conversations to the
+right calendar instantly.
+
+## Next steps
+
+**From you (required):** Org ID; Trigger Node `nodeName`; full LeanData Canvas
+mapping list (field names, type, required/optional, examples); SFDC/MAP object &
+field for the BookIt Log ID.
+
+**From 1mind:** construct the Smart Booking Links after receiving those inputs,
+append routing parameters using the exact API field names, and support validation
+during a workshop with a mapping spreadsheet and sample links.

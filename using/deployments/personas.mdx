@@ -1,0 +1,84 @@
+---
+title: "Personas"
+description: "Create, configure, assign, test, and safely maintain the reusable customer-facing identities that deployments use — appearance, voice, languages, and behavior."
+contentType: "how-to"
+status: "draft"
+---
+
+<Info>
+  Distilled from the July 19 Full Documentation Pass (internal Services set, approved by Devon for build). Customer-facing; pending doc-approver sign-off before publish.
+</Info>
+
+A **Persona** is a reusable, workspace-level identity package. It controls the customer-facing elements of a deployed Superhuman: name, visual appearance, gender/pronouns, supported languages, primary and fallback voice per language, wake words, and interruption behavior.
+
+A Persona is not the Superhuman's Brain. The Superhuman supplies instructions, knowledge, skills, and tools; a **deployment** chooses which Persona the experience uses.
+
+<Note>The customer-facing name comes from the Persona. The name on Manage Superhumans is an internal console label, managed separately.</Note>
+
+The core relationship: create and maintain Personas under **Workspace → Personas** → assign one on a Superhuman's Sandbox deployment (**Basics → About**) → save and test → promote the tested deployment.
+
+## Create a Persona
+
+1. Open **Workspace → Personas** and select **Create Persona**.
+2. Choose an appearance mode: **Photoreal**, **Waveform**, or **Custom Upload**.
+3. Complete the identity details, then configure languages, voices, and behavior.
+4. Select **Save Persona**.
+
+### Identity details
+
+- **Persona Name** (required, up to 16 characters) — the customer-facing name.
+- **Gender and pronouns** — Female/she, Male/he, or Neutral/they. Photoreal sets these automatically; Waveform and Custom Upload let you choose.
+- **What is this persona for?** — optional workspace-facing metadata (up to 200 characters) to distinguish similar Personas.
+- **Languages** — every language this Persona is approved to use. English is present by default.
+
+### Appearance modes
+
+- **Photoreal** — a realistic speaking person; pick from the gallery, filter by All/Female/Male.
+- **Waveform** — an animated non-human visual; set base, speaking, and listening state colors.
+- **Custom Upload** — a supplied MP4, PNG, JPG, WebP, or GIF up to 50 MB, with an optional appearance description (up to 2,000 characters).
+
+## Add languages and configure voices
+
+1. In the details panel, select **Add Language** and choose the language.
+2. Open its gear to configure voices.
+
+Voice selection is self-service and separate per language. For each language, choose a **Primary voice** (search or filter by Cartesia/ElevenLabs, preview samples, adjust speed), then a **Secondary voice** on the other provider so one provider issue does not remove both. Save and test.
+
+Available languages include multiple English locales plus French, German, Spanish, Portuguese (and Brazil), Chinese, Japanese, Hindi, Italian, Korean, Dutch, Polish, Russian, Swedish, Turkish, Indonesian, Arabic, and Thai. Adding a language approves it but does not remove the need to select and test voices for that locale.
+
+## Configure behavior
+
+- **Wake words** — short, distinctive words or phrases that wake the Persona. Test with expected accents, microphones, and background noise.
+- **Interruption handling** — **High** accepts interruptions most readily, **Medium** balances, **Low** is least likely to stop for brief sounds. Some older Personas show **Custom (read-only)**; leave that unless you intend to replace it.
+
+## Assign a Persona to a deployment
+
+Assignment happens in a Superhuman's deployment, not in Persona Manager.
+
+1. Select the **Superhuman** tab and the intended Superhuman, then open **Deployments**.
+2. Open the **Sandbox** deployment (choose **Edit in sandbox** if viewing Production).
+3. Open **Basics → About**, select the Persona under **Select a persona**, and **Save**.
+4. Test the Sandbox deployment, then use the deployment's **Promote to Production** control after reviewing the changes.
+
+A Persona is selected as a package — reusing it reuses its name, appearance, pronouns, languages, and voices. If two deployments need different identities, create separate Personas.
+
+## Edit and delete safely
+
+Treat every edit as potentially cross-deployment; a shared Persona is not a private copy. Before editing, review the Sandbox/Prod usage badges on the card, make the change, save, then **test every affected Sandbox deployment** and promote only those that are ready.
+
+The delete icon appears only when the Persona is used by no deployment. To remove one that is in use, assign and test a replacement Persona on each affected deployment first, complete each promotion, then delete once the usage badges are gone. Deletion removes the reusable identity from the workspace; it does not delete the Superhuman.
+
+## Sandbox QA checklist
+
+Before Production, verify the customer-facing name; appearance on desktop and mobile; gender/pronouns; every required language and its primary and secondary voices; natural voice speed; wake-word reliability (if enabled); interruption behavior; the correct Persona selected in the deployment; and the correct Production experience after promotion.
+
+## Troubleshooting
+
+- **Personas is missing from the Superhuman sidebar** — switch to the **Workspace** tab; Personas are workspace-scoped.
+- **The delete icon is missing** — the Persona is still used by a deployment; replace it everywhere first.
+- **The displayed or spoken name is wrong** — distinguish the console label from the Persona name, confirm the correct Persona in **Basics → About**, save, and retest.
+- **Interruption handling says "Custom (read-only)"** — legacy tuning; keep it unless you intend to replace it with High/Medium/Low.
+
+## Related
+
+- [Create & configure a deployment](/using/deployments/create-and-configure) · [Manage Superhumans](/using/superhumans/manage) · [Platform overview & navigation](/get-started/platform-overview)

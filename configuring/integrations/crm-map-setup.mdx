@@ -1,0 +1,112 @@
+---
+title: "CRM, MAP & Web Visitor Identification"
+description: "What 1mind needs to connect your CRM and Marketing Automation Platform and match website visitors to records — access, field mappings, and a testing plan."
+contentType: "how-to"
+status: "draft"
+---
+
+<Info>
+  **Migrated from the developer-docs Technical Integration Guide (source Jul
+  2025).** Faithful port pending review. Overlaps with Pre & Post Processing and
+  the Integration Workshop Preparation — reconcile the three before publish.
+</Info>
+
+## 1. Access & environment setup
+
+Integrations are tested in a sandbox before moving to production.
+
+| Environment | System | Access needed | Purpose |
+| --- | --- | --- | --- |
+| Sandbox | CRM | API access, test data | Development & testing |
+| Sandbox | MAP | API access, test data | Development & testing |
+| Production | CRM | API credentials | Live data sync |
+| Production | MAP | API credentials | Live data sync |
+
+**Customer action items:**
+
+- [ ] Grant API access (API user or dedicated user) for sandbox and production
+- [ ] Set up test users and test data
+- [ ] Provide the development/deployment process and timelines for Sandbox and Production changes
+
+## 2. CRM integration
+
+### 2.1 Pre-conversation data injection
+
+Example fields preloaded from the CRM to personalize interactions (final fields
+determined in the workshop):
+
+| Object | Field | Type | Purpose |
+| --- | --- | --- | --- |
+| Contact | Email | String | User identification |
+| Contact | First / Last Name | String | Personalization |
+| Contact | Job Title | String | Role identification |
+| Contact | Phone Number | String | Contact method |
+| Account | Account Name | String | Contextual awareness |
+| Account | Industry | String | Industry segmentation |
+| Custom Object | Custom Field 1–2 | String | Custom mapping |
+
+**Customer action items:** provide CRM API documentation, confirm fields available
+for preloading, provide sandbox test data.
+
+### 2.2 Post-conversation data posting
+
+| Object | Field | Type | Purpose |
+| --- | --- | --- | --- |
+| Activity | Transcript URL | String | Reference to conversation |
+| Activity | Summary | String | Conversation summary |
+| Activity | Topics Discussed | String | Key discussion points |
+| Custom Object | Superhuman Transcript | String | AI conversation logs |
+| Custom Object | Summary & Insights | String | AI-generated summary |
+
+**Customer action items:** provide endpoints for data posting, confirm whether
+custom objects are needed, establish data retention policies.
+
+## 3. MAP integration
+
+### 3.1 Pre-conversation data injection
+
+| Object | Field | Type | Purpose |
+| --- | --- | --- | --- |
+| Lead | Email | String | User identification |
+| Lead | Last Engagement Date | DateTime | Recency tracking |
+| Lead | Lead Source | String | Campaign attribution |
+| Lead | Recent Activity | String | Concatenated recent activities or JSON |
+| Custom Object | Custom Field 1–2 | String | Custom mapping |
+
+**Customer action items:** provide MAP API documentation, confirm preload fields,
+provide sandbox test data.
+
+### 3.2 Post-conversation data posting (optional)
+
+| Object | Field | Type | Purpose |
+| --- | --- | --- | --- |
+| Lead | Email | String | User identification |
+| Lead | Lead Score | Integer | Engagement level |
+| Lead | Last Interaction Date | DateTime | Lead tracking |
+| Lead | AI Engagement Score | Integer | Lead scoring enhancement |
+| Custom Object | Conversation Topics | String | Topics discussed |
+| Custom Object | Superhuman Transcript | String | AI conversation logs |
+| Custom Object | Summary & Insights | String | AI-generated summary |
+
+**Customer action items:** provide endpoints for data posting, confirm whether
+custom objects are needed, determine objects/fields to post to.
+
+## 4. Web Superhuman integration & visitor matching
+
+To match website visitors to CRM/MAP records, 1mind needs web tracking via
+cookies, session IDs, or other mechanisms.
+
+- **Tracking methods:** cookies, local storage, session ID.
+- **Required data points:** visitor IP; CRM/MAP user identifier (hashed if needed); user session ID; IP-to-company data (ZoomInfo, 6sense, Clearbit, RB2B).
+- **Integration steps:** (1) embed the launcher script (see [Website embed & script installation](/configuring/integrations/website-embed)); (2) capture the visitor identifier and map to CRM/MAP; (3) sync session variables to the launcher to enrich the Superhuman dialog.
+- **Customer action item:** provide developer resources for web implementation.
+
+## 5. Testing & deployment plan
+
+1. **Initial data validation** — validate CRM & MAP ingestion; confirm field mappings.
+2. **Web tracking validation** — verify visitor-ID resolution and session persistence.
+3. **Superhuman integration testing** — preload test data, run mock conversations, verify logs and CRM/MAP updates.
+4. **Production deployment** — migrate tested integrations, monitor live sync, provide hypercare.
+
+**Customer action items:** conduct UAT, assign technical leads for monitoring,
+schedule periodic post-launch reviews.

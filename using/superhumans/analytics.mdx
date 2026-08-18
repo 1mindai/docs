@@ -1,0 +1,55 @@
+---
+title: "Analytics"
+description: "The Performance Overview for one Superhuman — engagement and conversion funnels, conversation duration, usage, and the XLSX export — scoped by environment, date range, and deployment."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  Distilled from the July 19 Full Documentation Pass (internal Services set, approved by Devon for build). Customer-facing; pending doc-approver sign-off before publish.
+</Info>
+
+**Analytics** gives an aggregate view of how people use and progress through one Superhuman. The page is titled **Performance Overview** and organizes results into engagement, conversion, duration, and usage-and-experience sections. For individual records use [Engagement: Conversation Explorer](/using/superhumans/engagement); for quality findings use [Scorecard](/using/superhumans/scorecard). These pages use different reporting populations, so their totals may not match.
+
+## Set the reporting scope
+
+Open the Superhuman, select **Analytics**, choose **Sandbox** or **Production**, and set the scope before interpreting results:
+
+- **Date range** — 7d, 30d, 90d, All, or Custom (select start/end dates, then **Show Results**).
+- **Deployment** — the deployment or combined scope from the dropdown.
+
+Use the same environment, date range, and deployment scope when comparing metrics — a comparison is not meaningful when one control differs.
+
+## Engagement Funnel (Sessions)
+
+Stage-to-stage rates over sessions (a visitor can contribute multiple sessions):
+
+- **Start Rate** — started ÷ viewed sessions.
+- **Engagement Rate** — engaged ÷ started sessions (engaged = the visitor replied at least once).
+- **Meaningful Rate** — sessions reaching the Meaningful threshold ÷ engaged sessions.
+
+Read them in order and identify the largest drop-off, then open Conversation Explorer with a comparable scope.
+
+## Conversion Funnel (Unique Users)
+
+Four stages by unique visitor identifier: **Viewed → Started → Engaged → Meaningful**. Interpret as unique visitors, not authenticated people — a person on a new browser/device can appear as another visitor. A visitor seen in both Embedded and Widget is deduplicated in the combined total, so the combined number can be lower than the sum of the two placements.
+
+<Note>The two funnels are not expected to match: the Engagement Funnel counts sessions; the Conversion Funnel deduplicates unique visitors.</Note>
+
+## Duration, usage, and experience
+
+- **Average Duration** — average active conversation time for engaged sessions (an active-conversation measure, not wall-clock time). The portal shows a readable duration; exports record seconds.
+- **Repeat Engagement** — a return-behavior indicator for the active scope.
+- **Primary Mode Split** — the Voice-versus-Chat classification.
+
+## Export
+
+The download creates an **XLSX Analytics Export** for one Superhuman and up to 90 trailing days, with four worksheets: **Daily Performance**, **Daily Performance by Mode** (Embedded/Widget), **Daily Performance by Page** (with campaign values when available), and **Metadata** (definitions and formulas). It contains aggregate metrics, not transcripts. If today is included, it holds the current partial day — export through yesterday for complete-day comparisons. Review the **Metadata** sheet before combining with another report.
+
+## When a card is empty
+
+Confirm the environment, date range, and deployment filter; clear an overly narrow custom range; try **All** if appropriate; check Conversation Explorer for records in a comparable scope; and allow time for reporting processing, then reload. An empty card is not proof that no activity occurred.
+
+## Related
+
+- [Engagement: Conversation Explorer](/using/superhumans/engagement) · [Scorecard](/using/superhumans/scorecard) · [Signal Studio](/using/superhumans/signal-studio)

@@ -1,0 +1,48 @@
+---
+title: "Post-Conversation Actions"
+description: "Configure an automated follow-up email for a Superhuman — per-Superhuman SendGrid setup, AI-generated or template content, variables, and a controlled Draft-to-Live release."
+contentType: "how-to"
+status: "draft"
+---
+
+<Info>
+  **Gated by default** — served behind customer login. Distilled from the July 19 Full Documentation Pass (internal Services set, approved by Devon for build). Customer-facing draft; routes through the standard approval process before publish.
+</Info>
+
+**Post-Conversation Actions** configures an automated follow-up email for the selected Superhuman. It supports a per-Superhuman SendGrid configuration and distinguishes **DRAFT** work from a **LIVE** setting. It is not a campaign manager or bulk-email scheduler, and allows at most one live and one draft setting.
+
+<Warning>A **LIVE** state is not proof that a message was attempted, accepted, delivered, or placed in an inbox. The page shows no delivery log or retry control.</Warning>
+
+## Draft vs. Live
+
+A **DRAFT** is preparation work; saving it does not change the active configuration. A **LIVE** setting is the active configuration the follow-up action can operate from. The operating sequence: create/edit the draft → review sender, recipients, instructions, examples, email type, and provider config → test with synthetic data and a controlled mailbox → save the draft → activate only through the explicit lifecycle control on a populated page, after the content and email owners approve → run a controlled post-activation test → verify the message independently.
+
+## Sender and delivery
+
+The Draft Email Settings form has **From Email**, **BCC (optional, comma-separated)**, **Email Provider** (SendGrid), and **SendGrid API Key**.
+
+<Warning>Treat the SendGrid API key as a secret. Use the narrowest approved credential, never place it in instructions, examples, screenshots, tickets, or conversation content, use **Show** only when necessary, and ask the owner to rotate it if it may have been exposed.</Warning>
+
+## Variables
+
+Expand **Variable System Configuration** for the exact variable paths, in the form `{{variableName.property.subProperty}}`. Session variables cover identity/timing, processing/failure state, and session context; Conversation variables cover contact information, conversation summary, sales insights, knowledge-gap detection, links shared, and additional fields. A listed variable may still be empty for a given conversation, so write instructions and templates so missing optional data does not produce broken sentences. Prefer the smallest field that meets the need (a concise summary over a full transcript), and do not expose internal IDs, retry counts, failure state, logs, or enrichment data to recipients. Treat transcripts, phone numbers, emails, pain points, objections, and sentiment as sensitive.
+
+## Email content
+
+Three authoring fields: **Email Instructions** (purpose, tone, length, which facts may be used, what to do when a variable is missing, approved CTA, required compliance text), **Example Emails** (structure and voice only — use variables or synthetic values, never real customer content), and **Subject Line Examples** (short, consistent, no deceptive urgency).
+
+Two **Email Type** options: **AI Generated Content** (composed from instructions, examples, and conversation data) and **SendGrid Template** (enter a **Template ID**; the template exposes `{{recipient}}`, `{{subject_line}}`, and `{{body}}` — distinct from the longer Session/Conversation variable list).
+
+## Save, test, and activate safely
+
+Before saving, confirm the intended Superhuman, approved From/BCC addresses, the correct SendGrid key, every variable path, and (for templates) the Template ID and placements. **Test without contacting real users**: use a test-only sender and a controlled mailbox, remove BCC unless approved, use a synthetic conversation, exercise typical and missing-variable cases, and inspect the received message. Activate only through the populated page's explicit control, after approval from the email-content and email-system owners — do not infer a button label or confirmation from the DRAFT/LIVE badges. If no explicit control is available, stop and ask the authorized platform owner for the approved procedure.
+
+## Troubleshooting
+
+- **Save Draft is disabled** — review every field for validation (From Email format, SendGrid key present, an Email Type selected, Template ID if applicable, valid BCC separators).
+- **The email shows a literal variable** — compare the path character for character with Variable System Configuration, confirm both braces, and confirm the field supports variables.
+- **A message was not received** — confirm the setting is **LIVE**, verify recipient/BCC addresses and credential validity with the email-system owner, confirm the test conversation supplied the contact data, and check junk/quarantine.
+
+## Related
+
+- [Manage Superhumans](/using/superhumans/manage) · [Create & configure a deployment](/using/deployments/create-and-configure) · [Engagement: Conversation Explorer](/using/superhumans/engagement)

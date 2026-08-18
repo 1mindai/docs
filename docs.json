@@ -1,69 +1,184 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "1mind Documentation",
+  "description": "Documentation for the 1mind AI engagement platform and its Superhuman agents.",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#9A7AEB",
+    "light": "#B9A3F0",
+    "dark": "#7C5FD9"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon-1mind.svg",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Get Started",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Get Started",
             "pages": [
               "index",
-              "quickstart",
-              "development"
-            ]
-          },
-          {
-            "group": "Customization",
-            "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "get-started/what-is-1mind",
+              "get-started/what-is-a-superhuman",
+              "get-started/superhumans-vs-deployments",
+              "get-started/five-layers",
+              "get-started/platform-overview",
+              "get-started/quickstart",
+              "get-started/glossary"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "Using 1mind",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Overview",
+            "pages": ["using/overview"]
+          },
+          {
+            "group": "Superhumans",
             "pages": [
-              "api-reference/introduction"
+              "using/superhumans/overview",
+              "using/superhumans/manage",
+              "using/superhumans/brain",
+              "using/superhumans/assistant",
+              "using/superhumans/analytics",
+              "using/superhumans/engagement",
+              "using/superhumans/scorecard",
+              "using/superhumans/signal-studio",
+              "using/superhumans/post-conversation-actions",
+              {
+                "group": "Ride-Along",
+                "pages": ["using/superhumans/ride-along/conferencing"]
+              }
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Deployments",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "using/deployments/overview",
+              "using/deployments/create-and-configure",
+              "using/deployments/personas",
+              "using/deployments/face-and-voice",
+              "using/deployments/release-management"
             ]
+          },
+          {
+            "group": "Sub-Agents",
+            "pages": [
+              "using/sub-agents/overview",
+              "using/sub-agents/calendar-routing"
+            ]
+          },
+          {
+            "group": "Skills",
+            "pages": ["using/skills/overview"]
+          },
+          {
+            "group": "Analytics & Attribution",
+            "pages": ["using/analytics-attribution"]
+          },
+          {
+            "group": "Best Practices",
+            "pages": [
+              "using/best-practices/overview",
+              "using/best-practices/live-event-av-setup"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Configuring 1mind",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["configuring/overview"]
+          },
+          {
+            "group": "Platform",
+            "pages": ["configuring/platform/overview"]
+          },
+          {
+            "group": "Knowledge",
+            "pages": [
+              "configuring/knowledge/overview",
+              "configuring/knowledge/superhuman-knowledge",
+              "configuring/knowledge/website-crawling",
+              "configuring/knowledge/multilingual"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "configuring/integrations/overview",
+              "configuring/integrations/website-embed",
+              "configuring/integrations/behind-the-form",
+              "configuring/integrations/embedding-forms-calendars",
+              "configuring/integrations/iframe-embedding",
+              "configuring/integrations/crm-map-setup",
+              "configuring/integrations/workshop-preparation",
+              {
+                "group": "Salesforce",
+                "pages": [
+                  "configuring/integrations/salesforce/overview",
+                  "configuring/integrations/salesforce/oauth-setup"
+                ]
+              },
+              "configuring/integrations/calendars",
+              "configuring/integrations/marketo",
+              "configuring/integrations/chili-piper",
+              "configuring/integrations/leandata-bookit",
+              "configuring/integrations/cookie-behavior",
+              "configuring/integrations/widget-placement-troubleshooting"
+            ]
+          },
+          {
+            "group": "Administration",
+            "pages": [
+              "configuring/administration/overview",
+              "configuring/administration/sso"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": ["configuring/troubleshooting"]
+          }
+        ]
+      },
+      {
+        "tab": "Developers",
+        "groups": [
+          {
+            "group": "Developers",
+            "pages": [
+              "developers/sdk-reference",
+              "developers/tool-calls",
+              "developers/pre-post-processing",
+              "developers/event-listeners"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/overview",
+              "guides/getting-live/launch-your-first-superhuman",
+              "guides/getting-live/add-1mind-to-your-website"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Changelog",
+        "groups": [
+          {
+            "group": "Changelog",
+            "pages": ["changelog/overview"]
           }
         ]
       }
@@ -71,52 +186,37 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "1mind.com",
+          "href": "https://1mind.com",
+          "icon": "globe"
         }
       ]
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/1mind-light.svg",
+    "dark": "/logo/1mind-dark.svg",
+    "href": "https://1mind.com"
   },
   "navbar": {
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:support@1mind.com"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "1mind.com",
+      "href": "https://1mind.com"
     }
   },
   "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+    "options": ["copy", "view", "chatgpt", "claude", "perplexity", "mcp", "cursor", "vscode"]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "website": "https://1mind.com"
     }
   }
 }

@@ -1,0 +1,55 @@
+---
+title: "Widget & embed placement troubleshooting"
+description: "Self-serve checks to run when your 1mind widget or embed isn't appearing on your site — confirm the script is in the DOM, rule out common causes, and know what to send support if you still need help."
+contentType: "how-to"
+status: "draft"
+---
+
+<Info>
+  Distilled from the Services Troubleshooting Guide (Placement section) into a customer-facing self-serve version. Internal triage/escalation steps removed. Pending doc-approver sign-off before publish.
+</Info>
+
+If your 1mind **widget** or **embed** is not appearing where you expect, run these checks first. Most placement issues come down to the launcher script not loading on the page, or the page not being authorized to run it.
+
+## 1. Confirm the script is in the page
+
+The fastest check is whether the 1mind launcher is actually present in the page's DOM.
+
+1. Open the page where the widget or embed should appear.
+2. Open your browser's developer tools (right-click → **Inspect**).
+3. Go to the **Elements** tab.
+4. Search the DOM (on Mac, `Cmd + F`; on Windows, `Ctrl + F`) for **`launcher.1mind.com`**.
+5. Check whether a `<script>` referencing `launcher.1mind.com` is present.
+
+**If the script is present** but the widget/embed still does not render as expected, the placement is loading but something downstream is off — continue with the common causes below, then contact support if needed.
+
+**If the script is not present**, the launcher isn't reaching the page at all. Confirm the launcher code was installed exactly as shown in [Website embed & script installation](/configuring/integrations/website-embed), on the correct page, for the intended deployment and environment.
+
+## 2. Rule out common causes
+
+| Symptom | Likely cause | Where to fix |
+| --- | --- | --- |
+| Script isn't in the DOM at all | Launcher code missing, on the wrong page, or added for the wrong deployment/environment | [Website embed & script installation](/configuring/integrations/website-embed) |
+| Script loads on staging but not production (or vice-versa) | The domain isn't in the deployment's authorized list | Deployment **Launch Settings → Access** — add every approved production, staging, and preview host (see [Create & configure a deployment](/using/deployments/create-and-configure)) |
+| Works on a test page but not via your tag manager | Tag-manager injection timing or scope | Compare a direct in-`<head>` install against the GTM install per [Website embed & script installation](/configuring/integrations/website-embed) |
+| Embed appears blank inside an iframe / another tool | The host page is blocking framing | Review `Content-Security-Policy: frame-ancestors` and `X-Frame-Options` per [Making your page iframe-able](/configuring/integrations/iframe-embedding) |
+| Widget shows on some pages but not others | Page-level exclusion rules or a path the launcher isn't installed on | Confirm the launcher is present on each intended page and review any exclusion rules |
+
+## 3. Verify environment and deployment
+
+A widget can be "missing" simply because you are looking at the wrong deployment or environment. Confirm the launcher value you installed matches the intended **deployment** and that its configuration has been **promoted to Production** if you are checking a live page. Launcher values are deployment- and environment-specific — see [Create & configure a deployment](/using/deployments/create-and-configure).
+
+## When to contact support
+
+If the script is present in the DOM and the placement still isn't behaving after the checks above, reach out to 1mind support with:
+
+- The **page URL** where the issue occurs.
+- Whether it is a **Widget** or **Embed**.
+- **Expected vs. actual** behavior, with screenshots of each.
+- The **launcher/embed code snippet** you have on the site.
+
+<Warning>Do not include secrets, tokens, or private launcher values in a screenshot or message beyond the launcher code needed to reproduce the issue.</Warning>
+
+## Related
+
+- [Website embed & script installation](/configuring/integrations/website-embed) · [Making your page iframe-able](/configuring/integrations/iframe-embedding) · [Create & configure a deployment](/using/deployments/create-and-configure) · [Troubleshooting & FAQ](/configuring/troubleshooting)

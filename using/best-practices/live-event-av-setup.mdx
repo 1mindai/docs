@@ -1,0 +1,85 @@
+---
+title: "Live event A/V setup & best practices"
+description: "How to set up audio, video, and network for demoing a 1mind Superhuman live at an in-person event or booth — plus best practices to keep the demo reliable."
+contentType: "how-to"
+status: "draft"
+---
+
+<Info>
+  Distilled from the internal "Conference Best Practices & Audio/Video Setup" guide into a customer/field-facing version. Internal contact details removed. Pending doc-approver sign-off before publish.
+</Info>
+
+Demoing a Superhuman live at an in-person event — a booth, stage, or kiosk — introduces audio, video, and network variables you don't have on a normal web session. A/V setups vary widely by venue; the setup below is a common, reliable configuration and the issues to avoid.
+
+<Note>Every venue is different. Once the on-site A/V setup is known, reach out to your 1mind team as early as possible so they can review it and help you dial in the right settings before you go live.</Note>
+
+## Best practices
+
+- **Test — and rehearse the day of.** Do a full run-through on the event day itself; venue configurations change. If there's an on-site A/V stagehand, involve them.
+- **Internet speed is critical.** Aim for at least **100 Mbps down / 10 Mbps up**, higher if possible. Prefer a wired Ethernet connection (bring a USB-C-to-Ethernet adapter). Test at [speedtest.net](https://www.speedtest.net/).
+- **Use a fresh incognito window every time.** This prevents cached state from a previous session (for example, the Superhuman greeting a returning visitor by name) from disrupting the demo.
+- **Record a backup demo video.** Outages and setup surprises happen. Keep a recording of the planned demo open in the background so you can transition to it gracefully if needed.
+
+### Push-to-talk with the spacebar
+
+In a noisy room, push-to-talk gives you clean control over when the Superhuman is listening:
+
+1. Start the session.
+2. Click **Stop listening**.
+3. Click inside the box where the Superhuman's face is shown to activate the spacebar control.
+4. Press and hold the **spacebar** while you speak; release it when you're done.
+5. To interrupt the Superhuman while it's talking, tap the spacebar once.
+
+If you click elsewhere on the page (for example, a chat bubble), click the Superhuman's face again to re-enable the spacebar.
+
+### If the microphone isn't picking you up
+
+- In Chrome, check the mic the browser is using at `chrome://settings/content/microphone`.
+- Confirm what the mic is actually capturing with a checker such as [webcammictest.com](https://webcammictest.com/check-mic.html).
+
+## A/V setup
+
+**1. Display**
+
+- Keep the laptop plugged in and charging.
+- Connect HDMI/DisplayPort from the venue monitor to the laptop (often via a USB-C dongle with an HDMI port).
+- Choose **mirror display** so the laptop screen matches the big screen.
+
+**2. Speakers**
+
+- Connect device audio to the speaker system via 3.5mm, Bluetooth, or HDMI (depending on the setup).
+- Play a song to confirm audio works.
+
+**3. Microphone**
+
+- A USB microphone (e.g., a cardioid condenser mic) plugged into the laptop works well; enable **cardioid** mode.
+- Run a mic check to confirm clear capture with no feedback.
+
+**4. Inputs and outputs (the part people get wrong)**
+
+- **Laptop microphone input** — set to the laptop's own mic (e.g., the USB mic). **Do not** set the mic input to HDMI — it won't hear you. Some machines silently switch this default, so double-check it, including inside the browser.
+- **Laptop speaker output** — set to the HDMI cable (or your chosen method) so the audience hears the Superhuman through the event speakers.
+- **Presenter mic/lavalier** — the speaker uses a physical mic routed to the event speakers, so the audience hears the presenter, while the laptop output carries the Superhuman's voice.
+
+**5. Browser**
+
+- Close other applications and browser tabs to prevent microphone hand-off between apps (other Superhuman tabs, video-call apps, etc.).
+- Turn off Bluetooth so the mic/speakers don't jump to earbuds or another device.
+- Open Chrome, go to the page the Superhuman loads on, and maximize to full screen (Windows `Fn + F11`; Mac `⌘ + Ctrl + F`). Hide the URL bar if you don't want the demo link visible.
+- Click the button on the page to begin the session.
+
+## Equipment checklist
+
+A reliable booth kit generally includes:
+
+- Dedicated internet (wired connection or a dedicated hotspot)
+- Monitor or projector
+- Computer
+- USB microphone (with a mic arm if helpful)
+- Speakers / studio monitors
+- Cables and adapters to connect everything: USB-C dongle, DisplayPort-to-HDMI adapter, a long display cable, a long 3.5mm audio cable
+- Extension cord and surge protector
+
+## Related
+
+- [Website embed & script installation](/configuring/integrations/website-embed) · [Widget & embed placement troubleshooting](/configuring/integrations/widget-placement-troubleshooting) · [Best practices](/using/best-practices/overview)

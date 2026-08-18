@@ -1,0 +1,56 @@
+---
+title: "Assistant"
+description: "The Sandbox-only workspace where you ask 1mind to help train and configure a Superhuman — with a proposal-review flow that separates approving an edit from publishing and releasing it."
+contentType: "how-to"
+status: "draft"
+---
+
+<Info>
+  **Gated by default** — served behind customer login. Distilled from the July 19 Full Documentation Pass (internal Services set, approved by Devon for build). Customer-facing draft; routes through the standard approval process before publish.
+</Info>
+
+**Assistant** is the Superhuman-scoped workspace for asking 1mind to help train and configure the selected Superhuman. The page is accessed in **Sandbox**; opening it from Production offers **Switch to Sandbox**.
+
+<Note>The Sandbox location is an access boundary, not a guarantee that every action is harmless. When explicitly asked, Assistant can edit the Sandbox draft, publish a Sandbox release, or promote work to Production. Always read the proposed action and destination before confirming.</Note>
+
+## Open Assistant in the correct environment
+
+Open the Superhuman, select **Assistant**, and confirm the **SANDBOX** badge before entering anything. If the page is in Production, select **Switch to Sandbox** first.
+
+## Start a chat safely
+
+1. Confirm the page shows **SANDBOX**.
+2. Review the **Prompt version** if available — **Live** uses the current globally active Assistant prompt; it does not describe the Superhuman's release state.
+3. Enter one specific objective, including the intended result and any constraint to preserve.
+4. Remove secrets, credentials, personal data, or customer-confidential content before sending.
+5. Select **Send**. While a proposal is pending, the composer and **Attach a file** are unavailable.
+
+## Review a proposed edit
+
+<Warning>A proposal is only a preview — it changes nothing until approved. **Approve** writes the proposed change to the Superhuman's Sandbox draft; it does **not** publish a Sandbox release or change Production.</Warning>
+
+Each proposal card shows **BEFORE** and **AFTER** values, a rationale/tradeoff, and **Ask for change**, **Reject**, **Approve**, and **Approve All** (with a count of pending proposals). Compare Before and After word by word, confirm the change matches your request and preserves important constraints, then resolve each card. After **Approve** or **Approve All**, inspect the affected configuration and verify every expected value was saved.
+
+## Release an approved change
+
+Keep these states separate: **Proposal** (nothing written) → **Sandbox draft** (Approve writes the edit) → **Sandbox release** (explicitly publish the reviewed draft) → **Sandbox test** (verify behavior and an edge case) → **Production** (explicitly promote the tested version). You can ask Assistant to perform release steps or use [Release Management](/using/deployments/release-management); approval, Sandbox publication, and Production release remain distinct decisions. Deployment edits instead save to the deployment's Sandbox configuration and follow the deployment promotion flow — do not publish a Brain release merely because a deployment setting changed.
+
+## Lightning mode
+
+<Warning>**Lightning mode bypasses the normal proposal-review and release-confirmation gates.** Subsequent requests can execute edits, publish releases, or perform Production-impacting actions without the usual approval step, and those actions can be destructive.</Warning>
+
+Leave Lightning mode off for normal self-serve work. Turn it on only when explicitly authorized, when you understand every requested action, and when you are prepared for it to execute without another confirmation. A visible **SANDBOX** badge does not make those instructions harmless.
+
+## Voice Input and attachments
+
+**Voice Input** transcribes into the composer but does not send automatically — review the transcription (names, numbers, terms, the requested environment) before sending, and do not speak secrets. **Attach a file** is a beta capability for temporary supporting context (one file at a time); sanitize it first, and use [Superhuman Knowledge](/configuring/knowledge/superhuman-knowledge) when content should become a managed source. The interface does not publish a retention period for chats, attachments, or voice input — treat them as working history, not an archival or compliance record.
+
+## Troubleshooting
+
+- **"Available only in Sandbox"** — you are on the Production page; select **Switch to Sandbox** and confirm the badge.
+- **Send is unavailable** — enter text (Send requires composer text); if a proposal is pending, resolve it first.
+- **Response says work is complete but behavior did not change** — inspect the Sandbox draft; publish to Sandbox, retest, and release to Production as separate steps. For deployment edits, use the deployment promotion flow.
+
+## Related
+
+- [Brain](/using/superhumans/brain) · [Superhuman Knowledge](/configuring/knowledge/superhuman-knowledge) · [Create & configure a deployment](/using/deployments/create-and-configure) · [Release Management](/using/deployments/release-management)

@@ -1,0 +1,68 @@
+---
+title: "Troubleshooting & FAQ"
+description: "Diagnose portal issues that span multiple areas — start with five checks for the object, environment, save state, release path, and access, then use topic-specific guidance."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  Distilled from the July 19 Full Documentation Pass (internal Services set, approved by Devon for build). Customer-facing; pending doc-approver sign-off before publish. Term definitions live in the [Glossary](/get-started/glossary).
+</Info>
+
+Use this reference when something in the portal is missing, unavailable, out of date, or behaving differently from what you expected.
+
+## Start here: five checks that resolve most issues
+
+1. **Confirm the object.** Work with the intended workspace, Superhuman, Persona, and deployment — related but separate objects.
+2. **Confirm the environment.** Sandbox is where most configuration is authored and tested; Production is the live state and read-only in several Superhuman areas.
+3. **Confirm the save state.** **Saved** means the draft persisted — not that a Sandbox release or Production state changed.
+4. **Confirm the release path.** Brain and Superhuman Knowledge move through **Publish to Sandbox** and **Release Management**. A deployment has a separate inline **Promote to Production**.
+5. **Confirm access and scope.** Missing navigation, disabled controls, and unavailable actions can result from role permissions, feature availability, lifecycle state, or the selected environment.
+
+<Warning>Do not repeat a destructive or Production action merely to diagnose it. Capture the visible error, object type, environment, and last successful step, then use the relevant section below.</Warning>
+
+## Drafts, Sandbox, and Production
+
+- **My saved change is not visible in Sandbox testing** — for Brain or Knowledge, confirm the draft reached **Saved** (or the document finished processing), the intended component was included in **Publish to Sandbox**, a new frozen release was created, and the preview uses the expected Superhuman.
+- **My Sandbox change is not visible in Production** — for Brain/Knowledge, promote the tested release in Release Management; for deployment or Persona changes, use the deployment's own promotion path after testing. The two paths do not substitute for one another.
+- **Production promotion happened immediately** — the deployment editor promotes through an inline action with no confirmation dialog; treat the button as the final Production action.
+
+## Superhumans, Personas, and voices
+
+- **The customer-facing name is wrong** — the Manage Superhumans name is an internal label; the deployment's selected Persona supplies the customer-facing name. Confirm the Persona in **Basics → About**.
+- **The Persona I need is not available in a deployment** — Personas are workspace-scoped; confirm it exists in **Personas** before recreating a similarly named one.
+- **A language selector is unavailable** — the selector is unavailable when the Persona supports only one language; add and configure the language and its voices on the Persona.
+- **Static greeting is unavailable** — multilingual support requires a deployment greeting override in **Dynamic** mode.
+
+## Knowledge
+
+- **A document is stuck or unavailable** — check processing status and any error in Knowledge Hub; a source must finish processing before it is reliably enabled or referenced. Do not repeatedly delete and recreate it.
+- **A workspace source is not available to a Superhuman** — ingestion and Superhuman access are separate steps; use **Add from Knowledge Hub**, then publish the Knowledge component and test.
+- **A refreshed document is not in Production** — refresh updates the draft source, not a frozen release; include Knowledge in a new Sandbox release, test, and promote.
+
+## Deployments and previews
+
+- **The embedded preview does not load** — use **Retry** or **Open in new tab**; confirm the deployment has a selected Persona and complete required configuration.
+- **Launcher code does not run on a site** — the launcher executes only on allowed domains in **Launch Settings → Access**; add every approved host and use exact domains where possible.
+- **A deployment disappeared after archive** — open **Manage Deployments → Archived**; within seven days, **Unarchive** (a paired peer may also reactivate — read the dialog).
+
+## Integrations and events
+
+- **An external event is rejected** — confirm the webhook URL and secret belong to the intended workspace, send the secret in the Authorization header, and check the top-level `event`, `externalSessionId`, and `payload` fields.
+- **A vendor event listener does not fire** — review Event Name, Vendor/Source, Allowed Origin Domains, and the Superhuman Instruction; ensure the incoming origin is explicitly allowed and the event name matches exactly.
+- **Developer SDK callbacks do not run** — confirm the deployment launcher is loaded before using the SDK namespace, and register the relevant callback.
+
+## When to escalate
+
+Escalate to an authorized administrator or support when a required control is absent after role/environment checks, a draft repeatedly fails to save, a release completed but the environment is inconsistent, a destructive action affected the wrong object, or a Production deployment must be recovered with no self-service reversal. Provide only minimal diagnostic context (page/section, object type and sanitized name, environment, expected vs. observed result, exact error text, approximate time and last successful step). Never send passwords, API keys, tokens, launcher values, webhook secrets, private document content, or customer conversation data.
+
+## Frequently asked questions
+
+- **Can I edit Production directly?** No — Production Brain is read-only. Author and test in Sandbox, then use the relevant promotion path.
+- **Is a Persona part of one Superhuman?** No — it belongs to the workspace and can be selected by deployments across Superhumans.
+- **Does Publish to Sandbox change Production?** No — it creates a frozen Sandbox release; Production changes through the later authorized promotion.
+- **Does Release Management promote deployments?** No — it covers Brain and Knowledge; each deployment has its own promotion control.
+
+## Related
+
+- [Glossary](/get-started/glossary) · [Platform overview & navigation](/get-started/platform-overview) · [Release Management](/using/deployments/release-management) · [Settings & Administration](/configuring/administration/overview)

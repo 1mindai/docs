@@ -1,0 +1,48 @@
+---
+title: "Signal Studio"
+description: "The shared intelligence layer for configuring Signals (Topics and Pain Points that auto-tag sessions) and the four system-defined Qualification outcomes."
+contentType: "how-to"
+status: "draft"
+---
+
+<Info>
+  **Gated by default** — served behind customer login. Distilled from the July 19 Full Documentation Pass (internal Services set, approved by Devon for build). Customer-facing draft; routes through the standard approval process before publish.
+</Info>
+
+**Signal Studio** is the workspace's shared intelligence layer for two kinds of configuration used to organize conversation outcomes:
+
+- **Signals** automatically tag each session — **Topics** (themes customers repeatedly mention) and **Pain Points** (problems or frustrations customers express).
+- **Qualification** — four system-defined outcomes whose descriptions can be edited for future conversations.
+
+<Note>Signal definitions are **shared workspace configuration**, even though you open Signal Studio while a Superhuman is selected. Signal Studio is not independently versioned for Sandbox and Production — the environment switch changes which conversations you review, not whether an edit is isolated. Treat every definition edit as a workspace-level change.</Note>
+
+After a session ends, post-conversation processing evaluates the transcript against the signal definitions and writes matching values. A conversation can receive multiple Topics and Pain Points; Qualification produces exactly one of the four outcomes.
+
+## Create a signal
+
+On the **Signals** tab, select **Add signal**, choose **Topics** or **Pain Points**, enter a required **Name** and **Description** (Add stays disabled until both are complete), and confirm it appears. Write definitions around observable conversation evidence, state inclusions and exclusions, name one concept per signal, and avoid near-duplicate scope. New or edited definitions apply to conversations processed after the change — completed conversations keep their existing tags.
+
+## Edit Qualification descriptions
+
+On the **Qualification** tab, the four outcomes are system-defined and cannot be renamed; only their descriptions are editable, and edits apply to future conversations:
+
+- **Qualified** — strong buying signals (clear pain, budget/authority, urgency, or explicit next-step intent).
+- **Unqualified** — enough evidence to rule out the opportunity (clear mismatch, constraint, or blocker).
+- **No Outcome** — not enough evidence to decide (ended early, exploratory, or incomplete).
+- **Other** — valid but not a sales evaluation (careers, support, partnerships without product interest, research, media, testing).
+
+Open the outcome's row menu → **Edit**, update the required **Description**, and **Update**. Draft all four together so they do not conflict, use observable criteria, and test representative future conversations. Use the modification date as an operational reference — completed conversations and records already sent to connected systems are not automatically reclassified.
+
+## Review in Engagement
+
+Signal Studio configures labels; [Engagement: Conversation Explorer](/using/superhumans/engagement) is where you review results. The same four Qualification labels appear there as Account and Conversation Status filters. Configure definitions → test with representative future conversations → let them finish post-processing → filter by Status in Engagement and review Topic/Pain Point values → refine only after reviewing false positives, false negatives, and ambiguous examples.
+
+## Troubleshooting
+
+- **Add signal cannot be completed** — confirm a Signal type is selected and both Name and Description are filled; if still disabled, ask an administrator to confirm your permissions.
+- **Sessions are tagged too broadly** — add more specific required evidence and exclusions and test; existing tags do not change.
+- **An outcome description changed but older records did not** — expected; edits apply to future processing only, and Signal Studio config is shared, not environment-versioned.
+
+## Related
+
+- [Engagement: Conversation Explorer](/using/superhumans/engagement) · [Scorecard](/using/superhumans/scorecard) · [Analytics](/using/superhumans/analytics)

@@ -1,0 +1,136 @@
+---
+title: "Salesforce OAuth & package install"
+description: "Install the 1mind Integration Client managed package, authorize OAuth, and connect 1mind to your Salesforce org."
+contentType: "how-to"
+status: "draft"
+---
+
+<Info>
+  **Migrated from the developer-docs Salesforce OAuth Setup Guide (source updated
+  Jun 2026).** Faithful port pending review. Screenshots from the source are noted
+  inline and should be re-added to `/images` before publish.
+</Info>
+
+This guide walks a Salesforce admin through installing the **1mind Integration
+Client** managed package, authorizing OAuth access, and connecting 1mind to your
+Salesforce org.
+
+**Who should perform this install:** a Salesforce user with the **System
+Administrator** profile (or equivalent permissions to install managed packages).
+
+<Note>
+  **Best practice:** Use a service account that isn't tied to a specific person,
+  in case they leave or lose access.
+</Note>
+
+**Time required:** ~10 minutes.
+
+## Prerequisites
+
+- A Salesforce edition that supports managed package installs (Enterprise, Performance, Unlimited, Developer).
+- System Administrator access to the Salesforce org where 1mind should connect.
+- From your 1mind account manager:
+  - The package install URL (used in Step 1)
+  - The OAuth connection URL (used in Step 2)
+  - Confirmation of which Salesforce org (production or sandbox) to install into
+
+## Step 1 — Install the package
+
+<Steps>
+  <Step title="Sign in to the target Salesforce org">
+    Production at [https://login.salesforce.com](https://login.salesforce.com) or
+    your sandbox at [https://test.salesforce.com](https://test.salesforce.com).
+  </Step>
+  <Step title="Open the install URL in the same browser">
+    - **Production:** `https://login.salesforce.com/packaging/installPackage.apexp?p0=04tcx000002Y2hNAAS`
+    - **Sandbox:** `https://test.salesforce.com/packaging/installPackage.apexp?p0=04tcx000002Y2hNAAS`
+  </Step>
+  <Step title="Review the package details">
+    - **Publisher:** 1mind
+    - **Package name:** 1mind Integration Client
+    - **Namespace:** OneMind
+  </Step>
+  <Step title="Choose who to install for">
+    Under *Install for*, select **Install for All Users**, then click **Install**.
+    {/* screenshot: Salesforce "Install for All Users" package install page */}
+  </Step>
+  <Step title="Wait for confirmation">
+    Wait for the confirmation screen (~1–2 minutes). You'll see *"Installation
+    Complete"* when done.
+    {/* screenshot: Salesforce "Installation Complete" confirmation */}
+  </Step>
+</Steps>
+
+## Step 2 — Connect via the Launcher OAuth link
+
+Your 1mind Customer Success Manager will provide a **Launcher OAuth link** — the
+link that actually connects 1mind's services to your Salesforce data (e.g., looking
+up Leads and Contacts). You'll receive separate links if you're connecting both
+Sandbox and Production.
+
+<Steps>
+  <Step title="Confirm the correct org">
+    Make sure you're logged into the **correct Salesforce org** (production or sandbox) before clicking.
+  </Step>
+  <Step title="Open the Launcher OAuth link">
+    Click the link provided by your 1mind contact.
+  </Step>
+  <Step title="Complete the OAuth flow">
+    Enter your Salesforce domain when prompted and complete the flow, then approve the requested permissions in Salesforce.
+  </Step>
+  <Step title="Confirm success">
+    You should see: `{"success":"Authentication successful"}`
+  </Step>
+</Steps>
+
+<Note>
+  If you need to connect both Sandbox and Production, repeat this step with the
+  corresponding link for each environment.
+</Note>
+
+## Verifying the installation
+
+In your Salesforce org:
+
+1. **Setup → Installed Packages** — confirm *"1mind Integration Client"* is listed.
+2. **Setup → External Client Apps** — confirm *"1mind Integration Client"* appears under the `OneMind` namespace and is **Enabled**.
+
+Your 1mind contact can confirm on their end that API calls into your org are succeeding.
+
+## Uninstalling
+
+1. Ask your 1mind contact to revoke access from 1mind's side.
+2. In Salesforce: **Setup → Installed Packages** → next to *1mind Integration Client*, click **Uninstall**.
+3. Follow the uninstall prompts. Salesforce removes the ECA and all package components.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Error: app isn't installed in your org (during OAuth flow)">
+    The package didn't install fully, or OAuth replication is still propagating. Wait 5 minutes and retry. If it persists, uninstall and reinstall.
+  </Accordion>
+  <Accordion title="Error: redirect_uri_mismatch (during OAuth flow)">
+    Contact 1mind support with the full error URL — this usually means 1mind needs to update the callback URL registration on their side.
+  </Accordion>
+  <Accordion title="OAuth login succeeds but 1mind can't access data">
+    Rare, but may indicate restrictive OAuth policies on your org or service-user permissions. Contact 1mind and work with support to resolve.
+  </Accordion>
+  <Accordion title="OAuth link not working">
+    Confirm the link matches the correct environment (sandbox vs. production). If the issue persists, contact your 1mind account manager to regenerate the link.
+  </Accordion>
+  <Accordion title="Wrong Salesforce org connected">
+    Log out of the incorrect org, log into the correct one, and re-click the OAuth link.
+  </Accordion>
+  <Accordion title="Success message doesn't appear after OAuth">
+    Check for browser pop-up blockers, try a different browser, or contact your 1mind account manager to regenerate the OAuth link.
+  </Accordion>
+</AccordionGroup>
+
+## Support
+
+- **Email:** [support@1mind.com](mailto:support@1mind.com)
+- **1mind account manager:** use your existing channel
+
+## Related
+
+- [Integrations overview](/configuring/integrations/overview)

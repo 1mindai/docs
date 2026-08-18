@@ -1,0 +1,148 @@
+---
+title: "Making your page iframe-able"
+description: "A customer IT checklist for letting your pages render inside a Superhuman: CSP frame-ancestors, X-Frame-Options, sandbox, cookies, and auth."
+contentType: "how-to"
+status: "draft"
+---
+
+<Info>
+  **Migrated from the Services "Best Practices and Guide for Superhuman iframe
+  Content."** Faithful port of the customer-facing checklist and concepts; a
+  customer-specific example was genericized. Pending review.
+</Info>
+
+Superhuman experiences are embedded via iframes, and any page a Superhuman renders
+is also framed. Modern browsers are restrictive about iframes, so a page that works
+fine on its own can still fail to embed. The usual culprits:
+
+- Clickjacking protections (X-Frame-Options, CSP `frame-ancestors`)
+- Sandbox restrictions (missing the right flags)
+- Cross-origin access issues (scripts touching `window.parent`)
+- Third-party cookie restrictions (auth/session problems in nested iframes)
+- Mixed content (HTTP inside HTTPS)
+
+**Key concept:** a page can only be embedded if it explicitly allows framing —
+controlled by response headers from the embedded page.
+
+## The two main controls
+
+**CSP `frame-ancestors` (the modern way, preferred).** Controls which sites may
+embed your page:
+
+```
+Content-Security-Policy: frame-ancestors https://*.1mind.com https://customer.com;
+```
+
+Keep the allowlist tight — only the domains that actually need to embed.
+
+**X-Frame-Options (legacy, still enforced).** Values: `DENY` (never embeddable) or
+`SAMEORIGIN` (only same origin). Because Superhuman integrations are multi-hop
+(customer site → 1mind Superhuman → embedded customer content), `SAMEORIGIN` blocks
+the embedded page when its immediate parent is a different origin. **Don't use
+`X-Frame-Options: SAMEORIGIN` for pages you want embeddable across domains** —
+prefer CSP `frame-ancestors`, and remove/unset XFO for the specific page.
+
+<Note>
+  **Golden rule:** if both headers are present, CSP `frame-ancestors` **and**
+  X-Frame-Options must each resolve to allow. If either blocks, the iframe fails.
+</Note>
+
+## Sandbox
+
+If a sandbox attribute is present without `allow-same-origin`, the iframe becomes an
+"opaque origin," which breaks CSP checks, cookies/localStorage, and same-origin
+scripts. Avoid sandbox unless necessary; if required, include `allow-same-origin`:
+
+```html
+<iframe sandbox="allow-scripts allow-forms allow-popups allow-same-origin"></iframe>
+```
+
+## Cross-origin communication
+
+Scripts inside an iframe shouldn't touch `window.parent` directly (it fails across
+origins). Use `postMessage`:
+
+```javascript
+// child frame
+window.parent.postMessage({ type: "resize", height: 900 }, "https://parent-domain.com");
+
+// parent frame
+window.addEventListener("message", (event) => {
+  if (event.origin !== "https://child-domain.com") return;
+  // handle message
+});
+```
+
+## Cookies & authentication (the common "loads blank" issue)
+
+Even when headers allow embedding, auth can fail because browsers restrict
+third-party cookies inside iframes (symptoms: re-prompted login, blank page /
+infinite spinner, works in Chrome but not Safari). Best practices: prefer
+token-based auth in short-lived signed query params; use `SameSite=None; Secure` for
+cookies that must work in an iframe; avoid relying on third-party cookies for core flow.
+
+## Customer checklist
+
+<Steps>
+  <Step title="Allow embedding via CSP">
+    Add `Content-Security-Policy: frame-ancestors https://*.1mind.com https://your-domain.com;`
+  </Step>
+  <Step title="Remove or relax X-Frame-Options">
+    Ensure the embedded page does not return `X-Frame-Options: SAMEORIGIN` or `DENY`.
+  </Step>
+  <Step title="Avoid sandbox issues">
+    If your embedding page uses sandboxed iframes, use correct flags or remove sandbox.
+  </Step>
+  <Step title="Don't rely on third-party cookies">
+    If login is required, use an iframe-safe (token-based) auth approach.
+  </Step>
+  <Step title="Test in Safari">
+    Safari is strict and often surfaces issues first.
+  </Step>
+</Steps>
+
+## Vendor outreach email template
+
+Use when a third-party vendor needs to allowlist `*.1mind.com` for embedding.
+
+<Accordion title="Copy & send template">
+**Subject:** Request to allow iframe embedding of your pages from `*.1mind.com`
+
+Hi [name],
+
+We're embedding pages from your platform within the Superhuman, but they're
+failing to load due to current frame restrictions. Please allowlist **`*.1mind.com`**
+for iframe embedding (this covers `app.1mind.com` and any other subdomains).
+
+The error we're seeing: `Refused to display '...' in a frame because it set
+'X-Frame-Options' to 'sameorigin'`
+
+On the web servers serving that domain, replace the current
+`X-Frame-Options: sameorigin` response header with:
+
+`Content-Security-Policy: frame-ancestors 'self' *.1mind.com`
+
+This keeps your existing same-origin protection (`'self'`) and adds `*.1mind.com`
+as an allowed embedding origin. Thanks!
+</Accordion>
+
+## Diagnosing where the header is set
+
+If you have a HAR file or can run `curl -I <url>`, the response headers point to
+where the blocking header lives:
+
+| Header seen | Indicates |
+| --- | --- |
+| `server: cloudflare`, `cf-ray: ...` | Cloudflare — set via a Transform / Response Header rule, or passed from origin |
+| `server: nginx` | Nginx origin — likely `add_header X-Frame-Options SAMEORIGIN;` in config |
+| `server: Apache` | Apache origin — likely `.htaccess` / `httpd.conf` `Header set X-Frame-Options` |
+| `via: cloudfront`, `x-amz-cf-id` | AWS CloudFront — response headers policy |
+| `x-served-by: cache-...` | Fastly — VCL config |
+| `server: AkamaiGHost` | Akamai — property configuration |
+
+The fix happens wherever that header is set (CDN dashboard or origin server config).
+
+## Related
+
+- [Embedding forms & calendars](/configuring/integrations/embedding-forms-calendars)
+- [Website embed & script installation](/configuring/integrations/website-embed)

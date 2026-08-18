@@ -1,0 +1,81 @@
+---
+title: "Knowledge Hub"
+description: "The workspace-level library for content your Superhumans can use — add and organize sources, inspect versions, and control which Superhumans have access."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  Distilled from the July 19 Full Documentation Pass (internal Services set, approved by Devon for build). Customer-facing; pending doc-approver sign-off before publish.
+</Info>
+
+**Knowledge Hub** is the workspace-level library for the content your Superhumans can use. Use it to add and organize sources, inspect versions, and control which Superhumans can access each document.
+
+The related **Superhuman Knowledge** page is scoped to one Superhuman. Knowledge Hub owns the shared source; Superhuman Knowledge is where you review and change a Superhuman's access to it. One Knowledge Hub document can be reused instead of uploaded separately for every Superhuman.
+
+<Note>
+  Keep three layers separate when reviewing a change:
+  1. **Workspace source** — the document and its versions in Knowledge Hub.
+  2. **Superhuman draft access** — whether the source is enabled for a Superhuman's editable draft.
+  3. **Released environments** — the exact versions in the latest published Sandbox and promoted Production snapshots.
+
+  A successful upload or refresh does not publish a release. Enabling a document changes the draft, not a frozen snapshot.
+</Note>
+
+## Add knowledge
+
+Open Knowledge Hub, select **Add document**, and choose the source type.
+
+### Upload a file
+
+Supported formats and limits:
+
+| Content type | Formats | Limit |
+| --- | --- | --- |
+| Documents | TXT, MD, DOCX, PDF | 100 MB; PDFs up to 500 pages |
+| Presentations | PPT, PPTX | 100 MB, up to 200 slides |
+| Images | JPG, PNG, GIF, WEBP | 20 MB |
+| Video | MP4, MOV, MKV, AVI, WEBM, M4V | 500 MB, up to 30 minutes |
+| Learning content | SCORM 1.2 or 2004 ZIP | No separate package limit shown |
+
+Do not rename a file extension to bypass a limit. SCORM packages are extracted into child knowledge entries — review them and their Presentable settings before assigning the source.
+
+### Add from URL
+
+Choose the smallest mode that fits: **Single URL** for one known page, **URL List** for a defined CSV set, or **Website Crawl** to discover linked pages from a starting URL. Add tags, set Presentable as needed, and choose weekly or monthly auto-refresh when the content changes. New URL sources default to **Non-presentable** (a non-presentable page can still inform an answer). A website crawl defaults to a 1,000-page limit, supports up to 5,000 URLs, respects the site's robots rules, and can be narrowed by path prefix, depth, domains, subdomains, language, and exclusion patterns.
+
+### Add from an integration
+
+Choose **Add integrations** for a connected knowledge system. The catalog includes SFTP Seismic, Google Drive, Box, Dropbox, SharePoint/OneDrive, Highspot, Salesforce, Confluence, and Notion; connector setup lives under **Integrations**. The first sync imports the source set; later syncs process changes on a cadence. A successful sync confirms ingestion, not release.
+
+## Processing status
+
+Status describes ingestion health, not environment availability: **Pending/Processing** (underway), **Completed** (ready for workspace and draft use), **Partially Succeeded** (some items succeeded), **Failed** (retry or re-upload after fixing the source), **Cancelled**. A **Completed** status still does not mean the source is in a Sandbox or Production release.
+
+## Control which Superhumans can use a document
+
+1. Open the document's row actions and select **Manage Superhumans**.
+2. Enable or disable it per Superhuman and review the Sandbox/Production usage indicators.
+3. Use **Go to Superhuman Knowledge** to continue in that Superhuman's knowledge page.
+
+Enable/disable updates the Superhuman's editable draft. If a Sandbox or Production badge remains after you disable a source, that frozen release still contains the version — publish a new Sandbox release and promote it.
+
+## Versions and usage
+
+Open a document's version details to review status, knowledge-entry count, last-updated date, Superhuman usage (with Sandbox/Production indicators), download, and archived versions. Environment indicators are the safest way to confirm where a version is in use — do not infer Production availability from a document's mere presence in Knowledge Hub. Replacing content creates a new version and retains the earlier one; drafts using the source receive the new current version, while published snapshots stay frozen until you publish and promote again.
+
+## Destructive actions
+
+<Warning>
+  Deletion removes content rather than hiding it from one Superhuman, and there is no self-service recycle bin. Reverting a Superhuman release does **not** restore a deleted Knowledge Hub source.
+</Warning>
+
+To remove a source from only one Superhuman, **disable** its access instead of deleting. Before any deletion, download anything you may need and review every Sandbox and Production usage indicator. Deleting a website-crawl parent can remove its child pages; deleting the only version is effectively a document deletion. If recovery is required, contact support promptly.
+
+## From source to Superhuman (recommended flow)
+
+Add the source → organize with tags → check processing state → enable it for the intended Superhuman under **Manage Superhumans** → verify it in **Superhuman Knowledge** → publish the **Knowledge** component to Sandbox → validate in Sandbox → promote the complete snapshot through **Release Management**.
+
+## Related
+
+- [Website crawling](/configuring/knowledge/website-crawling) · [Multilingual support](/configuring/knowledge/multilingual) · [Integrations](/configuring/integrations/overview)

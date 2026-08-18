@@ -1,0 +1,61 @@
+---
+title: "Settings & Administration"
+description: "Manage configuration at three scopes — Workspace, Organization, and Personal — including workspace members, organization users and roles, company info, data retention, and Speech."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  Distilled from the July 19 Full Documentation Pass (internal Services set, approved by Devon for build). Customer-facing; pending doc-approver sign-off before publish.
+</Info>
+
+**Settings** manages configuration at three scopes. Always confirm the scope before saving — a similarly named control can have a very different impact at each level.
+
+| Scope | Controls | Where to open it |
+| --- | --- | --- |
+| **Workspace** | Workspace name, slide-translation languages and glossary, workspace membership | **Settings → Workspace** |
+| **Organization** | Organization profile, workspace directory, org users, retention, org-wide Speech | **Settings → Organization** |
+| **Personal** | Your profile, password, Gmail connection, theme, sign-out | Account menu → **My profile** |
+
+<Note>**Company info** is an important exception: it appears under Organization, but its values belong to the **current workspace** and can be used by every Superhuman there — it does not update every workspace. By contrast, **Speech** settings are organization-wide and apply across workspaces and deployments.</Note>
+
+## Workspace settings
+
+- **General** — rename the current workspace (Save is available only after the name changes). Notify teammates who rely on the name.
+- **Multilingual Slide Translation** — choose target languages (English is the implicit source) and build a **Translation glossary** for terms that should be preserved or translated a specific way. The add-term form requires at least one target language; you can import from pronunciations or CSV.
+- **Users** — add a person to the workspace, change their role, or remove only their workspace access (this does not remove their organization account).
+
+### Workspace roles
+
+| Role | On-screen summary |
+| --- | --- |
+| **Workspace Admin** | Full control over the workspace |
+| **Member** | Read access, can manage Signal Studio, can use conferencing |
+| **Viewer** | Read analytics and conversations (and email/inboxes when available); conferencing |
+| **Ride-along user** | Conferencing only |
+
+Role summaries are orientation, not a complete permission matrix — capabilities also depend on enabled products and features. Grant the least access required, then verify the person's actual tasks.
+
+## Organization settings
+
+- **General** — update the organization profile/logo and manage the workspace list (**Create Workspace**, rename).
+- **Company info** *(workspace-scoped)* — structured company facts every Superhuman in the current workspace can use: an organization overview and products/services, customer-facing links (added only when canonical and safe), and **Website URLs** queued for Knowledge Hub crawling. Removing a URL stops future crawls but does not delete already-collected content — delete that in Knowledge Hub separately.
+- **User Management** — the organization directory, invitations, and assignments. **Super Admin** is organization-level access spanning all workspaces; other roles are assigned per workspace. Invitations expire **seven days** after sending. Grant the least access required and use Super Admin only for organization-wide administration.
+- **Security and Compliance** — data retention and Legal Hold (see below).
+- **Speech** *(organization-wide)* — **Text replacements** (normalize speech-to-text spellings to a canonical term) and **Pronunciations** (define a spoken rendering per locale). Both support JSON/CSV import up to 500 rows. Preview uses a system-selected voice, not the Persona's exact voice, and a saved pronunciation is a hint rather than a deterministic override — test realistic sentences with the intended Persona voice in Sandbox.
+
+### Data retention and Legal Hold
+
+<Warning>
+  Retention options are 30/60/90/180/365 days or Indefinite; data older than the selected period is described as permanently deleted unless **Legal Hold** is enabled. Treat a shorter period as a potentially irreversible deletion decision, and confirm legal/privacy/operational requirements first. Do not rely on the Legal Hold UI switch alone as evidence a preservation requirement is satisfied — coordinate covered data, effective time, and required evidence with an authorized administrator and your legal/compliance owner before enabling, disabling, or relying on it.
+</Warning>
+
+## Personal settings (My profile)
+
+Update your name (email is read-only) and, under **Security**, change a local password. The password form applies only when you have a local 1mind password — **SSO-only users** manage credentials through the organization's identity provider; an existing local user joining an SSO-enabled organization may enter their password once to link identities, then sign in through the provider. **Theme** (Light/Dark/Match system) is a personal display preference only.
+
+<Warning>Connecting **Gmail** starts Google's authorization flow and grants message read/modify and send permissions for the connected mailbox — an external authorization, not a harmless preference. Do not connect until the mailbox owner and organization administrator have approved the mailbox, workflow, and permissions, and never use a shared, customer-facing, or privileged mailbox as an experiment. Treat disconnect as disconnecting the 1mind Email feature, not as proof that every Google authorization or stored record was removed.</Warning>
+
+## Related
+
+- [SSO configuration](/configuring/administration/sso) · [Platform overview & navigation](/get-started/platform-overview) · [Knowledge Hub](/configuring/knowledge/overview) · [Personas](/using/deployments/personas)

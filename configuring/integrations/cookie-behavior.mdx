@@ -1,0 +1,46 @@
+---
+title: "Cookie behavior"
+description: "How the 1mind script loads relative to cookies and consent — cookies are optional, first-party, and gated behind your existing CMP."
+contentType: "explanation"
+status: "draft"
+---
+
+<Info>
+  Distilled from 1mind's data-privacy response material (first-party cookie strategy). **Confirm current cookie names and behavior with Engineering/Product before publish.** Pending doc-approver sign-off.
+</Info>
+
+<Warning>
+  **Cookies are not required.** The 1mind script loads and the Superhuman runs fully without dropping any cookies. You do not need to allow cookie-dropping for 1mind to work — there is no dependency.
+</Warning>
+
+## First-party, not third-party
+
+1mind's launcher runs in your page's context, so any cookies it sets are **first-party on your domain** — not third-party trackers, and never synced to ad networks.
+
+## The cookies that may be set (both optional)
+
+| Cookie | Set when | Purpose |
+| --- | --- | --- |
+| `om_user_token` | Only when the **remember-user** feature is enabled | Recognize a returning visitor so the conversation can resume context across sessions |
+| `_zitok` | Only when **ZoomInfo enrichment** is enabled | Support IP/firmographic enrichment |
+
+Both are entirely opt-in and customer-controlled. With neither enabled, the Superhuman still functions fully.
+
+## Consent model
+
+The launcher loads behind your existing **CMP / tag-manager consent gate** (for example OneTrust or Cookiebot). Your data-privacy team controls how 1mind's cookies are classified (Functional/Required vs. Non-essential) within your CMP.
+
+If a visitor declines cookies, there are two graceful paths:
+
+- The Superhuman runs in **limited-memory mode** (no cross-session persistence), or
+- The widget **waits for the CMP consent signal** before initializing.
+
+## What 1mind does not do
+
+- No third-party tracking cookies.
+- No identity sync to advertising networks.
+- No dependency on cookie-dropping for the script to load or function.
+
+## Related
+
+- [Website embed & script installation](/configuring/integrations/website-embed) · [CRM / MAP & Web Visitor ID setup](/configuring/integrations/crm-map-setup) · [Behind-the-form setup](/configuring/integrations/behind-the-form)

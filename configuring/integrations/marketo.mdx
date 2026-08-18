@@ -1,0 +1,132 @@
+---
+title: "Marketo Integration"
+description: "How the 1mind Superhuman reads from and writes to Marketo to personalize conversations, qualify leads, and enrich nurture."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  **Migrated from the developer-docs Marketo Integration guide (source updated Jul
+  30, 2026).** Faithful port pending review. Supersedes the older "Marketo
+  integration guide (UPDATE)" backlog row — reconcile before publish.
+</Info>
+
+## Introduction
+
+The 1mind Superhuman acts as an always-on online BDR and Sales Engineer
+(MEDDPICC / BANT / SPICED). This guide details its integration with **Marketo**:
+using your Person data and activity history, it personalizes engagement, identifies
+high-intent leads, and routes them to sales — or adds them to nurture — with
+summarized and detailed insights.
+
+## Integration approach
+
+- **Intelligent pre-processing (read):** access Person data and summarized activity so conversations are informed from the first interaction, optimized for speed.
+- **Actionable post-processing (write):** update Marketo records with qualification details, engagement signals, conversation summaries, and full transcript.
+- **Accelerated workflow enhancement:** integrate with your existing programs and sales processes — route qualified leads to sales or into Smart Campaigns for nurture.
+
+### What pre-processing reads
+
+- **Person/Lead:** `GET /rest/v1/lead/{id}.json`, `GET /rest/v1/leads.json` (batch by email/filter). Fields: name, email, job title, company, industry, lead score, acquisition program, and custom scoring fields.
+- **Activity insights (summarized):** use custom aggregated fields (`Recent_Web_Activity__c`, `Aggregated_Email_Engagement_Score__c`, `Last_Content_Topic__c`, `Recent_Program_Memberships__c`, `Intent_Activity_Score__c`) populated via Smart Campaigns, batch workflows, or Data Value Change triggers — instead of querying raw activity records.
+- **Program membership:** `GET /rest/v1/leads/{leadId}/programs.json` to detect content engagement, event attendance, and webinar registrations.
+
+### What post-processing writes
+
+- 1mind-derived insights, qualification metadata, conversation summaries, full transcript
+- API: `POST /rest/v1/leads.json` with `action=createOrUpdate`, including custom fields
+- Optional: custom objects, full conversation URLs, structured summaries
+
+## Part 1: Use cases
+
+<AccordionGroup>
+  <Accordion title="1. On-demand product exploration & feature deep dive">
+    Superhuman engages as a Sales Engineer, presenting slides/specs on demand.
+    **Reads** `marketoContactId`, `Previous_Product_Interest__c`,
+    `Is_Existing_Customer__c` (optionally `GET /activities.json` for recent visits).
+    **Writes** `1mind_Product_Interest_Detail__c`,
+    `1mind_Technical_Questions_Asked__c`, `1mind_Pricing_Discussion_Level__c`,
+    `1mind_Proposed_Use_Cases__c`, `1mind_Summary__c`, `1mind_Top_Topics__c`,
+    `Full_Transcript__c`.
+  </Accordion>
+  <Accordion title="2. On-demand content presentation & instant qualification">
+    Superhuman presents whitepapers/case studies interactively. **Reads** Person
+    fields, `Recent_Content_Topic__c`, `Content_Engagement_Score__c`, content
+    programs. **Writes** `1mind_Content_Consumed_Via_Agent__c`,
+    `1mind_Content_Areas_of_Interest__c`, `1mind_Content_Related_Pains__c`,
+    `1mind_Summary__c`, `1mind_Top_Topics__c`, `Full_Transcript__c`.
+  </Accordion>
+  <Accordion title="3. Hyper-personalized engagements from email campaigns">
+    Superhuman greets by name and references recent campaign interest. **Reads**
+    lead score, recent campaign ID, `Last_Email_Click_Topic__c` (via
+    `GET /leads.json` by email). **Writes** `1mind_Campaign_Engagement_Depth__c`,
+    `1mind_Email_Content_Follow_Up_Topic__c`, `1mind_Summary__c`,
+    `1mind_Top_Topics__c`, `Full_Transcript__c`.
+  </Accordion>
+  <Accordion title="4. Re-engaging stalled opportunities & warming cold leads">
+    Superhuman re-engages with context. **Reads** `marketoContactId`, Opportunity
+    ID, `Last_Activity_Date`, `Current_Sales_Stage__c`, `Prior_Objections__c`.
+    **Writes** `1mind_Re_Engagement_Reason__c`,
+    `1mind_Previous_Objections_Addressed__c`, `1mind_New_Competitive_Insights__c`,
+    `1mind_Summary__c`, `1mind_Top_Topics__c`, `Full_Transcript__c`.
+  </Accordion>
+  <Accordion title="5. Intelligent event follow-up & post-webinar qualification">
+    Superhuman follows up with attendees and can re-present webinar content.
+    **Reads** `marketoContactId`, webinar/event attended status
+    (`GET /leads/{leadId}/programs.json` or `Last_Webinar_Attended__c`). **Writes**
+    `1mind_Webinar_Key_Takeaways__c`, `1mind_Follow_Up_Content_Interest__c`,
+    `1mind_Summary__c`, `1mind_Top_Topics__c`, `Full_Transcript__c`.
+  </Accordion>
+</AccordionGroup>
+
+## Part 2: Technical integration
+
+### Access & authentication
+
+Recommended: a **Marketo Custom Service with OAuth 2.0 (Client Credentials
+Grant)** — created in **Admin → LaunchPoint**, token endpoint
+`/identity/oauth/token` with `client_id` and `client_secret`. Least-privilege
+scope:
+
+- **Read (pre-processing):** Read Activities, Read Leads, Read Programs
+- **Write (post-processing):** Create/Update Leads, Create/Update Custom Objects
+
+### Data flow
+
+**Pre-processing — user identification (critical):** your web infrastructure must
+pass `marketoContactId` or `email` (from cookie, local storage, or web session) to
+the launcher — these are inputs to the Marketo Lead API. Without it, the Superhuman
+engages anonymously. **Fallback:** if a third-party vendor (ZoomInfo, 6sense)
+de-anonymizes the visitor and email is available, 1mind attempts Get Lead by Email.
+Retrieval focuses on minimal, recent data (last 1–2 email clicks, recent page
+visits, company/title/leadScore) for a fast payload; data is injected into the
+session in real time.
+
+**Post-processing — Person custom fields:** `1mind_Qualification_Status__c`,
+`1mind_Budget_Identified__c`, `1mind_Authority_Identified__c`,
+`1mind_Need_Pain_Points__c`, `1mind_Timeline_Identified__c`,
+`1mind_Impact_Discussed__c`, `1mind_Decision_Criteria__c`,
+`1mind_Champion_Identified__c`, `1mind_Competition_Discussed__c`,
+`1mind_Product_Interest__c`, `1mind_Next_Steps_Proposed__c`,
+`1mind_Engagement_Duration_Seconds__c`, `1mind_Conversation_Topics__c`,
+`1mind_Explicit_Opt_in_Preferences__c`.
+
+**Custom object (`1mind_Superhuman_Interaction__c`)** for richer derived insight:
+`Derived_Urgency_Indicator__c`, `Derived_Key_Themes_Discussed__c`,
+`Derived_Specific_Objections_Raised__c`, `Derived_Competitive_Mentions__c`,
+`Derived_Ideal_Customer_Profile_Fit__c`, `Derived_Opportunity_Expansion_Signals__c`,
+`Derived_Follow_Up_Call_Guidance__c`, `Derived_Resources_Presented_Detail__c`,
+`Derived_Action_Proposed_By_Agent__c`, plus `1mind_Summary__c`,
+`1mind_Top_Topics__c`, and `Full_Transcript__c` (long text, ~30K min).
+
+### Objects & fields
+
+- **Objects:** Person (core), Activity (history), Program (attribution), optional Custom Object (derived insight).
+- **Read:** `id, firstName, lastName, email, company, title, industry, leadScore, lastActivityDate`, CRM sync IDs, and recent activities (page visits, email clicks, form fillouts, content downloads).
+- **Write:** the `1mind_` Person fields above and the custom-object fields.
+
+### Workflow, reporting, and environment
+
+- **Workflow:** setting `1mind_Qualification_Status__c = "1QL"` (or a high-intent derived field) triggers your existing Marketo Flow Steps — owner assignment (synced to CRM), AE/BDR task creation, and alert emails. Relies on your Marketo–CRM sync to push `1mind_` fields to the CRM.
+- **Reporting:** track `1mind_Qualification_Status__c` conversions and lead-score changes in Marketo; conversion-to-Opportunity in CRM; and raw 1mind data (JSON/CSV to S3/warehouse) for bespoke dashboards (engagements, conversion rates, avg engagement time, top topics, objections, competitive mentions, BDR/SDR time saved).
+- **Environment:** request Sandbox/Production access, define testing scenarios (known vs. anonymous, qualified vs. unqualified), phased deployment, and collaborate with Marketo/Web/CRM/Data Engineering teams.

@@ -1,0 +1,132 @@
+---
+title: "Salesforce Integration"
+description: "How the 1mind Superhuman reads from and writes to Salesforce to personalize conversations, qualify leads, and hand off to sales."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  **Migrated from the developer-docs Salesforce Integration guide (source updated
+  Jul 30, 2026).** Faithful port pending review. The install/authorization steps
+  live in [Salesforce OAuth & package install](/configuring/integrations/salesforce/oauth-setup).
+</Info>
+
+## Introduction
+
+The 1mind Superhuman functions as an always-on, intelligent online Business
+Development Representative and Sales Engineer, engaging prospects using
+methodologies such as MEDDPICC, BANT, and SPICED. This guide details how it
+integrates with Salesforce: by using your Leads, Contacts, and Opportunities, the
+Superhuman delivers a personalized experience, identifies high-intent prospects,
+and routes them to your sales team with automatically created Tasks containing
+summarized and detailed insights.
+
+## Integration approach
+
+- **Intelligent pre-processing (read):** rapidly access relevant Lead/Contact data and activity history so every conversation is informed and personalized from the first interaction — optimized for the critical few seconds of a smooth UX.
+- **Actionable post-processing (write):** update Lead/Contact records with qualification details and engagement signals, and create actionable Tasks for the sales team.
+- **Accelerated workflow enhancement:** integrate with your existing Salesforce processes, Assignment Rules, and workflows to accelerate the flow of qualified leads.
+
+### What pre-processing reads
+
+Core fields from Lead/Contact plus summarized activity:
+
+- **Lead/Contact:** `GET /services/data/v58.0/sobjects/Lead/{Id}` and `/Contact/{Id}`; e.g. `SELECT Id, FirstName, LastName, Email, Company, Title, Industry, LeadScore__c, LeadSource, Status, Rating FROM Lead WHERE Email = '{email}'`
+- **Fields extracted:** name, email, job title, company, industry, lead score/source, rating/status, and custom scoring fields (e.g., `Aggregated_Content_Engagement_Score__c`).
+- **Activity insights (summarized):** rather than querying thousands of raw activity records, use custom aggregated fields (`Recent_Web_Activity__c`, `Aggregated_Email_Engagement_Score__c`, `Last_Content_Topic__c`, `Recent_Campaign_Responses__c`, `Intent_Activity_Score__c`) populated via Flow, Apex triggers, or scheduled batch jobs.
+- **Campaign membership:** `CampaignMember` to detect content engagement, event attendance, and webinar registrations.
+
+### What post-processing writes
+
+- LLM-derived insights and qualification metadata on Lead/Contact records
+- Conversation summaries
+- Automatically created Tasks for follow-up
+- APIs: `PATCH /sobjects/Lead/{Id}`, `PATCH /sobjects/Contact/{Id}`, `POST /sobjects/Task`
+- Optional: custom objects for detailed conversation storage, attachments, structured summaries
+
+## Part 1: Use cases
+
+<AccordionGroup>
+  <Accordion title="1. On-demand product exploration & feature deep dive">
+    A prospect exploring a product is engaged by the Superhuman as a Sales Engineer — answering technical/pricing questions, presenting slides or spec PDFs on demand, and gathering demo requirements. **Reads** Lead/Contact ID, `Previous_Product_Interest__c`, `Is_Existing_Customer__c`. **Writes** `1mind_Product_Interest_Detail__c`, `1mind_Technical_Questions_Asked__c`, `1mind_Pricing_Discussion_Level__c`, `1mind_Proposed_Use_Cases__c`, `1mind_Summary__c`, `1mind_Top_Topics__c`, `1mind_Engagement_Score__c`, plus a High-priority "1mind Superhuman Product Interest Follow-up" Task due within 24h.
+  </Accordion>
+  <Accordion title="2. On-demand content presentation & instant qualification">
+    The Superhuman presents whitepapers/ebooks/case studies interactively and qualifies in real time. **Reads** Lead/Contact core fields, `Recent_Content_Topic__c`, `Content_Engagement_Score__c`, content-related CampaignMember records. **Writes** `1mind_Content_Consumed_Via_Agent__c`, `1mind_Content_Areas_of_Interest__c`, `1mind_Content_Related_Pains__c`, `1mind_Summary__c`, `1mind_Qualification_Stage__c`, plus a "Content Follow-up" Task.
+  </Accordion>
+  <Accordion title="3. Hyper-personalized engagements from email campaigns">
+    Prospects clicking email campaigns meet a Superhuman that knows their context. **Reads** Lead Score, recent campaign responses, `Last_Email_Click_Topic__c`, `Campaign_Engagement_Score__c`. **Writes** `1mind_Campaign_Engagement_Depth__c`, `1mind_Email_Follow_Up_Interest__c`, `1mind_Campaign_Source__c`, `1mind_Next_Best_Action__c`, plus a "Campaign Response Follow-up" Task related to the originating Campaign.
+  </Accordion>
+  <Accordion title="4. Re-engaging stalled opportunities & warming cold leads">
+    The Superhuman re-engages with contextual outreach. **Reads** Opportunity info, last activity dates, `Current_Sales_Stage__c`, `Prior_Objections__c`, `Stall_Reason__c`. **Writes** `1mind_Re_Engagement_Reason__c`, `1mind_Previous_Objections_Addressed__c`, `1mind_New_Requirements_Identified__c`, `1mind_Competitive_Intelligence__c`, plus a High-priority "Re-engagement" Task.
+  </Accordion>
+  <Accordion title="5. Intelligent event follow-up & post-webinar qualification">
+    The Superhuman follows up with attendees, clarifies doubts, and can re-present webinar content. **Reads** event attendance/CampaignMember status, `Last_Event_Attended__c`, `Webinar_Engagement_Score__c`. **Writes** `1mind_Event_Key_Takeaways__c`, `1mind_Follow_Up_Content_Interest__c`, `1mind_Event_Qualification_Score__c`, plus an "Event Follow-up" Task due within 48h.
+  </Accordion>
+</AccordionGroup>
+
+## Part 2: Technical integration
+
+### Access & authentication
+
+1mind uses **OAuth 2.0**; the **Connected App is managed by 1mind**, so no
+customer-side Connected App configuration is required. 1mind provides an OAuth
+authorization URL per environment (Sandbox, Production); a Salesforce admin
+completes the flow signed in as the designated **integration user**. (Full steps:
+[Salesforce OAuth & package install](/configuring/integrations/salesforce/oauth-setup).)
+
+### Integration user
+
+Use a **dedicated integration/service account** (not an individual employee):
+created specifically for 1mind, governed by least-privilege access, and independent
+of any one employee for continuity and audit. Assign only the required Profile
+and/or Permission Sets, and restrict object permissions, field-level security, and
+record access to the minimum scope.
+
+### Minimum object permissions
+
+- **Read (pre-processing):** Lead, Contact, Task, Event, Campaign, CampaignMember
+- **Create/Update (post-processing):** Lead, Contact, Task
+
+No broader administrative or unrestricted data access is required for a standard
+deployment; field-level security should expose only the fields 1mind uses.
+
+### Data flow
+
+**Pre-processing — user identification (critical):** your web infrastructure must
+identify known Leads/Contacts by extracting their Salesforce ID or hashed email
+from cookies, local storage, or web session variables. Without it, the Superhuman
+treats the visitor as anonymous with generic qualification. If the Salesforce ID
+isn't available but an email is, 1mind attempts a Lead/Contact lookup by email.
+Retrieved data is injected into the session in real time.
+
+**Post-processing — enrichment fields** (written to Lead/Contact):
+`1mind_Qualification_Status__c`, `1mind_Budget_Identified__c`,
+`1mind_Authority_Identified__c`, `1mind_Need_Pain_Points__c`,
+`1mind_Timeline_Identified__c`, `1mind_Decision_Criteria__c`,
+`1mind_Champion_Identified__c`, `1mind_Competition_Mentioned__c`,
+`1mind_Product_Interest__c`, `1mind_Engagement_Duration__c`,
+`1mind_Engagement_Quality_Score__c`.
+
+**Task creation** — standard fields (Subject, Description, WhoId, WhatId, OwnerId,
+Priority, Status, Type = "1mind Follow-up", CallType) plus custom fields
+(`1mind_Conversation_ID__c`, `1mind_Qualification_Score__c`,
+`1mind_Key_Topics_Discussed__c`, `1mind_Recommended_Next_Action__c`,
+`1mind_Objections_Identified__c`, `1mind_Resources_Shared__c`).
+
+**Advanced LLM-derived insights:** `Derived_Urgency_Indicator__c`,
+`Derived_Budget_Range__c`, `Derived_Decision_Timeline__c`,
+`Derived_Buying_Stage__c`, `Derived_Competitive_Pressure__c`,
+`Derived_Technical_Complexity__c`, `Derived_Stakeholder_Map__c`,
+`Derived_Risk_Factors__c`, `Derived_Expansion_Opportunity__c`.
+
+### Objects & fields
+
+- **Objects:** Lead (net-new prospects), Contact (existing/converted), Task (follow-up), Campaign/CampaignMember (attribution), Opportunity (deal context).
+- **Read:** Lead/Contact core fields + engagement history (Tasks, Events, CampaignMember, custom scoring).
+- **Write:** the `1mind_`-prefixed custom fields above, and a Task with the custom fields above.
+
+### Workflow, reporting, and testing
+
+- **Workflow:** highly qualified interactions can trigger direct AE assignment (bypassing SDR triage); integrate via Process Builder/Flow, Assignment Rules, and Email Alerts. Auto-created Tasks are the primary handoff mechanism.
+- **Reporting:** native Lead/Contact/Task/Campaign reports on the `1mind_` fields; KPIs include engagement rate by source, qualification conversion, time-to-opportunity, and revenue attribution. Full transcripts can be stored externally with Salesforce ID linkage.
+- **Testing/deployment:** validate known vs. anonymous users, Lead vs. Contact handling, and Task creation/assignment in Sandbox; phased rollout with performance and API-usage monitoring.

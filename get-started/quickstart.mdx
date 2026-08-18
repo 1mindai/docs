@@ -1,0 +1,118 @@
+---
+title: "Build your first Superhuman"
+description: "End-to-end quickstart: create a Superhuman, connect its Persona and knowledge, test the full experience in Sandbox, and release both paths to Production."
+contentType: "tutorial"
+status: "draft"
+---
+
+<Info>
+  Distilled from the July 19 Full Documentation Pass (internal Services set, approved by Devon for build). Customer-facing; pending doc-approver sign-off before publish.
+</Info>
+
+This quickstart walks through building a new Superhuman, connecting its customer-facing identity and knowledge, testing the complete experience in Sandbox, and releasing it to Production.
+
+<Note>
+  There are **two separate Production paths**, and promoting one does not promote the other:
+  1. **Brain and Knowledge** are published as a frozen Sandbox release and promoted through **Release Management**.
+  2. **Deployment configuration** is saved, previewed, and promoted from the deployment editor.
+
+  Complete and verify both when a launch changes the Superhuman *and* its deployment.
+</Note>
+
+## Before you begin
+
+Confirm you can create/manage Superhumans, Personas, workspace knowledge, and deployments in the intended workspace, and that you have approved customer-facing copy, brand assets, URLs, knowledge, consent language, and test data. If a page or action is missing, ask a workspace administrator to review your access rather than working around it in another workspace.
+
+## 1. Create the Superhuman
+
+1. In the workspace navigation, open **Manage Superhumans**.
+2. Select **Create Superhuman**.
+3. Enter a clear internal **Superhuman name** (console-only label).
+4. Open **Brain Template** and choose an available template.
+5. Select **Create**, then open the Superhuman and confirm its name in the selector.
+
+Both a name and a Brain Template are required before **Create** is available. This name helps teammates identify the Superhuman; it is not what visitors see.
+
+## 2. Create or select the Persona
+
+A Persona belongs to the workspace and can be reused. Create it before configuring the deployment.
+
+1. Switch the sidebar to **Workspace** and open **Personas**.
+2. Reuse an existing Persona only when its identity, voice, languages, and behavior fit.
+3. Otherwise create one: choose an appearance, set the customer-facing name and identity, configure voice, add every required language, review behavior controls, and save.
+
+Creating a Persona does not attach it — you select it later in **Deployment → Basics → About**.
+
+## 3. Prepare a reusable knowledge source
+
+1. In the workspace navigation, open **Knowledge Hub** and select **Add document**.
+2. Choose **Upload file**, **Add from URL** (single page, URL list, or crawl), or **Add integrations**.
+3. Add tags and any source instructions; set **Presentable** only if assets may be shown to visitors.
+4. Complete the flow and wait for processing to finish (**Completed**).
+
+A successful upload confirms ingestion only — it does not publish anything to Sandbox or Production.
+
+## 4. Enable the source for this Superhuman
+
+1. Open the Superhuman and confirm **Sandbox** is selected.
+2. Open **Superhuman Knowledge** → **Add document → Add from Knowledge Hub**.
+3. Add the exact workspace source and confirm it appears with a **Completed** status.
+
+**Completed** means processing finished, not that the source is published.
+
+## 5. Configure the Brain in Sandbox
+
+1. Open **Brain** and confirm **Sandbox** (Production Brain is read-only).
+2. Complete required **Setup → Superhuman Info** fields; define company context, role, audience, goal, and success criteria.
+3. Add approved destinations in **Links**, a consistent style in **Behavior**, and current guidance in **Content**.
+4. Configure the greeting, and enable only the tools, skills, and variables the first experience needs.
+5. Wait for the **Saved** indicator before leaving.
+
+<Warning>Never store passwords, API keys, or other secrets in Brain fields or variables. **Saved** means the draft persisted — not that it was published to Sandbox or promoted to Production.</Warning>
+
+## 6. Publish Brain and Knowledge to Sandbox
+
+1. Confirm Brain shows **Saved** and knowledge has finished processing.
+2. Select **Publish to Sandbox**, then choose **Brain** and/or **Knowledge** for the release.
+3. Resolve any validation messages, review the change summary, and complete the publish.
+
+A component left unselected keeps the version from the previous Sandbox release. Publishing to Sandbox does not change Production.
+
+## 7. Create and configure the deployment
+
+1. Inside the Superhuman, open **Deployments → Create deployment**.
+2. In **Basics → About**, select the Persona and confirm the identity card.
+3. Configure **Experience Builder** (surface, template, theme, brand colors, content, CTA, consent).
+4. Configure **Context** (deployment variables, optional deployment goal), **Campaign Tracking**, and **Launch Settings** (authorized domains only).
+5. Save and confirm no placeholder copy, private URL, secret, or unapproved asset remains.
+
+## 8. Preview and test in Sandbox
+
+Start a new test conversation against the Sandbox release and verify the Persona identity, Brain behavior and boundaries, each enabled knowledge source, deployment-specific settings, and at least one edge case (missing variable, unsupported request, unmatched page, alternate language).
+
+## 9. Promote the Superhuman release to Production
+
+1. Open **Release Management** and confirm the current Sandbox release matches what you tested.
+2. Select the Superhuman-level **Promote to Production**, review the current-versus-incoming summary, and add a release note.
+3. Complete the action and confirm the promoted release is current in **Version History → Production**.
+
+Production promotion moves the complete frozen snapshot — it is not a second chance to pick individual components.
+
+## 10. Promote the deployment separately
+
+<Warning>Selecting the inline **Promote to Production** action immediately promotes the saved deployment, with no intervening confirmation dialog. Treat it as the final Production action.</Warning>
+
+Confirm the correct Superhuman and deployment, that the saved configuration is exactly what you tested, and that the intended Brain/Knowledge release is current in Production. Then promote, and verify before sharing or installing the launcher code.
+
+## 11. Verify Production
+
+Run a short end-to-end smoke test through the live surface: Persona identity, one core Brain behavior and one boundary, one knowledge-dependent question, and the primary CTA/handoff. Record the released version, deployment, time, and result per your launch process. If Production differs from Sandbox, stop rollout and compare release, deployment, Persona, knowledge version, launch domain, and session inputs before changing anything.
+
+## Rollback cautions
+
+- **Release Management → Version History → Production → Revert** restores an earlier Brain/Knowledge snapshot; it does not restore deployment configuration or a deleted Knowledge Hub source.
+- Deleting a Superhuman is permanent and removes every deployment beneath it. Archive a deployment (seven-day restore window) instead of deleting to stop new sessions.
+
+## Related
+
+- [Platform overview & navigation](/get-started/platform-overview) · [Manage Superhumans](/using/superhumans/manage) · [Personas](/using/deployments/personas) · [Knowledge Hub](/configuring/knowledge/overview) · [Create & configure a deployment](/using/deployments/create-and-configure)
