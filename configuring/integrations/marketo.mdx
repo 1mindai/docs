@@ -102,22 +102,41 @@ Retrieval focuses on minimal, recent data (last 1–2 email clicks, recent page
 visits, company/title/leadScore) for a fast payload; data is injected into the
 session in real time.
 
-**Post-processing — Person custom fields:** `1mind_Qualification_Status__c`,
-`1mind_Budget_Identified__c`, `1mind_Authority_Identified__c`,
-`1mind_Need_Pain_Points__c`, `1mind_Timeline_Identified__c`,
-`1mind_Impact_Discussed__c`, `1mind_Decision_Criteria__c`,
-`1mind_Champion_Identified__c`, `1mind_Competition_Discussed__c`,
-`1mind_Product_Interest__c`, `1mind_Next_Steps_Proposed__c`,
-`1mind_Engagement_Duration_Seconds__c`, `1mind_Conversation_Topics__c`,
-`1mind_Explicit_Opt_in_Preferences__c`.
+**Post-processing — Person custom fields.** Provision these on the Marketo Person record:
+
+| Field | Type / example values |
+| --- | --- |
+| `1mind_Qualification_Status__c` | Qualification status |
+| `1mind_Budget_Identified__c` | Text / Currency |
+| `1mind_Authority_Identified__c` | Text |
+| `1mind_Need_Pain_Points__c` | Long Text |
+| `1mind_Timeline_Identified__c` | Text |
+| `1mind_Impact_Discussed__c` | Long Text |
+| `1mind_Decision_Criteria__c` | Long Text |
+| `1mind_Champion_Identified__c` | Text |
+| `1mind_Competition_Discussed__c` | Text |
+| `1mind_Product_Interest__c` | Text |
+| `1mind_Next_Steps_Proposed__c` | Text |
+| `1mind_Engagement_Duration_Seconds__c` | Number |
+| `1mind_Conversation_Topics__c` | e.g., "Pricing", "Features", "Integration", "Support" |
+| `1mind_Explicit_Opt_in_Preferences__c` | Checkbox / Text |
 
 **Custom object (`1mind_Superhuman_Interaction__c`)** for richer derived insight:
-`Derived_Urgency_Indicator__c`, `Derived_Key_Themes_Discussed__c`,
-`Derived_Specific_Objections_Raised__c`, `Derived_Competitive_Mentions__c`,
-`Derived_Ideal_Customer_Profile_Fit__c`, `Derived_Opportunity_Expansion_Signals__c`,
-`Derived_Follow_Up_Call_Guidance__c`, `Derived_Resources_Presented_Detail__c`,
-`Derived_Action_Proposed_By_Agent__c`, plus `1mind_Summary__c`,
-`1mind_Top_Topics__c`, and `Full_Transcript__c` (long text, ~30K min).
+
+| Field | Type / example values |
+| --- | --- |
+| `Derived_Urgency_Indicator__c` | High, Medium, Low, None |
+| `Derived_Key_Themes_Discussed__c` | Top 3–5 themes (e.g., "Scalability Needs", "Integration Challenges", "Cost Concerns") |
+| `Derived_Specific_Objections_Raised__c` | Long Text |
+| `Derived_Competitive_Mentions__c` | Competitors named by the prospect |
+| `Derived_Ideal_Customer_Profile_Fit__c` | Score / Rating |
+| `Derived_Opportunity_Expansion_Signals__c` | Long Text |
+| `Derived_Follow_Up_Call_Guidance__c` | Long Text |
+| `Derived_Resources_Presented_Detail__c` | Long Text |
+| `Derived_Action_Proposed_By_Agent__c` | e.g., "Schedule Demo", "Connect with AE", "Provide Custom Quote" |
+| `1mind_Summary__c` | Long Text |
+| `1mind_Top_Topics__c` | Long Text |
+| `Full_Transcript__c` | Long Text (~30K min) |
 
 ### Objects & fields
 
