@@ -6,8 +6,10 @@ status: "draft"
 ---
 
 <Info>
-  **Migrated from the developer-docs "Using the OnemindSDK" (source Apr 2026).**
+  **Migrated from the developer-docs "Using the OnemindSDK" (source Apr 2026),
+  plus `showPrompt` documented from the shipped implementation (Sep 2026).**
   Faithful port pending review — confirm method signatures are current before publish.
+  This page does not yet cover every method the SDK exposes.
 </Info>
 
 The OnemindSDK is automatically embedded into your site's global `window` object.
@@ -122,6 +124,83 @@ onemind.v1.startConversation()
 }}>
   Start Conversation
 </button>
+```
+
+### `showPrompt`
+
+Shows a short text bubble above the collapsed widget. Use it to nudge a visitor
+based on what they are doing on your page — for example, offering a walkthrough
+of the feature they just scrolled past.
+
+```javascript
+const result = await onemind.v1.showPrompt({
+  text: "Looking at routing? I can walk you through it.",
+  durationMs: 0
+})
+```
+
+**Parameters** — `payload`: an object.
+
+| Field | Type | Required | Default | Notes |
+| --- | --- | --- | --- | --- |
+| `text` | string | Yes | — | The message to show. 1–200 characters after surrounding whitespace is trimmed. Longer copy is rejected, never truncated. |
+| `durationMs` | number | No | `0` | `0` keeps the prompt on screen until it is dismissed or replaced. A positive integer auto-hides it after that many milliseconds. Must be a whole number between `0` and `2147483647` (about 24.8 days). |
+
+**Response** — resolves to `{ shown: true }` once the bubble is on screen, or
+`{ shown: false, reason }` when it is not. The promise rejects only when the
+widget never became reachable at all.
+
+| `reason` | Meaning |
+| --- | --- |
+| `invalid_payload` | The argument was not an object. |
+| `invalid_text` | `text` was missing, not a string, or empty after trimming. |
+| `text_too_long` | `text` was longer than 200 characters. |
+| `invalid_duration` | `durationMs` was not a whole number in range. |
+| `prompt_surface_unavailable` | No collapsed widget was on screen to hold the bubble. |
+| `superseded` | A newer `showPrompt` call replaced this one while it was still waiting for the widget to load. |
+
+**When a prompt can show** — the widget must be collapsed. A prompt is refused
+with `prompt_surface_unavailable` while the widget is expanded or in a
+conversation, and on deployment types that have no collapsed state, such as
+full-screen experiences.
+
+**How a prompt goes away** — any of the following clears it:
+
+- The visitor closes it with the bubble's own close control.
+- `durationMs` elapses, when you set one.
+- A newer `showPrompt` call replaces it.
+- The visitor opens the widget.
+
+There is no `hidePrompt` method. A prompt sent with the default `durationMs` of
+`0` stays until one of the above happens, so pass a `durationMs` when you want
+the bubble to retire on its own.
+
+**Relationship to the configured teaser** — while a host prompt is on screen it
+takes the place of the deployment's configured welcome teaser. The two keep
+separate dismiss state: closing a host prompt does not suppress the teaser for
+the rest of the visit, and a visitor who already dismissed the teaser can still
+receive host prompts.
+
+**Timing** — you can call `showPrompt` before the widget has finished loading.
+The SDK retries for a few seconds while the widget boots. If you fire prompts
+from browsing behavior, only the newest call reaches the visitor; earlier calls
+still waiting resolve with `superseded` rather than showing a stale message.
+
+**Example** — send a prompt when a visitor lingers on a pricing section:
+
+```javascript
+try {
+  const result = await onemind.v1.showPrompt({
+    text: "Questions about pricing? I can compare the plans with you.",
+    durationMs: 30000
+  })
+
+  if (!result.shown) {
+    // ...the prompt was not displayed; inspect result.reason...
+  }
+} catch (error) {
+  // ...the widget never became reachable...
+}
 ```
 
 ## Events
