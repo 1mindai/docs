@@ -1,0 +1,50 @@
+---
+title: "Dropbox"
+description: "Connect Dropbox so a Superhuman can draw on documents stored in your Dropbox folders."
+contentType: "how-to"
+status: "draft"
+---
+
+<Info>
+  **Migrated from the developer-docs Knowledge Integrations Dropbox guide (source
+  2026).** Faithful port pending review; screenshots noted inline for re-add.
+</Info>
+
+## What you'll need
+
+- **Workspace Admin** or **Super Admin** access in the 1mind Console.
+- A Dropbox account that can access the folders you want to sync.
+
+## Setup
+
+<Steps>
+  <Step title="Add the Dropbox connector">
+    In the Console, open **Knowledge → Integrations** and choose **Dropbox**.
+    {/* screenshot: connector gallery */}
+  </Step>
+  <Step title="Sign in with Dropbox">
+    Authenticate with Dropbox (OAuth) and grant 1mind read access.
+    {/* screenshot: Dropbox OAuth consent */}
+  </Step>
+  <Step title="Select folders to sync">
+    Choose the Dropbox folders to include.
+    {/* screenshot: folder picker */}
+  </Step>
+  <Step title="Set sync frequency">
+    Pick every 1, 3, 6, 12, or 24 hours.
+  </Step>
+  <Step title="Review drafts and publish">
+    Synced files arrive as drafts in your Sandbox — review and publish to go live.
+  </Step>
+</Steps>
+
+## Good to know
+
+- One Dropbox connection per workspace.
+- 100MB per-file limit; keep files under 50MB for reliable processing.
+- Edits and deletes at the source flow through on the next sync.
+
+## Related
+
+- [Setup, troubleshooting & FAQ](/configuring/knowledge/integrations/setup-troubleshooting-faq)
+- [Knowledge integrations overview](/configuring/knowledge/integrations/overview)

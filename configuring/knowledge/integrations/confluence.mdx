@@ -1,0 +1,56 @@
+---
+title: "Confluence"
+description: "Connect Confluence Cloud so a Superhuman can draw on pages in your Confluence spaces."
+contentType: "how-to"
+status: "draft"
+---
+
+<Info>
+  **Migrated from the developer-docs Knowledge Integrations Confluence guide (source
+  2026).** Faithful port pending review; screenshots noted inline for re-add.
+</Info>
+
+## What you'll need
+
+- **Workspace Admin** or **Super Admin** access in the 1mind Console.
+- **Confluence Cloud** (Confluence Server / Data Center is not supported).
+- Your Confluence **username (email)**, **site domain**, and an **API token**.
+
+## Setup
+
+<Steps>
+  <Step title="Create a Confluence API token">
+    In your Atlassian account, generate an **API token** for the user that will
+    authorize the connection.
+    {/* screenshot: Atlassian API token page */}
+  </Step>
+  <Step title="Add the Confluence connector in 1mind">
+    In the Console, open **Knowledge → Integrations** and choose **Confluence**.
+    {/* screenshot: connector gallery */}
+  </Step>
+  <Step title="Enter your Confluence details">
+    Provide your **username (email)**, Confluence **site domain**, and the **API
+    token**, then authenticate.
+    {/* screenshot: Confluence credential entry */}
+  </Step>
+  <Step title="Select spaces to sync">
+    Choose the Confluence spaces or pages to include.
+    {/* screenshot: space picker */}
+  </Step>
+  <Step title="Set sync frequency and publish">
+    Pick every 1, 3, 6, 12, or 24 hours. Synced pages arrive as drafts in your
+    Sandbox — review and publish to go live.
+  </Step>
+</Steps>
+
+## Good to know
+
+- **Cloud only** — Confluence Server / Data Center is not supported.
+- One Confluence connection per workspace.
+- 100MB per-file limit; keep files under 50MB for reliable processing.
+- Edits and deletes at the source flow through on the next sync.
+
+## Related
+
+- [Setup, troubleshooting & FAQ](/configuring/knowledge/integrations/setup-troubleshooting-faq)
+- [Knowledge integrations overview](/configuring/knowledge/integrations/overview)

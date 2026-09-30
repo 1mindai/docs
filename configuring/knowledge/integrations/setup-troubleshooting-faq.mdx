@@ -1,0 +1,99 @@
+---
+title: "Setup, troubleshooting & FAQ"
+description: "The shared setup flow, troubleshooting steps, and frequently asked questions that apply to every knowledge connector."
+contentType: "how-to"
+status: "draft"
+---
+
+<Info>
+  **Migrated from the developer-docs Knowledge Integrations setup/troubleshooting/FAQ
+  guide (source 2026).** Faithful port pending review; screenshots noted inline for
+  re-add. Applies to all connectors — per-source specifics live in each connector
+  guide.
+</Info>
+
+## Before you begin
+
+- You must be a **Workspace Admin** or **Super Admin** to add or manage connectors.
+- Have admin (or delegated) access to the source system so you can authenticate and grant 1mind read access.
+- Decide which folders, sites, spaces, or libraries you want synced, and how often (1, 3, 6, 12, or 24 hours).
+
+## The standard setup flow
+
+Every connector follows the same five-step pattern; per-source authentication
+details differ and are covered in each connector's guide.
+
+<Steps>
+  <Step title="Open Knowledge integrations">
+    In the 1mind Console, go to the **Knowledge** area and open **Integrations**
+    (or **Connectors**). Choose the source you want to add.
+    {/* screenshot: connector gallery */}
+  </Step>
+  <Step title="Authenticate to the source">
+    Follow the source-specific authentication flow — OAuth sign-in, or entering the
+    credentials the source requires (for example, an API token or client
+    key/secret). See the per-source guide for exactly what's needed.
+    {/* screenshot: auth screen */}
+  </Step>
+  <Step title="Select what to sync">
+    Choose the folders, drives, sites, spaces, or libraries to include. Scope this
+    to only the content you want the Superhuman to use.
+    {/* screenshot: folder/scope picker */}
+  </Step>
+  <Step title="Set the sync frequency">
+    Pick how often 1mind checks the source for changes: every 1, 3, 6, 12, or 24
+    hours.
+  </Step>
+  <Step title="Review drafts and publish">
+    Synced files arrive as **drafts** in your Sandbox. Review them, then **publish**
+    to make them available to the Superhuman. Nothing goes live until you publish.
+    {/* screenshot: Sandbox drafts + publish */}
+  </Step>
+</Steps>
+
+## How sync behaves
+
+- **New files** at the source appear as drafts on the next sync.
+- **Edits** at the source re-sync and update the corresponding knowledge.
+- **Deletes** at the source remove the corresponding knowledge on the next sync.
+- **File size:** 100MB per-file limit; keep files under 50MB for reliable processing.
+- **One connector per source type.**
+
+## Troubleshooting
+
+| Symptom | Likely cause | What to do |
+| --- | --- | --- |
+| Can't see the Integrations area | You aren't a Workspace Admin or Super Admin | Ask an admin to grant the role or add the connector |
+| Authentication fails | Wrong credentials, or the account lacks access to the source | Re-enter credentials; confirm the account can read the selected content |
+| Files aren't appearing | Sync hasn't run yet, or the folder wasn't included in scope | Wait for the next sync window; confirm the folder is selected |
+| A file synced but isn't live | It's still a draft in Sandbox | Review and publish it |
+| A large file won't process | Over the 100MB limit (or near it) | Reduce the file size; keep under 50MB |
+| A deleted source file still shows | Sync hasn't run since the delete | Wait for the next sync; deletes propagate automatically |
+
+If a problem persists, contact your 1mind CSM or [support@1mind.com](mailto:support@1mind.com).
+
+## FAQ
+
+<AccordionGroup>
+  <Accordion title="Who can set up a connector?">
+    Only Workspace Admins and Super Admins can add or manage knowledge connectors.
+  </Accordion>
+  <Accordion title="Can I connect more than one account of the same type?">
+    No — you can connect one instance of each source type.
+  </Accordion>
+  <Accordion title="Do synced files go live automatically?">
+    No. Files sync in as drafts in your Sandbox; you publish them to make them live.
+  </Accordion>
+  <Accordion title="What happens when I delete a file at the source?">
+    The corresponding knowledge is removed from 1mind on the next sync.
+  </Accordion>
+  <Accordion title="How often does content sync?">
+    You choose the frequency per connector: every 1, 3, 6, 12, or 24 hours.
+  </Accordion>
+  <Accordion title="Is there a file size limit?">
+    Yes — 100MB per file. We recommend keeping files under 50MB for reliable processing.
+  </Accordion>
+  <Accordion title="Which sources are supported?">
+    Google Drive, SharePoint, OneDrive, Box, Dropbox, Confluence (Cloud), Highspot, Salesforce (Knowledge articles), and Notion. Seismic and SFTP are in progress; Jira is in development.
+  </Accordion>
+</AccordionGroup>
