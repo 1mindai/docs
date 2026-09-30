@@ -1,0 +1,172 @@
+---
+title: "Technical design specification (example)"
+description: "A worked example of an automated website-inbound workflow — visitor identification, Marketo enrichment, 6sense intelligence, and post-conversation lead sync — for a fictional company."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  Migrated from the developer-docs Technical Design Specification Example (source Jul 29, 2025). **Illustrative worked example using a fictional company ("AcmeCorp") and example values** — adapt the objects, fields, and programs to your own environment. Faithful port pending review.
+</Info>
+
+This specification outlines an automated inbound lead-qualification workflow using a 1mind Superhuman, integrated with Marketo and 6sense for lead enrichment and routing. It enables intelligent visitor identification, personalized AI conversations, and lead handoff to sales through automated Marketo task creation. It's written as a concrete example you can use as a template for your own design.
+
+## System architecture
+
+```text
+Visitor → Website → Identity Resolution → 6sense Data (Local Storage)
+   → Superhuman → Conversation → Lead Processing → Marketo
+```
+
+Core components: an **identity resolution engine** (visitor identification and session tracking), a **6sense data layer** (account intelligence in local storage), the **Superhuman conversation engine** (interaction with enriched context), and a **lead processing pipeline** (post-conversation data handling and Marketo sync).
+
+## 1. Pre-conversation processing
+
+### 1.1 Visitor identity resolution
+
+Primary identity sources: the **Marketo Munchkin cookie** (`_mkto_trk`) for returning-visitor identification; **URL parameters** (email, UTM campaign attribution); **form data** previously captured and passed as web-session variables to the launcher; and **session storage** for cross-page tracking.
+
+| Source | Data type | Usage |
+| --- | --- | --- |
+| Munchkin cookie | Lead ID, tracking token | Primary visitor identification |
+| UTM parameters | Campaign attribution | Source tracking and attribution |
+| IP address | Geographic location | Account matching for 6sense |
+
+### 1.2 Marketo lead enrichment
+
+- **Endpoint:** `/rest/v1/leads.json`
+- **Method:** GET (lead lookup)
+- **Authentication:** OAuth 2.0 Bearer token
+- **Rate limits:** 100 calls per 20 seconds
+- **Timeout:** 5 seconds with retry logic
+
+Cookie-based lookup example:
+
+```text
+GET /rest/v1/leads.json?filterType=cookies&filterValues=id:217-LXS-149&token:_mch-AcmeCorp.com-781ac0bdee8a28ff5f0d834cad583119&fields=email,company,createdAt,id&batchSize=10
+```
+
+The launcher code reads cookies or local storage and performs backend lead lookup. Additional visitor data can be gathered from query-string parameters and HTTP headers, but this is handled server-side and not passed to the 1mind script.
+
+Retrieved Marketo fields include core identity (Lead ID, email, first/last name, company, job title, phone) and firmographics (industry, company size, annual revenue, geographic location). **Fallback strategy:** cookie-based lookup (primary) → email-based lookup (if an email parameter is available) → anonymous visitor handling (temporary session record).
+
+### 1.3 6sense account intelligence
+
+Available 6sense data points (from local storage): account name and domain, industry classification, employee-count range, annual-revenue range, intent score (0–100), intent topics/keywords, buying stage (Early, Middle, Late), technology stack, geographic location, engagement timeline, competitive intelligence, and firmographics.
+
+The Superhuman is initialized with 6sense enrichment passed through data attributes:
+
+```html
+<script
+  defer
+  src="https://launcher.1mind.com/12345"
+  data-accountName="Acme Corporation"
+  data-domain="acme.com"
+  data-industry="Technology"
+  data-employeeCount="500-1000"
+  data-annualRevenue="50M-100M"
+  data-intentScore="85"
+  data-intentTopics="AI automation, workflow optimization"
+  data-buyingStage="Decision"
+  data-location="San Francisco, CA">
+</script>
+```
+
+Marketo lead data is retrieved server-side via cookie lookup and automatically enriches the AI context; query-string parameters and HTTP headers are also processed server-side for additional attribution.
+
+## 2. Post-conversation processing
+
+### 2.1 Conversation data capture
+
+The Superhuman captures the **full transcript**, an AI-generated **summary**, and **top topics**. For this example, conversation data is concatenated into a single formatted string written to the Marketo Contact field `tempText`:
+
+```text
+**CONVERSATION SUMMARY:**
+[AI-generated summary of the conversation]
+
+**KEY TOPICS DISCUSSED:**
+- Topic 1
+- Topic 2
+- Topic 3
+
+**FULL TRANSCRIPT:**
+[Complete conversation transcript with timestamps]
+```
+
+### 2.2 Marketo REST API integration
+
+Required endpoints:
+
+- **Lead lookup by cookie (pre-conversation):** `GET /rest/v1/leads.json`
+- **Lead upsert (post-conversation):** `POST /rest/v1/leads.json`
+- **Add lead to program:** `POST /rest/v1/leads/programs/{programId}/status.json`
+- **OAuth token management:** `POST /identity/oauth/token`
+
+Add-to-program request payload:
+
+```json
+{
+  "input": [
+    {
+      "email": "jane@acme.com",
+      "status": "Responded",
+      "membershipDate": "2025-06-17T10:30:00Z",
+      "acquisitionProgram": true
+    }
+  ]
+}
+```
+
+### 2.3 Field mapping by implementation phase
+
+| Category | Field | Marketo field | Phase 1 | Later | Data source |
+| --- | --- | --- | --- | --- | --- |
+| Core identity | Email | email | Required | Yes | Marketo lookup |
+| Core identity | First Name | firstName | Yes | Yes | Marketo lookup |
+| Core identity | Last Name | lastName | Yes | Yes | Marketo lookup |
+| Core identity | Company | company | Yes | Yes | Marketo lookup |
+| Core identity | Job Title | title | Optional | Yes | Marketo lookup |
+| Lead source | Lead Source | leadSource | Required | Yes | System generated |
+| Conversation | Full Context | tempText | Required | Yes | AI conversation |
+| Attribution | UTM Campaign | utmCampaign | Optional | Yes | Session data |
+| Attribution | UTM Source | utmSource | Optional | Yes | Session data |
+| Attribution | UTM Medium | utmMedium | Optional | Yes | Session data |
+| Attribution | Current Page | currentPage | Optional | Yes | Session data |
+| Attribution | Referrer | referrerURL | Optional | Yes | Session data |
+| 6sense | Intent Score | sixsenseIntentScore | Optional | Yes | 6sense data |
+| 6sense | Intent Topics | sixsenseIntentTopics | Optional | Yes | 6sense data |
+| 6sense | Buying Stage | sixsenseBuyingStage | Optional | Yes | 6sense data |
+| 6sense | Account Name | sixsenseAccountName | Optional | Yes | 6sense data |
+| AI metadata | Qualification Status | aiQualificationStatus | Optional | Yes | AI analysis |
+| AI metadata | Qualification Score | aiQualificationScore | Optional | Yes | AI analysis |
+| AI metadata | Conversation Duration | aiConversationDuration | Optional | Yes | AI analysis |
+| AI metadata | Engagement Level | aiEngagementLevel | Optional | Yes | AI analysis |
+
+**Phase 1** prioritizes the required fields (`email`, `leadSource = "Superhuman"`, `tempText`) plus best-effort identity and attribution. Lead upsert payload (Phase 1):
+
+```json
+{
+  "action": "createOrUpdate",
+  "lookupField": "email",
+  "input": [
+    {
+      "email": "jane@acme.com",
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "company": "Acme Inc",
+      "leadSource": "Superhuman",
+      "tempText": "**CONVERSATION SUMMARY:**\nJane is evaluating AI automation tools..."
+    }
+  ]
+}
+```
+
+### 2.4 Program membership & Smart Campaign triggers
+
+Example program names (development/testing only): **Superhuman_Demo_Request** (visitors requesting a demo) and **Superhuman_Conversation_Meeting** (visitors requesting a call/meeting). Based on conversation outcomes, leads are assigned to the appropriate program with status `Responded`.
+
+A Smart Campaign triggered on **Program Status Change** (new status "Responded") runs a **Create Task** flow step: task type "Follow Up", subject "Superhuman Qualified Lead – [Company Name]", description pulled from `Lead.tempText`, assigned to the account or lead owner. Marketo tasks are synchronized with connected CRM systems through standard Marketo sync.
+
+## Related
+
+- [Pre & Post Processing](/developers/pre-post-processing) · [Marketo integration](/configuring/integrations/marketo) · [CRM, MAP & Web Visitor Identification](/configuring/integrations/crm-map-setup)

@@ -1,0 +1,143 @@
+---
+title: "Data API: Snowflake implementation"
+description: "Load 1mind Data API output into Snowflake — staging, COPY INTO, deduplication, and MERGE."
+contentType: "how-to"
+status: "draft"
+---
+
+<Info>
+  Migrated from the developer-docs Snowflake implementation guide (source Aug 13, 2026). Faithful port pending review.
+</Info>
+
+This guide covers loading 1mind data into Snowflake — staging, `COPY INTO`, deduplication, and `MERGE`. It picks up after you have an Account API Key and an extraction job producing files.
+
+<Note>**Prerequisite:** authentication, endpoints, query parameters, extraction patterns, and API-level troubleshooting are documented once, in [1mind Data API](/developers/data-api/overview). This page does not repeat them — read it first.</Note>
+
+## Flow
+
+```text
+1mind Data API
+      |
+      v
+Your extraction job or ETL platform
+      |
+      v
+S3, Google Cloud Storage, Azure Storage, or a Snowflake internal stage
+      |
+      v
+Snowflake raw table (VARIANT)
+      |
+      v
+Validation and deduplication
+      |
+      v
+MERGE into your target tables
+```
+
+Snowflake loads files from internal or external stages with `COPY INTO`. External stages can reference S3, Google Cloud Storage, or Azure locations that you control. Storage integrations let you govern access without placing long-lived cloud credentials in SQL.
+
+## Step 1 — Extract and land
+
+Point your extraction job at a date-partitioned path with unique filenames, so any file can be traced and replayed:
+
+```text
+s3://your-data/1mind/conversations/load_date=2026-07-02/part-0001.ndjson
+```
+
+Newline-delimited JSON is the natural landing format for the `GET` endpoint. The CSV from the export endpoint loads equally well with a CSV file format.
+
+## Step 2 — Create the file format, stage, and raw table
+
+Because the report schema is not fixed by a published contract, use a `VARIANT` column so the payload lands without a declared structure:
+
+```sql
+CREATE FILE FORMAT IF NOT EXISTS RAW.ONE_MIND_JSON_FORMAT
+    TYPE = JSON;
+
+CREATE STAGE IF NOT EXISTS RAW.ONE_MIND_STAGE
+    URL = 's3://your-data/1mind/'
+    STORAGE_INTEGRATION = YOUR_STORAGE_INTEGRATION
+    FILE_FORMAT = RAW.ONE_MIND_JSON_FORMAT;
+
+CREATE TABLE IF NOT EXISTS RAW.ONE_MIND_REPORTS (
+    PAYLOAD      VARIANT,
+    SOURCE_FILE  STRING,
+    LOADED_AT    TIMESTAMP_TZ
+);
+```
+
+## Step 3 — Load the raw table
+
+```sql
+COPY INTO RAW.ONE_MIND_REPORTS
+    (PAYLOAD, SOURCE_FILE, LOADED_AT)
+FROM (
+    SELECT $1, METADATA$FILENAME, CURRENT_TIMESTAMP()
+    FROM @RAW.ONE_MIND_STAGE
+)
+FILE_FORMAT = (FORMAT_NAME = RAW.ONE_MIND_JSON_FORMAT)
+ON_ERROR = 'ABORT_STATEMENT';
+```
+
+If you're loading the CSV export instead, create a CSV file format and a staging table whose columns match the actual export headers you receive.
+
+<Note>Snowflake records file-loading status and avoids reloading the same staged file under normal `COPY INTO` load-history behavior. Even so, use unique filenames, deterministic paths, and target-level deduplication in production — load history is a convenience, not your deduplication strategy.</Note>
+
+## Step 4 — Inspect the payload and decide your mappings
+
+```sql
+SELECT SOURCE_FILE, PAYLOAD, LOADED_AT
+FROM RAW.ONE_MIND_REPORTS
+LIMIT 25;
+```
+
+Field access uses colon-path syntax on the `VARIANT` column, e.g. `PAYLOAD:some_field::STRING`. From real records, determine your report/conversation key, the timestamp that drives incremental processing, which fields contain personal information, which to promote into typed columns, whether records can be updated after creation, and which malformed records to reject or quarantine.
+
+## Step 5 — Merge into your target table
+
+Template only — replace `<business_key>` and the target mappings with fields confirmed from actual API output.
+
+```sql
+MERGE INTO ANALYTICS.CONVERSATIONS AS TARGET
+USING (
+    SELECT
+        PAYLOAD:<business_key>::STRING AS CONVERSATION_KEY,
+        PAYLOAD AS SOURCE_PAYLOAD,
+        LOADED_AT
+    FROM RAW.ONE_MIND_REPORTS
+    WHERE PAYLOAD:<business_key> IS NOT NULL
+    QUALIFY ROW_NUMBER() OVER (
+        PARTITION BY PAYLOAD:<business_key>::STRING
+        ORDER BY LOADED_AT DESC
+    ) = 1
+) AS SOURCE
+ON TARGET.CONVERSATION_KEY = SOURCE.CONVERSATION_KEY
+WHEN MATCHED THEN UPDATE SET
+    TARGET.SOURCE_PAYLOAD = SOURCE.SOURCE_PAYLOAD,
+    TARGET.UPDATED_AT = CURRENT_TIMESTAMP()
+WHEN NOT MATCHED THEN INSERT (CONVERSATION_KEY, SOURCE_PAYLOAD, CREATED_AT, UPDATED_AT)
+VALUES (SOURCE.CONVERSATION_KEY, SOURCE.SOURCE_PAYLOAD, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+```
+
+The `QUALIFY ROW_NUMBER()` clause collapses duplicates from overlapping extract windows, so `MERGE` sees at most one row per key.
+
+## Step 6 — Schedule, secure, and monitor
+
+**Orchestration.** Orchestrate the extraction with your existing ETL platform. For warehouse-side SQL, Snowflake Tasks can run on a schedule or be triggered by data events. For file-arrival ingestion, Snowpipe can detect files in a stage — a Snowflake-side choice, independent of the 1mind API.
+
+**Secrets and access.** Hold the Account API Key in your secrets manager and inject it at runtime. Use a storage integration to govern stage access rather than embedding cloud credentials in SQL, and apply least-privilege grants — consider tighter access on the raw payload schema than on your curated layer.
+
+**Monitor** extraction (job status, API error rate, records extracted, pagination completion), reconciliation (`total`/`recordCount` vs. rows loaded), files (count, size, unexpected/missing), load (rows parsed/loaded/rejected, `COPY INTO` errors), data quality (duplicate keys, null business keys, quarantined records), freshness (time since last load, checkpoint progression), and change (new/changed payload fields).
+
+## Snowflake-specific troubleshooting
+
+For authentication, pagination, missing records, and export-link failures, see *Troubleshooting* in [1mind Data API](/developers/data-api/overview).
+
+- **`COPY INTO` reports zero rows loaded** — Snowflake's load history skips files it has already ingested from that stage. Query the load history, or use `FORCE = TRUE` deliberately during testing only.
+- **Payload arrives as a single string rather than parsed JSON** — confirm the file format is `TYPE = JSON`, and that your extraction wrote newline-delimited JSON (one object per line, no wrapping array).
+- **Field lookups return null** — `VARIANT` path lookups are case-sensitive. `PAYLOAD:createdAt` and `PAYLOAD:created_at` are different paths.
+- **Stage access denied** — verify the storage integration's trust relationship, and that the external ID and cloud IAM policy match the values Snowflake reports.
+
+## Related
+
+- [1mind Data API](/developers/data-api/overview) · [Databricks](/developers/data-api/databricks) · [BigQuery](/developers/data-api/bigquery) · [Amazon Redshift](/developers/data-api/redshift)

@@ -1,0 +1,142 @@
+---
+title: "Data API: Databricks implementation"
+description: "Load 1mind Data API output into Databricks — Unity Catalog volumes, COPY INTO and Auto Loader, the medallion pattern, and Delta MERGE."
+contentType: "how-to"
+status: "draft"
+---
+
+<Info>
+  Migrated from the developer-docs Databricks implementation guide (source Aug 13, 2026). Faithful port pending review.
+</Info>
+
+This guide covers loading 1mind data into Databricks — Unity Catalog volumes, `COPY INTO` and Auto Loader, the medallion pattern, and Delta `MERGE`. It picks up after you have an Account API Key and an extraction job producing files.
+
+<Note>**Prerequisite:** authentication, endpoints, query parameters, extraction patterns, and API-level troubleshooting are documented once, in [1mind Data API](/developers/data-api/overview). This page does not repeat them — read it first.</Note>
+
+## Flow
+
+```text
+1mind Data API → extraction job → S3/ADLS/GCS or a Unity Catalog volume
+   → Bronze Delta table → validation/schema enforcement → Silver Delta table
+   → MERGE into your gold / reporting tables
+```
+
+Databricks recommends governing access to cloud storage with Unity Catalog external locations or volumes, which combine a storage path with a storage credential and workspace permissions. Landing files in a Unity Catalog volume keeps the whole path governed and auditable.
+
+## Step 1 — Extract and land
+
+```text
+/Volumes/main/landing/one_mind/load_date=2026-07-02/part-0001.ndjson
+```
+
+Or an external location backed by S3, ADLS, or GCS. Use date-partitioned paths and unique filenames so files can be traced and replayed.
+
+## Step 2 — Choose your ingestion path
+
+`COPY INTO` suits scheduled file batches; Auto Loader suits ongoing or larger-scale ingestion.
+
+**Option A — `COPY INTO`** (retryable and idempotent — re-running won't reload files already processed):
+
+```sql
+CREATE TABLE IF NOT EXISTS main.bronze.one_mind_reports (
+    payload      VARIANT,
+    source_file  STRING,
+    loaded_at    TIMESTAMP
+);
+
+COPY INTO main.bronze.one_mind_reports
+FROM (
+    SELECT parse_json(_c0) AS payload, _metadata.file_path AS source_file, current_timestamp() AS loaded_at
+    FROM '/Volumes/main/landing/one_mind/'
+)
+FILEFORMAT = JSON;
+```
+
+On runtimes without the `VARIANT` type, use a `STRING` column and parse on read, or let Auto Loader infer a struct.
+
+**Option B — Auto Loader** (incremental processing with schema inference and evolution — a good fit while the payload is still being characterized):
+
+```python
+source_path     = "/Volumes/main/landing/one_mind/"
+schema_path     = "/Volumes/main/checkpoints/one_mind_schema/"
+checkpoint_path = "/Volumes/main/checkpoints/one_mind_bronze/"
+
+reports = (
+    spark.readStream
+    .format("cloudFiles")
+    .option("cloudFiles.format", "json")
+    .option("cloudFiles.schemaLocation", schema_path)
+    .option("cloudFiles.schemaEvolutionMode", "rescue")
+    .load(source_path)
+)
+
+(
+    reports.writeStream
+    .option("checkpointLocation", checkpoint_path)
+    .trigger(availableNow=True)
+    .toTable("main.bronze.one_mind_reports")
+)
+```
+
+`trigger(availableNow=True)` processes everything currently available and stops, which suits a scheduled batch job.
+
+## Step 3 — Structure your medallion layers
+
+- **Bronze** — the source payload plus lineage columns (source filename, extraction and load timestamps, batch identifier, requested date range, raw payload, parsing status).
+- **Silver** — validated and typed: type conversion, field naming standards, null handling, deduplication, required-field validation, personal-information controls, rejected-record handling, and your confirmed report key.
+- **Gold** — your reporting objects (conversation facts, contact/account dimensions, topic tables, activity summaries, agent metrics). These are models you define; they aren't fields guaranteed by the API.
+
+## Step 4 — Inspect the payload before designing silver
+
+```sql
+SELECT source_file, payload, loaded_at
+FROM main.bronze.one_mind_reports
+LIMIT 25;
+```
+
+From real records, decide your business key, your incremental timestamp, which fields become typed columns, and which carry personal information.
+
+## Step 5 — Merge into silver
+
+Once your business key is confirmed:
+
+```sql
+MERGE INTO main.silver.conversations AS target
+USING main.bronze.one_mind_conversations_latest AS source
+ON target.conversation_key = source.conversation_key
+WHEN MATCHED THEN UPDATE SET *
+WHEN NOT MATCHED THEN INSERT *;
+```
+
+<Warning>`main.bronze.one_mind_conversations_latest` should be a view or table that has already collapsed duplicates from overlapping extract windows — Delta `MERGE` fails if the source supplies more than one row for the same target key.</Warning>
+
+```sql
+CREATE OR REPLACE VIEW main.bronze.one_mind_conversations_latest AS
+SELECT * EXCEPT (rn) FROM (
+    SELECT *,
+        ROW_NUMBER() OVER (PARTITION BY conversation_key ORDER BY loaded_at DESC) AS rn
+    FROM main.bronze.one_mind_conversations_typed
+)
+WHERE rn = 1;
+```
+
+## Step 6 — Schedule, secure, and monitor
+
+**Orchestration.** Databricks Lakeflow Jobs coordinate tasks, schedules, dependencies, retries, and control flow, and can run on a schedule, on file-arrival triggers, on table-update triggers, or continuously.
+
+**Secrets and access.** Hold the Account API Key in a Databricks secret scope or your own secrets manager. Govern the landing path with a Unity Catalog external location or volume, and grant the job's identity only the `READ VOLUME` / `WRITE VOLUME` permissions it needs. Consider tighter access on bronze than on silver and gold.
+
+Monitor extraction, reconciliation (`total`/`recordCount`), ingestion (new files, rows loaded, rescued/corrupt records), data quality, pipeline health (checkpoint state, stream backlog, merge results), freshness, and change. **Auto Loader's rescued-data column is worth alerting on specifically** — a non-empty rescued column is usually the first sign the payload has changed.
+
+## Databricks-specific troubleshooting
+
+For authentication, pagination, missing records, and export-link failures, see *Troubleshooting* in [1mind Data API](/developers/data-api/overview).
+
+- **`MERGE` fails with a multiple-source-rows error** — your source has more than one row per key. Collapse duplicates with a `ROW_NUMBER()` view before merging (Step 5).
+- **Auto Loader isn't picking up new files** — check the checkpoint location hasn't been reused from a different source path, and that the schema location is writable. Deleting a checkpoint reprocesses everything, so do that deliberately.
+- **Fields keep landing in `_rescued_data`** — the inferred schema no longer matches the payload. Inspect the rescued column, decide whether the new fields matter, and evolve the schema explicitly.
+- **Permission denied on a volume path** — confirm the external location's storage credential and the job identity's `READ VOLUME` / `WRITE VOLUME` grants.
+
+## Related
+
+- [1mind Data API](/developers/data-api/overview) · [Snowflake](/developers/data-api/snowflake) · [BigQuery](/developers/data-api/bigquery) · [Amazon Redshift](/developers/data-api/redshift)

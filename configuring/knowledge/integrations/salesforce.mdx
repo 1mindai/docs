@@ -1,0 +1,58 @@
+---
+title: "Salesforce Knowledge"
+description: "Connect Salesforce Knowledge articles so a Superhuman can draw on your published support and product content."
+contentType: "how-to"
+status: "draft"
+---
+
+<Info>
+  **Migrated from the developer-docs Knowledge Integrations Salesforce guide (source
+  2026).** Faithful port pending review; screenshots noted inline for re-add.
+</Info>
+
+## What you'll need
+
+- **Workspace Admin** or **Super Admin** access in the 1mind Console.
+- A Salesforce org with **Knowledge** articles, and permission to create a connected app.
+- From Salesforce: your **Instance URL**, **Consumer Key**, and **Consumer Secret** (from an External Client App / connected app).
+
+## Setup
+
+<Steps>
+  <Step title="Create an External Client App in Salesforce">
+    In Salesforce, create an External Client App (connected app) to authorize 1mind.
+    Note the **Consumer Key** and **Consumer Secret** it generates, and your org's
+    **Instance URL**.
+    {/* screenshot: Salesforce External Client App config */}
+  </Step>
+  <Step title="Add the Salesforce connector in 1mind">
+    In the Console, open **Knowledge → Integrations** and choose **Salesforce**.
+    {/* screenshot: connector gallery */}
+  </Step>
+  <Step title="Enter your Salesforce credentials">
+    Provide the **Instance URL**, **Consumer Key**, and **Consumer Secret**, then
+    authenticate.
+    {/* screenshot: Salesforce credential entry */}
+  </Step>
+  <Step title="Choose what to sync">
+    Select the Knowledge articles to include. Use the **Presentable documents** toggle
+    to control which documents are made available to the Superhuman.
+    {/* screenshot: article selection + Presentable toggle */}
+  </Step>
+  <Step title="Set sync frequency and publish">
+    Pick every 1, 3, 6, 12, or 24 hours. Synced articles arrive as drafts in your
+    Sandbox — review and publish to go live.
+  </Step>
+</Steps>
+
+## Good to know
+
+- Syncs Salesforce **Knowledge articles** (not general CRM records).
+- One Salesforce Knowledge connection per workspace.
+- 100MB per-file limit; keep files under 50MB for reliable processing.
+- Edits and deletes at the source flow through on the next sync.
+
+## Related
+
+- [Setup, troubleshooting & FAQ](/configuring/knowledge/integrations/setup-troubleshooting-faq)
+- [Knowledge integrations overview](/configuring/knowledge/integrations/overview)

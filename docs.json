@@ -105,7 +105,21 @@
               "configuring/knowledge/overview",
               "configuring/knowledge/superhuman-knowledge",
               "configuring/knowledge/website-crawling",
-              "configuring/knowledge/multilingual"
+              "configuring/knowledge/multilingual",
+              {
+                "group": "Knowledge integrations",
+                "pages": [
+                  "configuring/knowledge/integrations/overview",
+                  "configuring/knowledge/integrations/setup-troubleshooting-faq",
+                  "configuring/knowledge/integrations/google-drive",
+                  "configuring/knowledge/integrations/onedrive-sharepoint",
+                  "configuring/knowledge/integrations/box",
+                  "configuring/knowledge/integrations/dropbox",
+                  "configuring/knowledge/integrations/salesforce",
+                  "configuring/knowledge/integrations/notion",
+                  "configuring/knowledge/integrations/confluence"
+                ]
+              }
             ]
           },
           {
@@ -122,7 +136,8 @@
                 "group": "Salesforce",
                 "pages": [
                   "configuring/integrations/salesforce/overview",
-                  "configuring/integrations/salesforce/oauth-setup"
+                  "configuring/integrations/salesforce/oauth-setup",
+                  "configuring/integrations/salesforce/influence-attribution"
                 ]
               },
               "configuring/integrations/calendars",
@@ -155,7 +170,18 @@
               "developers/sdk-reference",
               "developers/tool-calls",
               "developers/pre-post-processing",
-              "developers/event-listeners"
+              "developers/event-listeners",
+              "developers/technical-design-spec-example"
+            ]
+          },
+          {
+            "group": "Data API",
+            "pages": [
+              "developers/data-api/overview",
+              "developers/data-api/snowflake",
+              "developers/data-api/databricks",
+              "developers/data-api/bigquery",
+              "developers/data-api/redshift"
             ]
           }
         ]

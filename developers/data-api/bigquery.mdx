@@ -1,0 +1,137 @@
+---
+title: "Data API: BigQuery implementation"
+description: "Load 1mind Data API output into BigQuery — Cloud Storage landing, the native JSON type, load and external-table options, and MERGE."
+contentType: "how-to"
+status: "draft"
+---
+
+<Info>
+  Migrated from the developer-docs BigQuery implementation guide (source Aug 13, 2026). Faithful port pending review.
+</Info>
+
+This guide covers loading 1mind data into BigQuery — Cloud Storage landing, the native `JSON` type, load and external-table options, and `MERGE`. It picks up after you have an Account API Key and an extraction job producing files.
+
+<Note>**Prerequisite:** authentication, endpoints, query parameters, extraction patterns, and API-level troubleshooting are documented once, in [1mind Data API](/developers/data-api/overview). This page does not repeat them — read it first.</Note>
+
+BigQuery tends to be the lowest-friction destination for this API: the export endpoint already returns a `storage.googleapis.com` URL, and BigQuery loads natively from Cloud Storage.
+
+## Flow
+
+```text
+1mind Data API → extraction job (Cloud Run, Composer, or Workflows)
+   → Cloud Storage bucket, partitioned by load date
+   → BigQuery raw table (JSON column)
+   → inspect real records, define typed columns and your business key
+   → MERGE into your curated datasets → BI, analytics, ML
+```
+
+## Step 1 — Land in Cloud Storage
+
+```text
+gs://your-data/1mind/conversations/load_date=2026-07-02/part-0001.ndjson
+```
+
+Newline-delimited JSON is the natural landing format for the `GET` endpoint; the CSV from the export endpoint also loads natively. Use date-partitioned prefixes and unique filenames so files can be traced and replayed.
+
+## Step 2 — Create the raw table
+
+The native `JSON` type lets the payload land without a declared schema, which is what you want until real records have been inspected:
+
+```sql
+CREATE TABLE IF NOT EXISTS `your_project.one_mind_raw.reports` (
+  payload      JSON,
+  source_file  STRING,
+  loaded_at    TIMESTAMP
+)
+PARTITION BY DATE(loaded_at);
+```
+
+Partitioning on load date keeps scan costs and merge windows manageable as volume grows.
+
+## Step 3 — Load from Cloud Storage
+
+Direct load with the `bq` CLI:
+
+```bash
+bq load \
+  --source_format=NEWLINE_DELIMITED_JSON \
+  --autodetect \
+  your_project:one_mind_raw.reports_stage \
+  "gs://your-data/1mind/conversations/load_date=2026-07-02/*.ndjson"
+```
+
+Or define an external table over the landing prefix and insert with lineage columns, which preserves `_FILE_NAME`:
+
+```sql
+CREATE OR REPLACE EXTERNAL TABLE `your_project.one_mind_raw.reports_ext`
+OPTIONS (
+  format = 'NEWLINE_DELIMITED_JSON',
+  uris = ['gs://your-data/1mind/conversations/*']
+);
+
+INSERT INTO `your_project.one_mind_raw.reports`
+SELECT TO_JSON(t) AS payload, _FILE_NAME AS source_file, CURRENT_TIMESTAMP() AS loaded_at
+FROM `your_project.one_mind_raw.reports_ext` AS t;
+```
+
+<Note>If you prefer not to run your own loader for the storage-to-warehouse hop, BigQuery Data Transfer Service can schedule recurring Cloud Storage loads. You still build the API extraction step that puts files in the bucket.</Note>
+
+## Step 4 — Inspect the payload and decide your mappings
+
+```sql
+SELECT source_file, payload, loaded_at
+FROM `your_project.one_mind_raw.reports`
+LIMIT 25;
+```
+
+Field access uses JSON path functions — `JSON_VALUE(payload, '$.some_field')` for scalars, `JSON_QUERY(payload, '$.some_object')` for nested structures. From real records, determine your business key, incremental timestamp, which fields become typed columns, which contain personal information, and which malformed records to quarantine.
+
+## Step 5 — Merge into your curated tables
+
+Template only — replace `<business_key>` with a field confirmed from actual API output.
+
+```sql
+MERGE `your_project.analytics.conversations` AS target
+USING (
+  SELECT
+    JSON_VALUE(payload, '$.<business_key>') AS conversation_key,
+    payload AS source_payload,
+    loaded_at
+  FROM `your_project.one_mind_raw.reports`
+  WHERE JSON_VALUE(payload, '$.<business_key>') IS NOT NULL
+    AND loaded_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)
+  QUALIFY ROW_NUMBER() OVER (
+    PARTITION BY JSON_VALUE(payload, '$.<business_key>')
+    ORDER BY loaded_at DESC
+  ) = 1
+) AS source
+ON target.conversation_key = source.conversation_key
+WHEN MATCHED THEN UPDATE SET
+  target.source_payload = source.source_payload,
+  target.updated_at = CURRENT_TIMESTAMP()
+WHEN NOT MATCHED THEN INSERT (conversation_key, source_payload, created_at, updated_at)
+VALUES (source.conversation_key, source.source_payload, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP());
+```
+
+The `loaded_at` filter restricts the merge source to recent partitions rather than rescanning the whole raw table on every run. Widen it for backfills.
+
+## Step 6 — Schedule, secure, and monitor
+
+**Orchestration.** Cloud Scheduler triggering a Cloud Run job is the simplest pattern for extraction. Cloud Composer (Airflow) or Workflows suit multi-step pipelines. BigQuery scheduled queries can handle the SQL layer once files are landing reliably.
+
+**Secrets.** Hold the Account API Key in Secret Manager and inject it at runtime; grant the job's service account access to that one secret only. **Access control** — IAM on the dataset, plus authorized views or column-level policy tags for any field carrying personal information; consider a separate dataset for the raw payload. **Cost control** — partition the raw table by load date, require partition filters on large queries, and cluster on the business key as the table grows.
+
+Monitor extraction, reconciliation (`total`/`recordCount`), load (errors, bad-record counts, files processed), data quality, freshness, and cost (bytes scanned per merge, raw-dataset storage growth). `INFORMATION_SCHEMA.JOBS` gives you load and query outcomes for alerting.
+
+## BigQuery-specific troubleshooting
+
+For authentication, pagination, missing records, and export-link failures, see *Troubleshooting* in [1mind Data API](/developers/data-api/overview).
+
+- **Load fails on schema mismatch** — `--autodetect` infers a schema from a sample and fails when later files diverge. Landing into a `JSON` column instead of an autodetected struct avoids this.
+- **`JSON_VALUE` returns null** — JSON paths are case-sensitive, and `JSON_VALUE` only extracts scalars (use `JSON_QUERY` for objects/arrays). Quote path elements with special characters: `$."some-field"`.
+- **Merge costs are climbing** — confirm the merge source is filtered to recent partitions, and the raw table is partitioned on `loaded_at` rather than scanned in full.
+- **External table queries fail after files move** — external tables resolve URIs at query time; if your landing zone archives or deletes files, load into a native table before files age out.
+
+## Related
+
+- [1mind Data API](/developers/data-api/overview) · [Snowflake](/developers/data-api/snowflake) · [Databricks](/developers/data-api/databricks) · [Amazon Redshift](/developers/data-api/redshift)

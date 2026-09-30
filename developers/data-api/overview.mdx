@@ -1,0 +1,295 @@
+---
+title: "1mind Data API"
+description: "Programmatic access to your account's integration and conversation report data (the Integration Reports API) — authentication, endpoints, extraction patterns, and the decisions to settle before you build."
+contentType: "reference"
+status: "draft"
+---
+
+<Info>
+  Migrated from the developer-docs 1mind Data API (source updated Aug 13, 2026). Faithful port pending review.
+</Info>
+
+The 1mind Data API, documented as the **Integration Reports API**, gives your team programmatic access to your account's integration and conversation report data, so you can load it into your own data warehouse, lake, or BI platform. This page covers the API itself — authentication, endpoints, extraction patterns, and the decisions to settle before you build. It applies regardless of where you load the data.
+
+**Who this is for:** data engineering and analytics teams, or the ETL partner building on your behalf.
+
+**Platform-specific steps** — landing location, staging objects, load mechanism, and merge pattern — live in the four implementation guides listed under *Platform implementation guides* at the end of this page. Read this page first.
+
+## Responsibilities
+
+1mind does not provide a managed warehouse connector that writes directly into your tables. Your warehouse schema, business keys, security model, transformation logic, and reporting requirements are specific to your organization, so your data engineering team or ETL partner builds and operates the ingestion pipeline.
+
+| Area | You / your ETL partner own | 1mind provides |
+| --- | --- | --- |
+| API access | Storing and rotating your Account API Key | Provisioning the key through a secure channel; reissuing on request |
+| Documentation | — | This page, the platform guides, and clarification of documented API behavior |
+| Extraction | Calling the API on a schedule, handling pagination, downloading export files | Availability of the data through the documented endpoints |
+| Landing zone | Your cloud storage location, retention policy, and file naming | — |
+| Warehouse objects | Stages, external locations, volumes, raw and curated tables | — |
+| Data model | Target schema, field mappings, typed columns, your unique business key | — |
+| Load logic | Incremental logic, checkpoints, deduplication, transformations, upserts, backfill | — |
+| Data quality | Validation rules, quarantining malformed records, reconciliation | — |
+| Orchestration | Scheduling, retries, monitoring, alerting, failure recovery | — |
+| Security & privacy | Personal-information handling, retention and deletion, access control | — |
+| Cost | Warehouse compute and storage | — |
+| Support | Ongoing maintenance of your pipeline | Support for retrieving the source data; escalation of API defects |
+
+## What this API does not provide
+
+Worth reading before you scope the work — each of these is something teams commonly assume is available.
+
+| Not provided | What to do instead |
+| --- | --- |
+| A managed connector for Snowflake, Databricks, BigQuery, or Redshift | Build the extraction and load yourself, or with your ETL partner. The platform guides give a working pattern for each. |
+| Direct writes into your warehouse tables | Land API output in storage you control, then load from there. |
+| Streaming or change-data-capture delivery | Poll on a schedule that matches your freshness requirement. Batch is the delivery model. |
+| Webhooks or event push | Schedule an extraction job rather than waiting to be notified. |
+| A published schema contract for the report objects | Land the payload in a schema-flexible column first (`JSON`, `VARIANT`, `SUPER`), inspect real records, then promote fields into typed columns. |
+| Documented rate limits | Build defensively regardless: conservative pacing, exponential backoff, retry on `429` and `5xx`. |
+| A stated lifetime for export download links | Treat `downloadUrl` as short-lived. Fetch the file immediately and copy it into your own storage. |
+| An asynchronous export job-status endpoint | None is needed — the export call is synchronous and returns a completed file. Size your client timeout accordingly. |
+| A guaranteed refresh frequency or data-freshness SLA | If you have a contractual freshness requirement, raise it with your 1mind contact rather than inferring one. |
+| Delete / hard-delete propagation semantics | Not documented. Apply your own retention and deletion policy in your warehouse and landing zone. |
+
+## Before you build
+
+<Warning>Work through these with your data team **before writing pipeline code**. The answers determine your table design, and changing them later usually means a reload.</Warning>
+
+**Scope:** Is this a one-time historical export, an ongoing incremental load, or both? How frequently should the data refresh? What historical date range do you need? Which report flows do you need (use `flow=conversation` for conversation-related reports)?
+
+**Data model:** Which field is your unique record key (answer only after inspecting real API output)? Which timestamp drives incremental processing? Can records change after creation (if so, upsert rather than append)? Which fields should be promoted into typed columns, and which stay in the raw payload?
+
+**Operations:** Who owns the ETL — internal team or partner? Where will raw files land, and what's the retention policy? Which secrets manager holds the Account API Key? How are failed records handled — quarantined, alerted, or dropped? What reconciliation compares source counts (`total` / `recordCount`) against rows loaded? Who monitors the pipeline, and where do alerts go?
+
+**Governance:** Which fields contain personal or regulated information? What retention and deletion requirements apply to conversation data in your warehouse? Is there a security or privacy review to clear before data leaves 1mind?
+
+### Recommended sequence
+
+```text
+Receive API key
+   → Discovery pull (small date range, inspect real records)
+   → Define your unique key and typed columns
+   → Build the incremental pipeline
+   → Run the historical backfill
+   → Enable scheduling and monitoring
+```
+
+The single most useful first step is a small `GET` against a narrow date range, so your engineers can look at actual report objects before designing anything.
+
+## The API
+
+The API offers two access patterns: a paginated `GET` for record-level retrieval, and a `POST` export that generates a downloadable CSV file.
+
+**Base URL:** `https://interaction.1mind.com/platform/api/v1/integration-reports`
+
+**Authentication** — every request carries your Account API Key as a header: `x-api-key: your_api_key_here`. There is no OAuth flow and no token refresh. A single account-scoped key authenticates every request; your 1mind contact provisions it through a secure channel.
+
+### `GET /platform/api/v1/integration-reports` — list and query reports
+
+Retrieves your integration reports as a paginated list.
+
+| Parameter | Required | Default | Format / values | Notes |
+| --- | --- | --- | --- | --- |
+| `flow` | Optional | — | String | Workflow flow filter. Use `conversation` for conversation-related reports. |
+| `start-date` | Optional | — | `YYYY-MM-DD` or ISO 8601 | Start of the filter window. |
+| `end-date` | Optional | — | `YYYY-MM-DD` or ISO 8601 | End of the filter window. |
+| `limit` | Optional | `100` | Integer | Maximum records per request. |
+| `offset` | Optional | `0` | Integer | Records to skip, for pagination. |
+| `sort-by` | Optional | `created_at` | Field name | Field used for sorting. |
+| `sort-order` | Optional | — | `asc` or `desc` | Sort direction. |
+
+<Note>Note the **hyphenated** parameter names — `start-date`, `end-date`, `sort-by`, `sort-order`. They are not snake_case. This is a common source of silently-ignored filters when query strings are built from a config object.</Note>
+
+```bash
+curl -X GET \
+  "https://interaction.1mind.com/platform/api/v1/integration-reports?flow=conversation&start-date=2026-07-01&end-date=2026-07-31&limit=50&offset=0&sort-by=created_at&sort-order=asc" \
+  -H "x-api-key: your_api_key_here"
+```
+
+Response:
+
+```json
+{
+  "data": [ { } ],
+  "total": 150,
+  "limit": 100,
+  "offset": 0
+}
+```
+
+`data` is the array of report objects; `total` is the total records matching the filter across all pages (drive your pagination loop from this, and use it to reconcile row counts after loading); `limit` and `offset` are the page size and offset in effect.
+
+### `POST /platform/api/v1/integration-reports/export` — generate a downloadable file
+
+Generates a downloadable file of your report data. Filters are supplied as **query parameters**, not a request body. It accepts `flow`, `start-date`, and `end-date` — but not `limit`, `offset`, `sort-by`, or `sort-order`; it covers the entire result set for the filter window.
+
+```bash
+curl -X POST \
+  "https://interaction.1mind.com/platform/api/v1/integration-reports/export?flow=conversation&start-date=2026-07-01&end-date=2026-07-31" \
+  -H "x-api-key: your_api_key_here"
+```
+
+Response:
+
+```json
+{
+  "message": "Export completed successfully",
+  "downloadUrl": "https://storage.googleapis.com/bucket/file.csv",
+  "fileName": "integration-reports-export.csv",
+  "recordCount": 150
+}
+```
+
+The call is synchronous — the response contains a completed export rather than a job ID to poll. Use `recordCount` to reconcile against rows loaded.
+
+<Warning>**Download the file promptly.** The lifetime of `downloadUrl` is not specified. Treat it as short-lived: fetch the file immediately after the export response and copy it into your own storage rather than queuing the URL for later processing.</Warning>
+
+### Choosing between the two endpoints
+
+Use the paginated **`GET`** for ongoing incremental, record-level loads — when you want record-level control, need to manage pagination yourself, prefer JSON/NDJSON, want smaller incremental requests, or want to validate records before landing them. Use the **export** for historical backfills and file-oriented batch loads — when CSV suits your ingestion or you want to reconcile against `recordCount`. Most production setups use both: the export for the initial backfill, the `GET` for the ongoing incremental load.
+
+### Implementation notes (build defensively)
+
+These are practical recommendations rather than documented API guarantees:
+
+- **Pagination loop** — page with `offset` until records retrieved reach `total`, or a page returns zero records. Guard against an infinite loop if `total` is missing. Increment `offset` by records actually returned, not the requested `limit`.
+- **Stable sorting** — paginating an actively-written dataset while sorting `desc` can shift records between pages. Sorting `asc` on `created_at` is generally safer for extraction jobs.
+- **Date boundaries** — the docs don't state whether `start-date`/`end-date` are inclusive/exclusive or which time zone applies. Test against your data, and use slightly overlapping windows plus deduplication.
+- **Rate limits** — not documented. Build for them anyway: conservative pacing, exponential backoff, retry on `429` and `5xx`.
+- **Retries** — treat network errors and `5xx` as retryable; treat `4xx` as a configuration problem to investigate.
+- **Report schema** — the structure inside `data` is not a published contract. Land in a schema-flexible column first, inspect real records, then promote fields into typed columns.
+
+## Reference architecture
+
+```text
+1mind Data API
+      |
+      v
+Your extraction job or ETL platform
+      |
+      v
+Your cloud storage landing area
+      |
+      v
+Raw / Bronze warehouse table
+      |
+      v
+Validation, deduplication, and transformation
+      |
+      v
+Curated / Silver / Gold tables
+      |
+      v
+BI, analytics, ML, or downstream applications
+```
+
+For most production implementations, save API output to your own cloud storage before loading into the warehouse — a replayable copy of every extract, separation between retrieval and availability, simpler failure recovery, auditability, and the ability to reprocess after transformation changes.
+
+### Incremental extraction (Python example)
+
+```python
+import json
+import os
+import time
+from datetime import date
+from pathlib import Path
+
+import requests
+
+BASE_URL = (
+    "https://interaction.1mind.com/"
+    "platform/api/v1/integration-reports"
+)
+
+api_key = os.environ["ONE_MIND_ACCOUNT_API_KEY"]
+
+params = {
+    "flow": "conversation",
+    "start-date": "2026-07-01",
+    "end-date": "2026-07-02",
+    "limit": 100,
+    "offset": 0,
+    "sort-by": "created_at",
+    "sort-order": "asc",
+}
+
+output_path = Path(f"1mind-conversations-{date.today().isoformat()}.ndjson")
+
+session = requests.Session()
+session.headers.update({"x-api-key": api_key})
+
+with output_path.open("w", encoding="utf-8") as output_file:
+    while True:
+        for attempt in range(5):
+            response = session.get(BASE_URL, params=params, timeout=60)
+            if response.status_code < 500 and response.status_code != 429:
+                break
+            time.sleep(2 ** attempt)
+
+        response.raise_for_status()
+        body = response.json()
+        records = body.get("data", [])
+
+        for record in records:
+            output_file.write(json.dumps(record) + "\n")
+
+        params["offset"] += len(records)
+        if not records or params["offset"] >= body.get("total", 0):
+            break
+```
+
+### Historical backfill via the export endpoint (Python example)
+
+```python
+import os
+import requests
+
+EXPORT_URL = (
+    "https://interaction.1mind.com/"
+    "platform/api/v1/integration-reports/export"
+)
+
+response = requests.post(
+    EXPORT_URL,
+    headers={"x-api-key": os.environ["ONE_MIND_ACCOUNT_API_KEY"]},
+    params={"flow": "conversation", "start-date": "2026-01-01", "end-date": "2026-01-31"},
+    timeout=300,
+)
+response.raise_for_status()
+export = response.json()
+
+# Download promptly — link lifetime is not specified.
+csv_bytes = requests.get(export["downloadUrl"], timeout=300).content
+# Reconcile row counts against export["recordCount"] after loading.
+```
+
+## Security
+
+<Warning>**1mind will never ask you to send your API key over Slack, email, a support ticket, or a shared document.** If you need a key reissued, ask your 1mind contact to provision a new one through the secure channel.</Warning>
+
+Your Account API Key is a secret; it is account-scoped and grants access to your account's report data. Store it in an approved secrets manager and inject it at runtime; restrict access to the extraction service identity; keep it out of source control and CI logs; avoid printing request headers; rotate per your policy; use encrypted storage and transport; apply least-privilege permissions on both cloud storage and the warehouse; review conversation data for personal/regulated information before it reaches broad-access reporting layers; and apply retention/deletion policies to the landing zone as well as the warehouse.
+
+## Troubleshooting
+
+**Authentication errors** — confirm the request includes the `x-api-key` header (not `Authorization`, not a bearer token), you're using the Account API Key, the key isn't wrapped in extra quotation marks, the request targets the documented base URL, and no proxy/secret-substitution step is modifying the header.
+
+**Fewer records than expected** — check `start-date`/`end-date` values and formats, the `flow` filter, `limit`/`offset` termination, whether your loop compares retrieved count against `total`, time-zone assumptions on date-only values, and whether records were removed downstream.
+
+**Pagination skips or repeats** — sorting `desc` while new records arrive shifts rows across pages (use `sort-order=asc` on `created_at`); confirm `offset` increments by records actually returned; confirm the loop exits on an empty `data` array as well as the `total` comparison.
+
+**Export download fails or the link no longer works** — download immediately after the export response and copy into your own storage; don't queue `downloadUrl`; re-issue the export call rather than retrying a stale URL.
+
+**The payload structure changed** — preserve the raw payload, detect new/changed fields before they reach typed tables, quarantine incompatible records rather than dropping them, and update typed tables deliberately.
+
+## Getting help
+
+Your 1mind contact can help with provisioning/reissuing your Account API Key, questions about documented API behavior, troubleshooting access/authentication, and escalating suspected API defects. Warehouse design decisions — schema, business keys, transformations, orchestration, monitoring — sit with your data engineering team or ETL partner. If you'd like 1mind to take on part of the implementation, ask your account contact about a scoped engagement.
+
+## Platform implementation guides
+
+Read this page first, then follow the guide for your platform:
+
+- [Snowflake](/developers/data-api/snowflake) — staging, `COPY INTO`, deduplication, `MERGE`
+- [Databricks](/developers/data-api/databricks) — Unity Catalog volumes, `COPY INTO` and Auto Loader, the medallion pattern, Delta `MERGE`
+- [BigQuery](/developers/data-api/bigquery) — Cloud Storage landing, the native `JSON` type, load and external-table options, `MERGE`
+- [Amazon Redshift](/developers/data-api/redshift) — S3 staging, `COPY`, the `SUPER` type, `MERGE`
