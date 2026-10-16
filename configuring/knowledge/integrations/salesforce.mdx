@@ -22,7 +22,6 @@ Before you start, have these three things ready. They all come from your Salesfo
 <Note>The Consumer Key and Consumer Secret come from an **External Client App** set up in your Salesforce org. If you don't have one, ask your Salesforce administrator to create one with API access enabled.</Note>
 
 Instructions to create external client app:  [https://fivetran.com/docs/connectors/applications/salesforce/setup-guide/create-local-app](https://fivetran.com/docs/connectors/applications/salesforce/setup-guide/create-local-app)
-<Note></Note>
 
 ## Step-by-step setup
 
@@ -31,20 +30,18 @@ Instructions to create external client app:  [https://fivetran.com/docs/connecto
 
     In Salesforce, open the **Knowledge** articles you plan to bring in. Confirm they're **Published** and note that any images in an article (for example, diagrams or slides) will come across too. This is the source content the Hub will pull from.
 
-    <Note><Frame></Note>
+    <Frame>
       <img src="/images/knowledge/salesforce/01-salesforce-knowledge-articles.png" alt="Salesforce knowledge articles" />
     </Frame>
-    <Note></Note>
 
   </Step>
   <Step title="Open the Salesforce integration in the Console">
 
     In the 1mind Console, go to **Workspace → Integrations → Knowledge Integrations** and open the **Salesforce** card (click **Configure**). Under **Content Types**, keep **Knowledge Articles** selected and choose your options: **language(s)**, **article types**, whether to **include archived articles**, and an optional **lookback (days)** window.
 
-    <Note><Frame></Note>
+    <Frame>
       <img src="/images/knowledge/salesforce/02-integration-config-form.png" alt="Integration config form" />
     </Frame>
-    <Note></Note>
 
   </Step>
   <Step title="Enter your credentials and enable image processing">
@@ -55,60 +52,54 @@ Instructions to create external client app:  [https://fivetran.com/docs/connecto
 
     <Tip>Turn on **Presentable documents** *before* you connect. It applies to new and updated documents and overrides per-document Presentable settings when an article syncs.</Tip>
 
-    <Note><Frame></Note>
+    <Frame>
       <img src="/images/knowledge/salesforce/03-credentials-and-presentable-toggle.png" alt="Credentials and presentable toggle" />
     </Frame>
-    <Note></Note>
 
   </Step>
   <Step title="Authorize the Salesforce connection">
 
     Clicking **Connect Salesforce** opens a secure Salesforce connection window. Re-enter the same information here — **Client ID**, **Client Secret**, and **My Domain URL** — leave **OAuth 2.0** selected as the authentication method, then click **Save & Test**.
 
-    <Note><Frame></Note>
+    <Frame>
       <img src="/images/knowledge/salesforce/04-salesforce-oauth-save-and-test.png" alt="Salesforce oauth save and test" />
     </Frame>
-    <Note></Note>
 
   </Step>
   <Step title="Confirm the connection tests pass">
 
     The connection runs a quick set of checks — verifying your My Domain URL, validating the REST API call limit, and connecting to the API. When you see **All connection tests passed!**, the connection is set up correctly.
 
-    <Note><Frame></Note>
+    <Frame>
       <img src="/images/knowledge/salesforce/05-connection-tests-passed.png" alt="Connection tests passed" />
     </Frame>
-    <Note></Note>
 
   </Step>
   <Step title="Wait for the first sync">
 
     Back in the Console, the Salesforce integration shows its status while it finishes setting up and begins pulling data. Depending on how much content you're syncing, the first batch of data can take **up to an hour or two** to appear in your system.
 
-    <Note><Frame></Note>
+    <Frame>
       <img src="/images/knowledge/salesforce/06-connection-syncing-status.png" alt="Connection syncing status" />
     </Frame>
-    <Note></Note>
 
   </Step>
   <Step title="Verify your articles in the Knowledge Hub">
 
     Once the sync runs, open the **Knowledge Hub**. Your Salesforce articles appear with **Source: Salesforce** and a name made up of the **Salesforce document ID as a prefix, followed by the article title** — for example, `kA0au000000BnhCAS-en_US - test 3.md`. The prefix keeps documents uniquely identifiable, while the title makes them easy to recognize.
 
-    <Note><Frame></Note>
+    <Frame>
       <img src="/images/knowledge/salesforce/07-knowledge-hub-synced-documents.png" alt="Knowledge hub synced documents" />
     </Frame>
-    <Note></Note>
 
   </Step>
   <Step title="Confirm content and images processed correctly">
 
     Open one of the synced documents. You should see the full article content, and — if you enabled **Presentable documents** — the article's images processed and included. That confirms the article made it into the Knowledge Hub with all the content it's supposed to have.
 
-    <Note><Frame></Note>
+    <Frame>
       <img src="/images/knowledge/salesforce/08-processed-document-with-image.png" alt="Processed document with image" />
     </Frame>
-    <Note></Note>
 
   </Step>
 </Steps>
