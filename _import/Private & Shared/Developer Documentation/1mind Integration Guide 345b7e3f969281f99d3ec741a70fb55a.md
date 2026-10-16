@@ -1,0 +1,274 @@
+# 1mind Integration Guide
+
+*Last updated April 17, 2026*
+
+---
+
+## **1. Getting Started**
+
+We suggest creating a few pages in your website editor where you will be able to test:
+
+1. Sandbox page
+2. Production page
+
+Once you have your pages created, let's focus first on the "Sandbox" page.
+
+To start, include the following `<script>` block in the `<head>`, `<footer>`, or `<body>` section of your HTML page. 
+
+```html
+<script>
+var s = document.createElement('script');
+s.defer = true;
+s.src = '{YOUR_LAUNCHER_SCRIPT}';
+document.head.appendChild(s);
+</script>
+```
+
+### **Example**
+
+If your `YOUR_LAUNCHER_SCRIPT` = [`https://launcher.1mind.com/ABC1234?flow=default`](https://launcher.1mind.com/zgjtpd5cw9?flow=default) your script block would look like this:
+
+```html
+<script>
+var s = document.createElement('script');
+s.defer = true;
+s.src = 'https://launcher.1mind.com/ABC1234?flow=default';
+document.head.appendChild(s);
+</script>
+```
+
+---
+
+## **2. Placement**
+
+If your deployment is configured as an **embed**, include the following `<div>` tag in the `<body>` section of your HTML page where you would like the Superhuman to be positioned. The **style** parameter may be provided to further customize the size of the Superhuman window. This parameter is optional. If no height or width are provided, the Superhuman will occupy 100% of the enclosing `<div>` element.
+
+For the **best web experience**, we recommend setting the parent container dimensions as follows:
+
+- **Width:** 80% – 85% of the viewport width (vw)
+- **Height:** 70% – 80% of the viewport height (vh)
+
+### **Valid Examples for Embed Placement**
+
+```html
+<div id="onemind-widget"></div>
+```
+
+```html
+<div id="onemind-widget" style="height: 660px;"></div>
+```
+
+```html
+<div style="width: 100%; height: 675px;">
+    <div id="onemind-widget"></div>
+</div>
+```
+
+### **Widget Placement**
+
+If your deployment is configured as a **widget**, no `<div>` placement is needed — the widget will automatically appear as an overlay on your site.
+
+```html
+<script>
+var s = document.createElement('script');
+s.defer = true;
+s.src = '{YOUR_LAUNCHER_SCRIPT}';
+document.head.appendChild(s);
+</script>
+```
+
+### **Widget Example**
+
+If your `YOUR_LAUNCHER_SCRIPT` is [`https://launcher.1mind.com/ABC1234?flow=default`](https://launcher.1mind.com/zgjtpd5cw9?flow=default):
+
+```html
+<script>
+var s = document.createElement('script');
+s.defer = true;
+s.src = '{YOUR_LAUNCHER_SCRIPT}';
+document.head.appendChild(s);
+</script>
+```
+
+---
+
+## **3. Customizing with Attributes**
+
+You can pass additional parameters to the launcher script depending on your integration needs. These attributes allow you to control the script's behavior directly on your page, as well as leverage user and page context in the conversation.
+
+**Note:** The attributes in the examples below are just suggestions. The 1mind implementation team will work with you directly to create custom attributes for your use cases.
+
+### **Example of Custom Attributes**
+
+```html
+<script>
+var s = document.createElement('script');
+s.defer = true;
+s.src = '{YOUR_LAUNCHER_SCRIPT}';
+s.setAttribute('data-customParam1', 'specialValue');
+s.setAttribute('data-userId', 'user123');
+s.setAttribute('data-language', 'en');
+document.head.appendChild(s);
+</script>
+```
+
+---
+
+## **4. How It Works**
+
+When the script is loaded, it reads the custom attributes, as well as any other configured page context/cookies, and initiates the appropriate conversation for the specific page/user/workflow. The experience is then loaded in an iframe where the user can interact.
+
+---
+
+## **5. Deploying via Google Tag Manager**
+
+*The following steps should be applicable for any tag management deployment system, but this guide will focus specifically on GTM.*
+
+1. Open GTM
+2. Navigate to the Tags page
+3. Click "New"
+4. Provide a name, such as "1mind Deployment"
+5. For *Tag Configuration*, select "Custom HTML"
+6. Paste the following script in the *HTML* section:
+
+```html
+<script>
+var s = document.createElement('script');
+s.defer = true;
+s.src = '{YOUR_LAUNCHER_SCRIPT}';
+document.head.appendChild(s);
+</script>
+```
+
+Make sure to replace `your_deployment_id` with your unique deployment ID. Use the correct values for your respective environments (sandbox vs. production).
+
+> 💡 *TIP: Create the sandbox tag first and upon validating it, duplicate the production tag version and keep it in the paused state or not submitted until go-live testing/launch.*
+> 
+1. Click into the *Triggering* box and select a *Trigger*
+2. Select "Initialization - All pages"
+3. Click "Save" upon reviewing the setup
+
+![image.png](1mind%20Integration%20Guide/image.png)
+
+1. Click "Submit" to deploy the latest version
+2. A confirmation page will appear with the ability to provide a version name/description
+3. Add the respective version name/description per your internal processes *(e.g., v1 - Adding 1mind Sandbox Deployment)*
+4. Click "Publish"
+5. Now check your site in an incognito window to confirm the experience is appearing on your site.
+
+---
+
+## **5b. Adding the Script Directly to the Head**
+
+1. In your CMS, navigate to the site settings where you can configure adding custom code to the head/footer of your site
+2. From here, you will add the script directly into the top Head code section and SAVE
+
+```html
+<script>
+var s = document.createElement('script');
+s.defer = true;
+s.src = '{YOUR_LAUNCHER_SCRIPT}';
+document.head.appendChild(s);
+</script>
+```
+
+1. Make sure to utilize the correct launcher ID for your respective environments
+
+> 💡 *TIP: If utilizing this approach, deploy to the sandbox to your staging site first and upon validating it, duplicate the production tag version and keep it not submitted until go-live testing/launch or deploy to a single hidden page.*
+> 
+1. Upon saving and deploying the new website version, check your site in an incognito window to confirm the widget is now appearing across your site
+
+---
+
+## **6. Adding Exceptions (Excluding Pages)**
+
+Certain scenarios may require the deployment to skip loading on a certain page. This can be configured within your tag management system or by wrapping the script with an exclusion check:
+
+```html
+<script>
+const excludedPaths = ["/", "/.html", "/about-us", "/about-us.html"];
+if (!excludedPaths.includes(window.location.pathname)) {
+  var s = document.createElement('script');
+  s.defer = true;
+  s.src = '{YOUR_LAUNCHER_SCRIPT}';
+  document.head.appendChild(s);
+}
+</script>
+```
+
+In the above example, we are skipping the home page (`/`) and the about us page (`about-us`). This sample site also has an `.html` version that exists, so that was included additionally to prevent it from loading on those versions as well.
+
+---
+
+## **7. Example Usage in HTML**
+
+Here's a full example to illustrate how the script and custom attributes can be used in a real page setup:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Website</title>
+    <script>
+    var s = document.createElement('script');
+    s.defer = true;
+    s.src = '{YOUR_LAUNCHER_SCRIPT}';
+    s.setAttribute('data-customParam1', 'specialValue');
+    s.setAttribute('data-userId', 'user123');
+    s.setAttribute('data-language', 'en');
+    document.head.appendChild(s);
+    </script>
+</head>
+<body>
+    <h1>Welcome to My Website</h1>
+    <p>Your experience is about to begin...</p>
+    <div id="onemind-widget" style="height: 660px;"></div>
+</body>
+</html>
+```
+
+---
+
+## **8. Best Practices**
+
+- **Create a dedicated page:** The Superhuman will live on this page only (similar to [1mind.com](http://1mind.com)) so you can easily direct traffic to it. Putting the Superhuman embedded on your home page will allow your Superhuman to be more effective in helping your users accordingly.
+- **Wide container width (embeds):** We suggest making the container you embed the 1mind Superhuman on your site to be set near the maximum width of the page. This allows for a larger viewing experience for your users when speaking with the Superhuman.
+- **Parent Container Sizing (Recommended for embeds):** For **web breakpoints**, we recommend:
+    - **Width:** 70% – 75% of the viewport width (vw)
+    - **Height:** 70% – 80% of the viewport height (vh)
+
+> **Note:** These values are recommendations only. Our UI is fully responsive and designed to adapt dynamically to any container size or breakpoint. For optimal experiences on other breakpoints such as tablet or mobile, we encourage adjusting the width and height values accordingly.
+> 
+
+### **UI / UX Adjustments**
+
+The copy that appears in the UI in some areas can be configurable. Additionally, within the UX itself, there are several other key areas of configurability. Please reach out to your 1mind CSM for details on available customizations.
+
+![image.png](1mind%20Integration%20Guide/image%201.png)
+
+---
+
+## **9. Troubleshooting**
+
+If you encounter any issues:
+
+- **Check the console:** Open your browser's developer console to see any error messages that may provide more insight.
+- **Check Deployment ID:** Ensure your deployment ID is correct for sandbox or production respectively.
+- **Verify attribute names:** Ensure your custom data attributes are correctly defined.
+- **Reach out to support:** If issues persist, please contact our support team at [support@1mind.com](mailto:support@1mind.com).
+
+**Microphone Issues** — A server-level policy/rule is likely configured to disable microphone access and needs to be ENABLED to allow the microphone/superhuman to fully work within your site.
+
+![image.png](1mind%20Integration%20Guide/image%202.png)
+
+**Tag Issues** — Utilizing [Google Tag Assistant](https://tagassistant.google.com/) and its respective [Chrome Extension](https://chromewebstore.google.com/detail/tag-assistant/kejbdjndbnbjgmefkgdddjlbokphdefk) can be extremely helpful when advanced aspects are set up (e.g., certain exceptions added to the trigger). Please contact your 1mind CSM with any questions.
+
+---
+
+## **10. Security & Privacy**
+
+Our script only collects and processes data that it is configured to. No additional data is gathered without consent. Refer to our [Privacy Policy](https://www.1mind.com/privacy-policy) for details.
+
+We support domain-level whitelisting for all Superhuman deployment codes to ensure they can only be run on approved domains. To get this configured for your implementation, we need a list of the root domains where you'd like your Superhuman AI to be allowed (e.g., `www.1mind.com`, `marketing.1mind.com`, `*.1mind.com`). Please let your CS lead know and once we have that, we'll apply the restriction accordingly.
