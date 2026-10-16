@@ -9,3 +9,4 @@ Thumbs.db
 # Dependencies / Mintlify CLI
 node_modules/
 .mintlify/
+_import/
