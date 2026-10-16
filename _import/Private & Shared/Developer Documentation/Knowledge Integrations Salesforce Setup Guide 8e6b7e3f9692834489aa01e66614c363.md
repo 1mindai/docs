@@ -1,0 +1,155 @@
+# Knowledge Integrations: Salesforce Setup Guide
+
+*Last updated September 1, 2026*
+
+The Salesforce integration brings your Salesforce **Knowledge articles** — including the images inside them — directly into the 1mind Knowledge Hub. Once connected, your published articles sync into the Hub on a schedule, and any images in an article are processed so they can be shown in conversation. When an article changes in Salesforce, the Hub picks it up on the next sync, so you no longer have to export or re-upload knowledge content by hand.
+
+This guide walks through connecting Salesforce step by step. The whole setup takes a few minutes; after that, the sync runs on its own.
+
+## What you'll need
+
+- **The Workspace Admin or Super Admin role in 1mind.** Knowledge integrations are managed at the workspace level, so those are the only two roles that can connect, edit, or remove a source. If you do not see the Integrations page, check your role assignment first.
+
+Before you start, have these three things ready. They all come from your Salesforce org:
+
+- **Instance URL (My Domain)** — your Salesforce My Domain login URL, in the format `https://yourcompany.my.salesforce.com`.
+- **Consumer Key (Client ID)** — from an External Client App (connected app) in Salesforce.
+- **Consumer Secret (Client Secret)** — from the same External Client App.
+
+> **Note:** The Consumer Key and Consumer Secret come from an **External Client App** set up in your Salesforce org. If you don't have one, ask your Salesforce administrator to create one with API access enabled.
+
+Instructions to create external client app:  [https://fivetran.com/docs/connectors/applications/salesforce/setup-guide/create-local-app](https://fivetran.com/docs/connectors/applications/salesforce/setup-guide/create-local-app)
+> 
+
+## Step-by-step setup
+
+### Step 1 — Find the knowledge articles you want to sync
+
+In Salesforce, open the **Knowledge** articles you plan to bring in. Confirm they're **Published** and note that any images in an article (for example, diagrams or slides) will come across too. This is the source content the Hub will pull from.
+
+> 
+> 
+> 
+> ![01-salesforce-knowledge-articles.png](Knowledge%20Integrations%20Salesforce%20Setup%20Guide/f0544b72-3d04-4c38-be99-d1f11cd512f8.png)
+> 
+
+### Step 2 — Open the Salesforce integration in the Console
+
+In the 1mind Console, go to **Workspace → Integrations → Knowledge Integrations** and open the **Salesforce** card (click **Configure**). Under **Content Types**, keep **Knowledge Articles** selected and choose your options: **language(s)**, **article types**, whether to **include archived articles**, and an optional **lookback (days)** window.
+
+> 
+> 
+> 
+> ![02-integration-config-form.png](Knowledge%20Integrations%20Salesforce%20Setup%20Guide/8575e4f7-759a-43ca-bc86-dd49069f9a9f.png)
+> 
+
+### Step 3 — Enter your credentials and enable image processing
+
+Under **Credentials**, enter your **Instance URL (My Domain)**, **Consumer Key (Client ID)**, and **Consumer Secret (Client Secret)**. Your credentials are verified when the first sync runs.
+
+If you want images in your articles to be processed and shown in conversation, turn on the **Presentable documents** toggle — this generates page images for in-conversation display. Then click **Connect Salesforce**.
+
+> **Tip:** Turn on **Presentable documents** *before* you connect. It applies to new and updated documents and overrides per-document Presentable settings when an article syncs.
+> 
+
+> 
+> 
+> 
+> ![03-credentials-and-presentable-toggle.png](Knowledge%20Integrations%20Salesforce%20Setup%20Guide/36f92a92-de4a-47ca-a3a4-9c010fc15a91.png)
+> 
+
+### Step 4 — Authorize the Salesforce connection
+
+Clicking **Connect Salesforce** opens a secure Salesforce connection window. Re-enter the same information here — **Client ID**, **Client Secret**, and **My Domain URL** — leave **OAuth 2.0** selected as the authentication method, then click **Save & Test**.
+
+> 
+> 
+> 
+> ![04-salesforce-oauth-save-and-test.png](Knowledge%20Integrations%20Salesforce%20Setup%20Guide/6c7cb340-8fd9-4e0f-b071-5b47d0393562.png)
+> 
+
+### Step 5 — Confirm the connection tests pass
+
+The connection runs a quick set of checks — verifying your My Domain URL, validating the REST API call limit, and connecting to the API. When you see **All connection tests passed!**, the connection is set up correctly.
+
+> 
+> 
+> 
+> ![05-connection-tests-passed.png](Knowledge%20Integrations%20Salesforce%20Setup%20Guide/1cfed8c3-9335-4a85-992d-7183b9acd236.png)
+> 
+
+### Step 6 — Wait for the first sync
+
+Back in the Console, the Salesforce integration shows its status while it finishes setting up and begins pulling data. Depending on how much content you're syncing, the first batch of data can take **up to an hour or two** to appear in your system.
+
+> 
+> 
+> 
+> ![06-connection-syncing-status.png](Knowledge%20Integrations%20Salesforce%20Setup%20Guide/87e1ddc4-3097-44b3-a38a-db768a62118f.png)
+> 
+
+### Step 7 — Verify your articles in the Knowledge Hub
+
+Once the sync runs, open the **Knowledge Hub**. Your Salesforce articles appear with **Source: Salesforce** and a name made up of the **Salesforce document ID as a prefix, followed by the article title** — for example, `kA0au000000BnhCAS-en_US - test 3.md`. The prefix keeps documents uniquely identifiable, while the title makes them easy to recognize.
+
+> 
+> 
+> 
+> ![07-knowledge-hub-synced-documents.png](Knowledge%20Integrations%20Salesforce%20Setup%20Guide/f7ea4697-f4c5-480b-aec3-5e8b92140a7c.png)
+> 
+
+### Step 8 — Confirm content and images processed correctly
+
+Open one of the synced documents. You should see the full article content, and — if you enabled **Presentable documents** — the article's images processed and included. That confirms the article made it into the Knowledge Hub with all the content it's supposed to have.
+
+> 
+> 
+> 
+> ![08-processed-document-with-image.png](Knowledge%20Integrations%20Salesforce%20Setup%20Guide/e0c4eea7-ea1f-45eb-a96b-d619a0db578a.png)
+> 
+
+## How your synced articles are named
+
+Each synced Salesforce article is named with two parts:
+
+- **Salesforce document ID prefix** (e.g., `kA0au000000BnhCAS-en_US`) — uniquely identifies the source article and its language.
+- **Article title** (e.g., `test 3.md`) — for quick, human-friendly identification.
+
+You'll also see the **Source** column show **Salesforce**, and tags such as **text** and **presentable** on each document.
+
+## Troubleshooting
+
+| What you're seeing | What to check |
+| --- | --- |
+| A connection test fails | Double-check your **Instance URL (My Domain)** is in the `https://yourcompany.my.salesforce.com` format, and that the **Consumer Key** and **Consumer Secret** were copied exactly from your External Client App. Re-enter them and run **Save & Test** again. |
+| Authentication or authorization error | Confirm your External Client App has API access enabled and the correct OAuth scopes, and that the account authorizing the connection can read Knowledge articles. Then reconnect. |
+| No data has appeared yet | Give it time — the first sync isn't instant, and data can take **up to an hour or two** to land depending on volume. Confirm the connection status shows it's syncing. |
+| Articles synced but images are missing | Make sure **Presentable documents** was turned on **before** connecting. If it was added later, let a fresh sync run so new and updated articles are processed with images. |
+| Status stuck on setup / incomplete | Use **Retry Setup** on the Salesforce integration page to reopen the connection window and finish authorizing. If it keeps happening, reconnect. |
+| An article you expected isn't there | Confirm the article is **Published** in Salesforce and matches your chosen **language**, **article type**, and **archived / lookback** settings. Adjust the configuration and re-sync. |
+
+## FAQ
+
+**What does the Salesforce integration sync?**
+
+Your Salesforce **Knowledge articles**, based on the content types you select — language(s), article type(s), and whether to include archived articles. Images inside articles come across too when **Presentable documents** is on.
+
+**Do images from my articles come through?**
+
+Yes — turn on **Presentable documents** before connecting. It generates page images so article visuals can be shown in conversation.
+
+**How are synced documents named?**
+
+With the Salesforce document ID as a prefix, followed by the article title (for example, `kA0au000000BnhCAS-en_US - test 3.md`).
+
+**How long until my data shows up?**
+
+The first sync can take **up to an hour or two** depending on how much content you're bringing in. After that, syncs run on the schedule set for the connection.
+
+**Where do the credentials come from, and are they safe?**
+
+The Consumer Key and Consumer Secret come from an **External Client App** in your Salesforce org. You authorize the connection through Salesforce's own secure window using OAuth 2.0.
+
+## Need help?
+
+If you run into anything during setup, reach out to your 1mind contact or Customer Success team. They can confirm your configuration, check your External Client App settings, and help if any part of the connection needs attention.

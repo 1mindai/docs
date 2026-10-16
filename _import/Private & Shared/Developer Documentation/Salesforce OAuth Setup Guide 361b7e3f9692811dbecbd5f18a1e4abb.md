@@ -1,0 +1,115 @@
+# Salesforce OAuth Setup Guide
+
+This guide walks a Salesforce admin through installing the **1mind Integration Client** managed package, authorizing OAuth access, and connecting 1mind to your Salesforce org.
+
+**Who should perform this install:** a Salesforce user with the **System Administrator** profile (or equivalent permissions to install managed packages).
+
+> **Best Practice:** Use a service account that isn't tied to a specific person, in case they leave or lose access.
+> 
+
+**Time required:** ~10 minutes.
+
+---
+
+# Prerequisites
+
+- Salesforce edition that supports managed package installs (Enterprise, Performance, Unlimited, Developer).
+- System Administrator access to the Salesforce org where 1mind should connect.
+- From your 1mind account manager:
+    - The package install URL (used in Step 1)
+    - The OAuth connection URL (used in Step 2)
+    - Confirmation of which Salesforce org (production or sandbox) to install into
+
+---
+
+# Step 1 — Install the package
+
+1. Sign in to the target Salesforce org in your browser (production at [https://login.salesforce.com](https://login.salesforce.com) or your sandbox at [https://test.salesforce.com](https://test.salesforce.com)).
+2. Open the install URL in the same browser:
+    - **Production:** `https://login.salesforce.com/packaging/installPackage.apexp?p0=04tcx000002Y2hNAAS`
+    - **Sandbox:** `https://test.salesforce.com/packaging/installPackage.apexp?p0=04tcx000002Y2hNAAS`
+3. On the install page, review the package details:
+    - **Publisher:** 1mind
+    - **Package name:** 1mind Integration Client
+    - **Namespace:** OneMind
+4. Under *Install for*, select **Install for All Users**.
+5. Click **Install**.
+
+![image.png](Salesforce%20OAuth%20Setup%20Guide/image.png)
+
+1. Wait for the confirmation screen (~1-2 minutes). You'll see *"Installation Complete"* when done.
+
+![image.png](Salesforce%20OAuth%20Setup%20Guide/image%201.png)
+
+---
+
+# Step 2 — Connect SFDC via the 1mind Console
+
+Your 1mind Customer Success Manager will provide access to the 1mind Console. 1mind will provide supplemental information on the step by step on how to authenticate into SFDC within the 1mind Console.  
+
+1. Make sure you are logged into the **correct Salesforce org** (production or sandbox) before clicking.
+2. Enter your Salesforce domain when prompted and complete the OAuth flow.
+3. Approve the requested permissions in Salesforce.
+4. You should see a confirmation: `{"success":"Authentication successful"}`
+
+> If you need to connect both Sandbox and Production, repeat this step with the corresponding link for each environment.
+> 
+
+---
+
+# Verifying the installation
+
+In your Salesforce org:
+
+1. **Setup → Installed Packages** — confirm *"1mind Integration Client"* is listed.
+2. **Setup → External Client Apps** — confirm *"1mind Integration Client"* appears under the `OneMind` namespace and is **Enabled**.
+
+Your 1mind contact can confirm on their end that API calls into your org are succeeding.
+
+---
+
+# Uninstalling
+
+To remove the integration:
+
+1. Ask your 1mind contact to revoke access from 1mind's side.
+2. In Salesforce: **Setup → Installed Packages** → next to *1mind Integration Client*, click **Uninstall**.
+3. Follow the uninstall prompts. Salesforce will remove the ECA and all package components.
+
+---
+
+# Troubleshooting
+
+- `"This app isn't installed in your org"` during OAuth flow
+    
+    The package didn't install fully, or OAuth replication is still propagating. Wait 5 minutes and retry. If it persists, uninstall and reinstall.
+    
+- "`redirect_uri_mismatch"` during OAuth flow
+    
+    Contact 1mind support with the full error URL — this usually means 1mind needs to update the callback URL registration on their side.
+    
+- OAuth login succeeds but 1mind can't access data
+    
+    Rare, but may indicate restrictive OAuth policies on your org or service user permissions. Contact 1mind and work with support to resolve the issue. 
+    
+- OAuth link not working
+    
+    Confirm the link matches the correct environment (sandbox vs production). If the issue persists, contact your 1mind account manager to regenerate the link.
+    
+- Wrong Salesforce org connected
+    
+    Log out of the incorrect org, log into the correct one, and re-click the OAuth link.
+    
+- Success message doesn't appear after OAuth
+    
+    Check for browser pop-up blockers, try a different browser, or contact your 1mind account manager to regenerate the OAuth link.
+    
+
+---
+
+# Support
+
+For help with installation or authorization:
+
+- **Email:** [support@1mind.com](mailto:support@1mind.com)
+- **1mind account manager:** use your existing channel
