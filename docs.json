@@ -34,7 +34,9 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["using/overview"]
+            "pages": [
+              "using/overview"
+            ]
           },
           {
             "group": "Superhumans",
@@ -50,7 +52,9 @@
               "using/superhumans/post-conversation-actions",
               {
                 "group": "Ride-Along",
-                "pages": ["using/superhumans/ride-along/conferencing"]
+                "pages": [
+                  "using/superhumans/ride-along/conferencing"
+                ]
               }
             ]
           },
@@ -73,11 +77,15 @@
           },
           {
             "group": "Skills",
-            "pages": ["using/skills/overview"]
+            "pages": [
+              "using/skills/overview"
+            ]
           },
           {
             "group": "Analytics & Attribution",
-            "pages": ["using/analytics-attribution"]
+            "pages": [
+              "using/analytics-attribution"
+            ]
           },
           {
             "group": "Best Practices",
@@ -93,11 +101,15 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["configuring/overview"]
+            "pages": [
+              "configuring/overview"
+            ]
           },
           {
             "group": "Platform",
-            "pages": ["configuring/platform/overview"]
+            "pages": [
+              "configuring/platform/overview"
+            ]
           },
           {
             "group": "Knowledge",
@@ -142,9 +154,12 @@
               },
               "configuring/integrations/calendars",
               "configuring/integrations/marketo",
+              "configuring/integrations/pardot",
+              "configuring/integrations/eloqua",
               "configuring/integrations/chili-piper",
               "configuring/integrations/leandata-bookit",
               "configuring/integrations/cookie-behavior",
+              "configuring/integrations/6sense-enrichment",
               "configuring/integrations/widget-placement-troubleshooting"
             ]
           },
@@ -157,7 +172,9 @@
           },
           {
             "group": "Troubleshooting",
-            "pages": ["configuring/troubleshooting"]
+            "pages": [
+              "configuring/troubleshooting"
+            ]
           }
         ]
       },
@@ -204,7 +221,9 @@
         "groups": [
           {
             "group": "Changelog",
-            "pages": ["changelog/overview"]
+            "pages": [
+              "changelog/overview"
+            ]
           }
         ]
       }
@@ -238,7 +257,16 @@
     }
   },
   "contextual": {
-    "options": ["copy", "view", "chatgpt", "claude", "perplexity", "mcp", "cursor", "vscode"]
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "footer": {
     "socials": {
