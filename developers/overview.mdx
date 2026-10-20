@@ -1,0 +1,47 @@
+---
+title: "Developers"
+description: "Technical references for building on and integrating with 1mind — the JavaScript SDK, in-conversation tool calls, data read/write, event listeners, and the Data API."
+contentType: "overview"
+status: "draft"
+public: true
+---
+
+This section is the technical home for engineers working with 1mind. It covers how the Superhuman launcher and SDK behave on your site, how conversations read and write data, the events you can listen for, and how to pull conversation data into your warehouse.
+
+## On your site
+
+<CardGroup cols={2}>
+  <Card title="SDK reference (OnemindSDK)" href="/developers/sdk-reference">
+    JavaScript SDK methods and lifecycle events for the 1mind widget, available on `window.onemind.v1`.
+  </Card>
+  <Card title="Event listeners" href="/developers/event-listeners">
+    Subscribe to conversation and widget events to trigger your own analytics or page behavior.
+  </Card>
+</CardGroup>
+
+## Data in and out of a conversation
+
+<CardGroup cols={2}>
+  <Card title="Tool Calls" href="/developers/tool-calls">
+    How a Superhuman calls out to your systems mid-conversation to fetch data or take an action.
+  </Card>
+  <Card title="Pre & Post Processing" href="/developers/pre-post-processing">
+    What the Superhuman reads before a conversation and writes back after, across your CRM, MAP, and warehouse.
+  </Card>
+  <Card title="Technical design specification (example)" href="/developers/technical-design-spec-example">
+    A worked example of a 1mind technical design spec, showing how an integration is scoped end to end.
+  </Card>
+</CardGroup>
+
+## Data API
+
+Extract conversation and attribution data into your own analytics stack.
+
+<CardGroup cols={2}>
+  <Card title="Data API overview" href="/developers/data-api/overview">
+    Authentication, endpoints, and extraction patterns for the 1mind Data API.
+  </Card>
+  <Card title="Warehouse implementation guides" href="/developers/data-api/snowflake">
+    Step-by-step setup for Snowflake, Databricks, BigQuery, and Amazon Redshift.
+  </Card>
+</CardGroup>

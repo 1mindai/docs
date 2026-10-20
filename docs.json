@@ -184,6 +184,7 @@
           {
             "group": "Developers",
             "pages": [
+              "developers/overview",
               "developers/sdk-reference",
               "developers/tool-calls",
               "developers/pre-post-processing",
