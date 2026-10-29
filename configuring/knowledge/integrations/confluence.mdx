@@ -17,11 +17,11 @@ This guide walks through connecting Confluence step by step. The whole setup tak
 Before you start, have this ready:
 
 - **An active Confluence Cloud account** with permission to access the content you want to sync.
-- **Your Confluence username** — the email address you sign in with.
-- **Your Confluence domain** — for example, `yoursite.atlassian.net`. Enter it **without** an `https://` prefix and **without** a trailing slash.
-- **A Confluence API token** — create one from your Atlassian account security settings. The in-product Setup Guide links to the exact steps for finding your domain and creating a token.
+- **Your Confluence username**: the email address you sign in with.
+- **Your Confluence domain**: for example, `yoursite.atlassian.net`. Enter it **without** an `https://` prefix and **without** a trailing slash.
+- **A Confluence API token**: create one from your Atlassian account security settings. The in-product Setup Guide links to the exact steps for finding your domain and creating a token.
 
-<Note>Confluence Data Center is not supported — this connector works with Confluence Cloud.</Note>
+<Note>Confluence Data Center is not supported, this connector works with Confluence Cloud.</Note>
 
 ## Step-by-step setup
 
@@ -37,7 +37,7 @@ Before you start, have this ready:
   </Step>
   <Step title="Connect Confluence">
 
-    On the Confluence page, click **Connect Confluence**. This takes you to the Confluence connection page — click **Continue** to reach the credentials form.
+    On the Confluence page, click **Connect Confluence**. This takes you to the Confluence connection page, click **Continue** to reach the credentials form.
 
     <Frame>
       <img src="/images/knowledge/confluence/02-step-2-connect-confluence.png" alt="Step 2 connect confluence" />
@@ -48,9 +48,9 @@ Before you start, have this ready:
 
     On the connection form, fill in:
 
-    - **Username** — the email address you sign in to Confluence with.
-    - **Domain** — your Confluence domain, e.g. `yoursite.atlassian.net`. Do **not** add an `https://` prefix or a trailing slash.
-    - **API token** — paste the token you created in your Atlassian account.
+    - **Username**: the email address you sign in to Confluence with.
+    - **Domain**: your Confluence domain, e.g. `yoursite.atlassian.net`. Do **not** add an `https://` prefix or a trailing slash.
+    - **API token**: paste the token you created in your Atlassian account.
 
     The Setup Guide on the right links to the exact steps for finding your domain and creating an API token if you need them.
 
@@ -92,7 +92,7 @@ Before you start, have this ready:
 | What you're seeing | What to check |
 | --- | --- |
 | The connection test doesn't pass | Double-check the username, domain, and API token. Make sure the domain has **no** `https://` prefix and **no** trailing slash, and that the API token is current and hasn't been revoked. Then run **Save & Test** again. |
-| No data has appeared yet | Give it time — the first sync isn't instant, and data can take an hour or two to land depending on volume. Confirm the integration shows a **Connected** status. |
+| No data has appeared yet | Give it time, the first sync isn't instant, and data can take an hour or two to land depending on volume. Confirm the integration shows a **Connected** status. |
 | Files are stuck on Processing | Processing runs after content syncs in; larger or content-heavy pages take longer. Wait for it to finish, then refresh the Knowledge Hub. |
 | Some pages are missing | Confirm your Confluence account has permission to access those spaces and pages. Content the account can't see won't be synced. |
 | Confluence Data Center won't connect | This connector supports Confluence **Cloud** only. Data Center isn't supported. |
@@ -105,15 +105,15 @@ Pages and blog posts from your Confluence Cloud site that your account has permi
 
 **Where do I find my domain and API token?**
 
-Your domain is in your Confluence URL (e.g. `yoursite.atlassian.net`). Create an API token from your Atlassian account security settings — the in-product Setup Guide links to the exact steps.
+Your domain is in your Confluence URL (e.g. `yoursite.atlassian.net`). Create an API token from your Atlassian account security settings, the in-product Setup Guide links to the exact steps.
 
 **How should I format the domain?**
 
-Enter it without an `https://` prefix and without a trailing slash — just `yoursite.atlassian.net`.
+Enter it without an `https://` prefix and without a trailing slash, just `yoursite.atlassian.net`.
 
 **Does it support Confluence Data Center?**
 
-No — the connector works with Confluence Cloud only.
+No, the connector works with Confluence Cloud only.
 
 **How long until my data shows up?**
 

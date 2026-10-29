@@ -1,6 +1,6 @@
 ---
 title: "Release Management"
-description: "How a Superhuman's tested Brain, goals, and Knowledge move from Sandbox to Production — publish, promote, version history, and revert — and how that differs from deployment promotion."
+description: "How a Superhuman's tested Brain, goals, and Knowledge move from Sandbox to Production, publish, promote, version history, and revert, and how that differs from deployment promotion."
 contentType: "reference"
 status: "published"
 ---
@@ -29,26 +29,26 @@ Saving does not create a frozen release. When the draft is ready to become testa
 
 ## Review "READY TO PROMOTE"
 
-Treat **READY TO PROMOTE** as an *availability* indicator — a Sandbox release is eligible for promotion. It is not a test result, an approval, or proof that every intended draft change is included. Confirm the release identity, review its change summary, and complete Sandbox testing before promoting.
+Treat **READY TO PROMOTE** as an *availability* indicator, a Sandbox release is eligible for promotion. It is not a test result, an approval, or proof that every intended draft change is included. Confirm the release identity, review its change summary, and complete Sandbox testing before promoting.
 
 ## Promote to Production
 
-Promotion copies the **complete frozen Sandbox release** — Brain, goals, and Knowledge together (component selection already happened at publish). Confirm the latest Sandbox card is the release you tested, select **Promote to Production**, review every current-versus-incoming summary, add a concise release note, and complete the confirmation. Wait for the job to finish, then verify the new Production release in **Version History → Production** and run an end-to-end check on the live surface. The review is a release summary, not a field-by-field diff — targeted Sandbox tests remain necessary. The flow has no second-person approval step; complete your team's approval process before the final action.
+Promotion copies the **complete frozen Sandbox release**: Brain, goals, and Knowledge together (component selection already happened at publish). Confirm the latest Sandbox card is the release you tested, select **Promote to Production**, review every current-versus-incoming summary, add a concise release note, and complete the confirmation. Wait for the job to finish, then verify the new Production release in **Version History → Production** and run an end-to-end check on the live surface. The review is a release summary, not a field-by-field diff, targeted Sandbox tests remain necessary. The flow has no second-person approval step; complete your team's approval process before the final action.
 
 ## Version history and revert
 
-**Version History** has separate **Sandbox** and **Production** tabs; each release card shows identifier, author/timestamp, Brain/Knowledge badges, an optional release note, **Current**, and **Revert** on eligible older releases. **Revert** makes a selected historical release current again in the same environment: it restores that release's Brain, goals, and Knowledge together, creates a new history entry, leaves the editable Sandbox draft unchanged, does not restore deployment configuration, and does not partially restore only Brain or only Knowledge. Use **Production Revert** to recover from a live problem (acts directly on Production history — no need to republish through Sandbox), then fix the underlying issue in Sandbox and promote a corrected release when ready.
+**Version History** has separate **Sandbox** and **Production** tabs; each release card shows identifier, author/timestamp, Brain/Knowledge badges, an optional release note, **Current**, and **Revert** on eligible older releases. **Revert** makes a selected historical release current again in the same environment: it restores that release's Brain, goals, and Knowledge together, creates a new history entry, leaves the editable Sandbox draft unchanged, does not restore deployment configuration, and does not partially restore only Brain or only Knowledge. Use **Production Revert** to recover from a live problem (acts directly on Production history, no need to republish through Sandbox), then fix the underlying issue in Sandbox and promote a corrected release when ready.
 
 ## Promote a deployment separately
 
-To release deployment configuration, open the deployment, review every tab, test in Sandbox, and select the inline **Promote to Production** only when you are ready for it to go live immediately. Deployment configuration is not included in Version History Revert — if a deployment promotion is wrong, correct it in Sandbox, retest, and promote the corrected configuration.
+To release deployment configuration, open the deployment, review every tab, test in Sandbox, and select the inline **Promote to Production** only when you are ready for it to go live immediately. Deployment configuration is not included in Version History Revert, if a deployment promotion is wrong, correct it in Sandbox, retest, and promote the corrected configuration.
 
 ## Troubleshooting
 
-- **Publish fails while Knowledge is processing** — wait for every intended document to finish, then reopen the flow.
-- **Brain is selected but does not enter the release** — complete all required Brain fields, save, reopen Publish, and confirm Brain is selected.
-- **Promote/Revert is missing** — your role may not include release control; ask a Workspace Admin or Super Admin. (Workspace Admin and Super Admin are the safest documented roles for managing releases.)
-- **A deployment change is live but the Brain change is not** — the two paths are separate; review Brain/Knowledge here and the deployment in its own editor.
+- **Publish fails while Knowledge is processing**: wait for every intended document to finish, then reopen the flow.
+- **Brain is selected but does not enter the release**: complete all required Brain fields, save, reopen Publish, and confirm Brain is selected.
+- **Promote/Revert is missing**: your role may not include release control; ask a Workspace Admin or Super Admin. (Workspace Admin and Super Admin are the safest documented roles for managing releases.)
+- **A deployment change is live but the Brain change is not**: the two paths are separate; review Brain/Knowledge here and the deployment in its own editor.
 
 ## Related
 

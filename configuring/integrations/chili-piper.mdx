@@ -16,7 +16,7 @@ With 1mind's Superhumans + Chili Piper, companies can:
 - **Route intelligently** based on CRM/MAP data (account, territory, industry, etc.)
 - **Provide seamless handoff** from digital conversation to human rep
 
-This integration ensures your best prospects don't wait — they talk, qualify, and book a meeting in a single flow.
+This integration ensures your best prospects don't wait, they talk, qualify, and book a meeting in a single flow.
 
 ## 2. Integration Overview
 
@@ -68,13 +68,13 @@ This integration ensures your best prospects don't wait — they talk, qualify, 
   </Step>
   <Step title="4.2 Minimum parameter (required)">
 
-    - `id=<prospect_email>` — the primary identifier Chili Piper uses to match or create the record and apply routing/owner rules
+    - `id=<prospect_email>`, the primary identifier Chili Piper uses to match or create the record and apply routing/owner rules
 
   </Step>
   <Step title="4.3 Common optional parameters">
 
-    - `meetingTypeId=<UUID>` — selects a specific meeting template/flow (e.g., Demo, Discovery)*
-    - `by=<name-or-id>` — credits the booker (e.g., for SDR→AE handoff reporting)
+    - `meetingTypeId=<UUID>`, selects a specific meeting template/flow (e.g., Demo, Discovery)*
+    - `by=<name-or-id>`, credits the booker (e.g., for SDR→AE handoff reporting)
 
     *If your workspace uses a legacy format, the meeting type may be indicated with `type=<name>` instead of `meetingTypeId`.*
 
@@ -135,7 +135,7 @@ NOTE: Under “Meeting Type”, for the form that the superhuman will reference 
 
 ## 7. Example Conversation Flow (Cisco Example)
 
-*⚠️ Simulated demonstration only — not real data.* *This example intentionally uses Superhuman Candace for Cisco's inbound BDR flow.*
+*⚠️ Simulated demonstration only, not real data.* *This example intentionally uses Superhuman Candace for Cisco's inbound BDR flow.*
 
 **Superhuman Candace:** Hi 👋 I'm Candace from Cisco. Are you exploring networking today?
 
@@ -165,7 +165,7 @@ NOTE: Under “Meeting Type”, for the form that the superhuman will reference 
 
 **Prospect:** John Smith.
 
-**Superhuman Candace:** Thanks—what's your best email?
+**Superhuman Candace:** Thanks, what's your best email?
 
 **Prospect:** john.smith@acme.com
 
@@ -173,7 +173,7 @@ NOTE: Under “Meeting Type”, for the form that the superhuman will reference 
 
 **Prospect:** Yes.
 
-**Superhuman Candace:** Great—here's your scheduling link to meet our specialist.
+**Superhuman Candace:** Great, here's your scheduling link to meet our specialist.
 
 *Superhuman Candace shares link:*
 
@@ -216,7 +216,7 @@ Prospect clicks → Chili Piper applies your configured queue/owner rules, shows
 
 **What's the minimum data needed to route?** The prospect email (`id=`) so Chili Piper can match in CRM and apply your rules.
 
-**Can we enforce a specific meeting type?** Yes—include `meetingTypeId=<UUID>` (or `type=<name>` in legacy setups).
+**Can we enforce a specific meeting type?** Yes, include `meetingTypeId=<UUID>` (or `type=<name>` in legacy setups).
 
 **What if we want territories or custom queues?** Configure that in Chili Piper; 1mind will pass identifiers so those rules apply.
 
@@ -226,4 +226,4 @@ Superhuman conversation → Chili Piper scheduling → CRM logging, all in one s
 
 Your team controls routing logic in Chili Piper; 1mind ensures the right identifiers are captured in conversation and included in the link.
 
-**Result:** Faster handoffs, higher conversion, and more qualified meetings—without adding friction for your buyers within the superhuman qualification
+**Result:** Faster handoffs, higher conversion, and more qualified meetings, without adding friction for your buyers within the superhuman qualification

@@ -1,6 +1,6 @@
 ---
 title: "Event listeners"
-description: "Let a Superhuman react to vendor-emitted window events on your page — configured in the Console, no code deploy required."
+description: "Let a Superhuman react to vendor-emitted window events on your page, configured in the Console, no code deploy required."
 contentType: "reference"
 status: "published"
 ---
@@ -8,7 +8,7 @@ status: "published"
 ## What it is
 
 Event Listeners let a Superhuman listen for and respond to **vendor-emitted window
-events** on your page — configured entirely in the Console, with no engineering or
+events** on your page, configured entirely in the Console, with no engineering or
 code changes. When something meaningful happens (a meeting is booked, a form is
 submitted, a trial step is completed), the Superhuman is made aware instantly and
 told how to respond.
@@ -22,11 +22,11 @@ edit, or delete listeners per environment (Production or Staging).
 
 Each listener has these fields:
 
-- **Event name** — the exact string the vendor's JavaScript emits as a window event. It must match **exactly**, including case (e.g., `BOOKIT_MEETING_BOOKED`, `CHILIPIPER_MEETING_SCHEDULED`). A typo or case mismatch means it never fires — confirm the name against the vendor docs or your developers.
-- **Vendor / source** — a label for organization/reporting (e.g., `Chili Piper`, `ZoomInfo`, `BookIt`, or your product name).
-- **Allowed origin domains** — the domain(s) permitted to emit this event (typically your web app domain). Be specific; don't leave it overly broad.
-- **Superhuman instruction** *(most important)* — plain-language context injected into the Superhuman's Brain when the event fires. Brief it like you'd brief a rep, and explain each payload parameter.
-- **Description** *(optional)* — an internal note on when the event fires.
+- **Event name**: the exact string the vendor's JavaScript emits as a window event. It must match **exactly**, including case (e.g., `BOOKIT_MEETING_BOOKED`, `CHILIPIPER_MEETING_SCHEDULED`). A typo or case mismatch means it never fires, confirm the name against the vendor docs or your developers.
+- **Vendor / source**: a label for organization/reporting (e.g., `Chili Piper`, `ZoomInfo`, `BookIt`, or your product name).
+- **Allowed origin domains**: the domain(s) permitted to emit this event (typically your web app domain). Be specific; don't leave it overly broad.
+- **Superhuman instruction** *(most important)*, plain-language context injected into the Superhuman's Brain when the event fires. Brief it like you'd brief a rep, and explain each payload parameter.
+- **Description** *(optional)*, an internal note on when the event fires.
 
 **Instruction template:**
 
@@ -38,7 +38,7 @@ Event parameters:
 [param_name]: [what this parameter represents]
 ```
 
-**Example — Chili Piper meeting booked:**
+**Example, Chili Piper meeting booked:**
 
 ```
 The prospect has just booked a meeting via Chili Piper. Stop offering booking
@@ -83,9 +83,9 @@ Superhuman responds based on your instruction.
 
 ## What to watch for
 
-- **Event name must match exactly** — verify against vendor docs or a developer.
-- **Write the instruction like a rep briefing** — plain language, with each parameter clearly described.
-- **Scope Allowed Origins carefully** — don't leave it too broad.
+- **Event name must match exactly**: verify against vendor docs or a developer.
+- **Write the instruction like a rep briefing**: plain language, with each parameter clearly described.
+- **Scope Allowed Origins carefully**: don't leave it too broad.
 
 ## Known limitations (V1)
 

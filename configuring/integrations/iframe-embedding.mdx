@@ -15,7 +15,7 @@ fine on its own can still fail to embed. The usual culprits:
 - Third-party cookie restrictions (auth/session problems in nested iframes)
 - Mixed content (HTTP inside HTTPS)
 
-**Key concept:** a page can only be embedded if it explicitly allows framing —
+**Key concept:** a page can only be embedded if it explicitly allows framing, 
 controlled by response headers from the embedded page.
 
 ## The two main controls
@@ -27,13 +27,13 @@ embed your page:
 Content-Security-Policy: frame-ancestors https://*.1mind.com https://customer.com;
 ```
 
-Keep the allowlist tight — only the domains that actually need to embed.
+Keep the allowlist tight, only the domains that actually need to embed.
 
 **X-Frame-Options (legacy, still enforced).** Values: `DENY` (never embeddable) or
 `SAMEORIGIN` (only same origin). Because Superhuman integrations are multi-hop
 (customer site → 1mind Superhuman → embedded customer content), `SAMEORIGIN` blocks
 the embedded page when its immediate parent is a different origin. **Don't use
-`X-Frame-Options: SAMEORIGIN` for pages you want embeddable across domains** —
+`X-Frame-Options: SAMEORIGIN` for pages you want embeddable across domains**: 
 prefer CSP `frame-ancestors`, and remove/unset XFO for the specific page.
 
 <Note>
@@ -127,12 +127,12 @@ where the blocking header lives:
 
 | Header seen | Indicates |
 | --- | --- |
-| `server: cloudflare`, `cf-ray: ...` | Cloudflare — set via a Transform / Response Header rule, or passed from origin |
-| `server: nginx` | Nginx origin — likely `add_header X-Frame-Options SAMEORIGIN;` in config |
-| `server: Apache` | Apache origin — likely `.htaccess` / `httpd.conf` `Header set X-Frame-Options` |
-| `via: cloudfront`, `x-amz-cf-id` | AWS CloudFront — response headers policy |
-| `x-served-by: cache-...` | Fastly — VCL config |
-| `server: AkamaiGHost` | Akamai — property configuration |
+| `server: cloudflare`, `cf-ray: ...` | Cloudflare, set via a Transform / Response Header rule, or passed from origin |
+| `server: nginx` | Nginx origin, likely `add_header X-Frame-Options SAMEORIGIN;` in config |
+| `server: Apache` | Apache origin, likely `.htaccess` / `httpd.conf` `Header set X-Frame-Options` |
+| `via: cloudfront`, `x-amz-cf-id` | AWS CloudFront, response headers policy |
+| `x-served-by: cache-...` | Fastly, VCL config |
+| `server: AkamaiGHost` | Akamai, property configuration |
 
 The fix happens wherever that header is set (CDN dashboard or origin server config).
 

@@ -1,6 +1,6 @@
 ---
 title: "Post-Conversation Actions"
-description: "Configure an automated follow-up email for a Superhuman — per-Superhuman SendGrid setup, AI-generated or template content, variables, and a controlled Draft-to-Live release."
+description: "Configure an automated follow-up email for a Superhuman, per-Superhuman SendGrid setup, AI-generated or template content, variables, and a controlled Draft-to-Live release."
 contentType: "how-to"
 status: "published"
 ---
@@ -25,19 +25,19 @@ Expand **Variable System Configuration** for the exact variable paths, in the fo
 
 ## Email content
 
-Three authoring fields: **Email Instructions** (purpose, tone, length, which facts may be used, what to do when a variable is missing, approved CTA, required compliance text), **Example Emails** (structure and voice only — use variables or synthetic values, never real customer content), and **Subject Line Examples** (short, consistent, no deceptive urgency).
+Three authoring fields: **Email Instructions** (purpose, tone, length, which facts may be used, what to do when a variable is missing, approved CTA, required compliance text), **Example Emails** (structure and voice only, use variables or synthetic values, never real customer content), and **Subject Line Examples** (short, consistent, no deceptive urgency).
 
-Two **Email Type** options: **AI Generated Content** (composed from instructions, examples, and conversation data) and **SendGrid Template** (enter a **Template ID**; the template exposes `{{recipient}}`, `{{subject_line}}`, and `{{body}}` — distinct from the longer Session/Conversation variable list).
+Two **Email Type** options: **AI Generated Content** (composed from instructions, examples, and conversation data) and **SendGrid Template** (enter a **Template ID**; the template exposes `{{recipient}}`, `{{subject_line}}`, and `{{body}}`, distinct from the longer Session/Conversation variable list).
 
 ## Save, test, and activate safely
 
-Before saving, confirm the intended Superhuman, approved From/BCC addresses, the correct SendGrid key, every variable path, and (for templates) the Template ID and placements. **Test without contacting real users**: use a test-only sender and a controlled mailbox, remove BCC unless approved, use a synthetic conversation, exercise typical and missing-variable cases, and inspect the received message. Activate only through the populated page's explicit control, after approval from the email-content and email-system owners — do not infer a button label or confirmation from the DRAFT/LIVE badges. If no explicit control is available, stop and ask the authorized platform owner for the approved procedure.
+Before saving, confirm the intended Superhuman, approved From/BCC addresses, the correct SendGrid key, every variable path, and (for templates) the Template ID and placements. **Test without contacting real users**: use a test-only sender and a controlled mailbox, remove BCC unless approved, use a synthetic conversation, exercise typical and missing-variable cases, and inspect the received message. Activate only through the populated page's explicit control, after approval from the email-content and email-system owners, do not infer a button label or confirmation from the DRAFT/LIVE badges. If no explicit control is available, stop and ask the authorized platform owner for the approved procedure.
 
 ## Troubleshooting
 
-- **Save Draft is disabled** — review every field for validation (From Email format, SendGrid key present, an Email Type selected, Template ID if applicable, valid BCC separators).
-- **The email shows a literal variable** — compare the path character for character with Variable System Configuration, confirm both braces, and confirm the field supports variables.
-- **A message was not received** — confirm the setting is **LIVE**, verify recipient/BCC addresses and credential validity with the email-system owner, confirm the test conversation supplied the contact data, and check junk/quarantine.
+- **Save Draft is disabled**: review every field for validation (From Email format, SendGrid key present, an Email Type selected, Template ID if applicable, valid BCC separators).
+- **The email shows a literal variable**: compare the path character for character with Variable System Configuration, confirm both braces, and confirm the field supports variables.
+- **A message was not received**: confirm the setting is **LIVE**, verify recipient/BCC addresses and credential validity with the email-system owner, confirm the test conversation supplied the contact data, and check junk/quarantine.
 
 ## Related
 
