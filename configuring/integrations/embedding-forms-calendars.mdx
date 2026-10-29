@@ -2,7 +2,7 @@
 title: "Embedding forms & calendars"
 description: "Embed an external form or meeting-booking calendar inside the Superhuman conversation, and what each tool needs to make it work."
 contentType: "reference"
-status: "draft"
+status: "published"
 ---
 
 ## What this means
@@ -36,7 +36,7 @@ Consider embedding a form or calendar when you need to:
 
 **During display**
 
-- Does the embedded page need **whitelisting** to render inside the Superhuman?
+- Does the embedded page need **allowlisting** to render inside the Superhuman?
 - Style the form to core brand styles, input fields, and the submit button only — remove everything else.
 - Ideally the form auto-closes on submission.
 
@@ -48,11 +48,11 @@ Consider embedding a form or calendar when you need to:
 ## Per-tool support
 
 For every tool, you provide the link to the form/calendar you want embedded. The
-preferred whitelisting approach (where required) is to whitelist the `*1mind.com`
+preferred allowlisting approach (where required) is to allowlist the `*1mind.com`
 domain for that form; sharing the embed code is a last resort and requires Services
 approval.
 
-| Tool | Whitelisting | URL parameters (pre-fill) | 1mind can read data after submission |
+| Tool | Allowlisting | URL parameters (pre-fill) | 1mind can read data after submission |
 | --- | --- | --- | --- |
 | Marketo Forms (2.0) | Typically yes | Additional setup (customer parses params) | Additional setup (webhook to 1mind) |
 | HubSpot Forms | Typically no | Yes (default) | Additional setup (webhook to 1mind) |
