@@ -137,7 +137,7 @@ const result = await onemind.v1.showPrompt({
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
-| `text` | string | Yes |, | The message to show. 1–200 characters after surrounding whitespace is trimmed. Longer copy is rejected, never truncated. |
+| `text` | string | Yes | | The message to show. 1–200 characters after surrounding whitespace is trimmed. Longer copy is rejected, never truncated. |
 | `durationMs` | number | No | `0` | `0` keeps the prompt on screen until it is dismissed or replaced. A positive integer auto-hides it after that many milliseconds. Must be a whole number between `0` and `2147483647` (about 24.8 days). |
 
 **Response**: resolves to `{ shown: true }` once the bubble is on screen, or
@@ -208,7 +208,7 @@ the event occurs; an object with event-relevant data is passed in.
 | `onConversationEnded` | The user session ends | `{ timestamp, conversationStartTimestamp, conversationEndTimestamp, conversationId, userMessagesCount, userVoiceMessagesCount, agentRepliesCount }` |
 | `onChatMessageSent` | The user sends a message (voice or text) | `{ timestamp, conversationStartTimestamp, conversationId, userMessagesCount, userVoiceMessagesCount, agentRepliesCount }` |
 | `onChatMessageReceived` | The user receives a message from the Superhuman | `{ timestamp }` |
-| `onUrlClicked` | The user clicks a URL in the chat |, |
+| `onUrlClicked` | The user clicks a URL in the chat | |
 
 **Syntax:**
 
