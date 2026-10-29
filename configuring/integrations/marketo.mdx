@@ -11,19 +11,19 @@ public: true
 The 1mind Superhuman acts as an always-on online BDR and Sales Engineer
 (MEDDPICC / BANT / SPICED). This guide details its integration with **Marketo**:
 using your Person data and activity history, it personalizes engagement, identifies
-high-intent leads, and routes them to sales — or adds them to nurture — with
+high-intent leads, and routes them to sales, or adds them to nurture, with
 summarized and detailed insights.
 
 ## Integration approach
 
 - **Intelligent pre-processing (read):** access Person data and summarized activity so conversations are informed from the first interaction, optimized for speed.
 - **Actionable post-processing (write):** update Marketo records with qualification details, engagement signals, conversation summaries, and full transcript.
-- **Accelerated workflow enhancement:** integrate with your existing programs and sales processes — route qualified leads to sales or into Smart Campaigns for nurture.
+- **Accelerated workflow enhancement:** integrate with your existing programs and sales processes, route qualified leads to sales or into Smart Campaigns for nurture.
 
 ### What pre-processing reads
 
 - **Person/Lead:** `GET /rest/v1/lead/{id}.json`, `GET /rest/v1/leads.json` (batch by email/filter). Fields: name, email, job title, company, industry, lead score, acquisition program, and custom scoring fields.
-- **Activity insights (summarized):** use custom aggregated fields (`Recent_Web_Activity__c`, `Aggregated_Email_Engagement_Score__c`, `Last_Content_Topic__c`, `Recent_Program_Memberships__c`, `Intent_Activity_Score__c`) populated via Smart Campaigns, batch workflows, or Data Value Change triggers — instead of querying raw activity records.
+- **Activity insights (summarized):** use custom aggregated fields (`Recent_Web_Activity__c`, `Aggregated_Email_Engagement_Score__c`, `Last_Content_Topic__c`, `Recent_Program_Memberships__c`, `Intent_Activity_Score__c`) populated via Smart Campaigns, batch workflows, or Data Value Change triggers, instead of querying raw activity records.
 - **Program membership:** `GET /rest/v1/leads/{leadId}/programs.json` to detect content engagement, event attendance, and webinar registrations.
 
 ### What post-processing writes
@@ -79,7 +79,7 @@ summarized and detailed insights.
 ### Access & authentication
 
 Recommended: a **Marketo Custom Service with OAuth 2.0 (Client Credentials
-Grant)** — created in **Admin → LaunchPoint**, token endpoint
+Grant)**: created in **Admin → LaunchPoint**, token endpoint
 `/identity/oauth/token` with `client_id` and `client_secret`. Least-privilege
 scope:
 
@@ -88,16 +88,16 @@ scope:
 
 ### Data flow
 
-**Pre-processing — user identification (critical):** your web infrastructure must
+**Pre-processing, user identification (critical):** your web infrastructure must
 pass `marketoContactId` or `email` (from cookie, local storage, or web session) to
-the launcher — these are inputs to the Marketo Lead API. Without it, the Superhuman
+the launcher, these are inputs to the Marketo Lead API. Without it, the Superhuman
 engages anonymously. **Fallback:** if a third-party vendor (ZoomInfo, 6sense)
 de-anonymizes the visitor and email is available, 1mind attempts Get Lead by Email.
 Retrieval focuses on minimal, recent data (last 1–2 email clicks, recent page
 visits, company/title/leadScore) for a fast payload; data is injected into the
 session in real time.
 
-**Post-processing — Person custom fields.** Provision these on the Marketo Person record:
+**Post-processing, Person custom fields.** Provision these on the Marketo Person record:
 
 | Field | Type / example values |
 | --- | --- |
@@ -141,6 +141,6 @@ session in real time.
 
 ### Workflow, reporting, and environment
 
-- **Workflow:** setting `1mind_Qualification_Status__c = "1QL"` (or a high-intent derived field) triggers your existing Marketo Flow Steps — owner assignment (synced to CRM), AE/BDR task creation, and alert emails. Relies on your Marketo–CRM sync to push `1mind_` fields to the CRM.
+- **Workflow:** setting `1mind_Qualification_Status__c = "1QL"` (or a high-intent derived field) triggers your existing Marketo Flow Steps, owner assignment (synced to CRM), AE/BDR task creation, and alert emails. Relies on your Marketo–CRM sync to push `1mind_` fields to the CRM.
 - **Reporting:** track `1mind_Qualification_Status__c` conversions and lead-score changes in Marketo; conversion-to-Opportunity in CRM; and raw 1mind data (JSON/CSV to S3/warehouse) for bespoke dashboards (engagements, conversion rates, avg engagement time, top topics, objections, competitive mentions, BDR/SDR time saved).
 - **Environment:** request Sandbox/Production access, define testing scenarios (known vs. anonymous, qualified vs. unqualified), phased deployment, and collaborate with Marketo/Web/CRM/Data Engineering teams.

@@ -1,6 +1,6 @@
 ---
 title: "Personas"
-description: "Create, configure, assign, test, and safely maintain the reusable customer-facing identities that deployments use — appearance, voice, languages, and behavior."
+description: "Create, configure, assign, test, and safely maintain the reusable customer-facing identities that deployments use, appearance, voice, languages, and behavior."
 contentType: "how-to"
 status: "published"
 ---
@@ -22,16 +22,16 @@ The core relationship: create and maintain Personas under **Workspace → Person
 
 ### Identity details
 
-- **Persona Name** (required, up to 16 characters) — the customer-facing name.
-- **Gender and pronouns** — Female/she, Male/he, or Neutral/they. Photoreal sets these automatically; Waveform and Custom Upload let you choose.
-- **What is this persona for?** — optional workspace-facing metadata (up to 200 characters) to distinguish similar Personas.
-- **Languages** — every language this Persona is approved to use. English is present by default.
+- **Persona Name** (required, up to 16 characters), the customer-facing name.
+- **Gender and pronouns**: Female/she, Male/he, or Neutral/they. Photoreal sets these automatically; Waveform and Custom Upload let you choose.
+- **What is this persona for?**: optional workspace-facing metadata (up to 200 characters) to distinguish similar Personas.
+- **Languages**: every language this Persona is approved to use. English is present by default.
 
 ### Appearance modes
 
-- **Photoreal** — a realistic speaking person; pick from the gallery, filter by All/Female/Male.
-- **Waveform** — an animated non-human visual; set base, speaking, and listening state colors.
-- **Custom Upload** — a supplied MP4, PNG, JPG, WebP, or GIF up to 50 MB, with an optional appearance description (up to 2,000 characters).
+- **Photoreal**: a realistic speaking person; pick from the gallery, filter by All/Female/Male.
+- **Waveform**: an animated non-human visual; set base, speaking, and listening state colors.
+- **Custom Upload**: a supplied MP4, PNG, JPG, WebP, or GIF up to 50 MB, with an optional appearance description (up to 2,000 characters).
 
 ## Add languages and configure voices
 
@@ -44,8 +44,8 @@ Available languages include multiple English locales plus French, German, Spanis
 
 ## Configure behavior
 
-- **Wake words** — short, distinctive words or phrases that wake the Persona. Test with expected accents, microphones, and background noise.
-- **Interruption handling** — **High** accepts interruptions most readily, **Medium** balances, **Low** is least likely to stop for brief sounds. Some older Personas show **Custom (read-only)**; leave that unless you intend to replace it.
+- **Wake words**: short, distinctive words or phrases that wake the Persona. Test with expected accents, microphones, and background noise.
+- **Interruption handling**: **High** accepts interruptions most readily, **Medium** balances, **Low** is least likely to stop for brief sounds. Some older Personas show **Custom (read-only)**; leave that unless you intend to replace it.
 
 ## Assign a Persona to a deployment
 
@@ -56,7 +56,7 @@ Assignment happens in a Superhuman's deployment, not in Persona Manager.
 3. Open **Basics → About**, select the Persona under **Select a persona**, and **Save**.
 4. Test the Sandbox deployment, then use the deployment's **Promote to Production** control after reviewing the changes.
 
-A Persona is selected as a package — reusing it reuses its name, appearance, pronouns, languages, and voices. If two deployments need different identities, create separate Personas.
+A Persona is selected as a package, reusing it reuses its name, appearance, pronouns, languages, and voices. If two deployments need different identities, create separate Personas.
 
 ## Edit and delete safely
 
@@ -70,10 +70,10 @@ Before Production, verify the customer-facing name; appearance on desktop and mo
 
 ## Troubleshooting
 
-- **Personas is missing from the Superhuman sidebar** — switch to the **Workspace** tab; Personas are workspace-scoped.
-- **The delete icon is missing** — the Persona is still used by a deployment; replace it everywhere first.
-- **The displayed or spoken name is wrong** — distinguish the console label from the Persona name, confirm the correct Persona in **Basics → About**, save, and retest.
-- **Interruption handling says "Custom (read-only)"** — legacy tuning; keep it unless you intend to replace it with High/Medium/Low.
+- **Personas is missing from the Superhuman sidebar**: switch to the **Workspace** tab; Personas are workspace-scoped.
+- **The delete icon is missing**: the Persona is still used by a deployment; replace it everywhere first.
+- **The displayed or spoken name is wrong**: distinguish the console label from the Persona name, confirm the correct Persona in **Basics → About**, save, and retest.
+- **Interruption handling says "Custom (read-only)"**: legacy tuning; keep it unless you intend to replace it with High/Medium/Low.
 
 ## Related
 

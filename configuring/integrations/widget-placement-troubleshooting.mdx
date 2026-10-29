@@ -1,6 +1,6 @@
 ---
 title: "Widget & embed placement troubleshooting"
-description: "Self-serve checks to run when your 1mind widget or embed isn't appearing on your site — confirm the script is in the DOM, rule out common causes, and know what to send support if you still need help."
+description: "Self-serve checks to run when your 1mind widget or embed isn't appearing on your site, confirm the script is in the DOM, rule out common causes, and know what to send support if you still need help."
 contentType: "how-to"
 status: "published"
 ---
@@ -17,7 +17,7 @@ The fastest check is whether the 1mind launcher is actually present in the page'
 4. Search the DOM (on Mac, `Cmd + F`; on Windows, `Ctrl + F`) for **`launcher.1mind.com`**.
 5. Check whether a `<script>` referencing `launcher.1mind.com` is present.
 
-**If the script is present** but the widget/embed still does not render as expected, the placement is loading but something downstream is off — continue with the common causes below, then contact support if needed.
+**If the script is present** but the widget/embed still does not render as expected, the placement is loading but something downstream is off, continue with the common causes below, then contact support if needed.
 
 **If the script is not present**, the launcher isn't reaching the page at all. Confirm the launcher code was installed exactly as shown in [Website embed & script installation](/configuring/integrations/website-embed), on the correct page, for the intended deployment and environment.
 
@@ -26,14 +26,14 @@ The fastest check is whether the 1mind launcher is actually present in the page'
 | Symptom | Likely cause | Where to fix |
 | --- | --- | --- |
 | Script isn't in the DOM at all | Launcher code missing, on the wrong page, or added for the wrong deployment/environment | [Website embed & script installation](/configuring/integrations/website-embed) |
-| Script loads on staging but not production (or vice-versa) | The domain isn't in the deployment's authorized list | Deployment **Launch Settings → Access** — add every approved production, staging, and preview host (see [Create & configure a deployment](/using/deployments/create-and-configure)) |
+| Script loads on staging but not production (or vice-versa) | The domain isn't in the deployment's authorized list | Deployment **Launch Settings → Access**: add every approved production, staging, and preview host (see [Create & configure a deployment](/using/deployments/create-and-configure)) |
 | Works on a test page but not via your tag manager | Tag-manager injection timing or scope | Compare a direct in-`<head>` install against the GTM install per [Website embed & script installation](/configuring/integrations/website-embed) |
 | Embed appears blank inside an iframe / another tool | The host page is blocking framing | Review `Content-Security-Policy: frame-ancestors` and `X-Frame-Options` per [Making your page iframe-able](/configuring/integrations/iframe-embedding) |
 | Widget shows on some pages but not others | Page-level exclusion rules or a path the launcher isn't installed on | Confirm the launcher is present on each intended page and review any exclusion rules |
 
 ## 3. Verify environment and deployment
 
-A widget can be "missing" simply because you are looking at the wrong deployment or environment. Confirm the launcher value you installed matches the intended **deployment** and that its configuration has been **promoted to Production** if you are checking a live page. Launcher values are deployment- and environment-specific — see [Create & configure a deployment](/using/deployments/create-and-configure).
+A widget can be "missing" simply because you are looking at the wrong deployment or environment. Confirm the launcher value you installed matches the intended **deployment** and that its configuration has been **promoted to Production** if you are checking a live page. Launcher values are deployment- and environment-specific, see [Create & configure a deployment](/using/deployments/create-and-configure).
 
 ## When to contact support
 

@@ -25,11 +25,11 @@ await onemind.v1.sendSessionContextEvent({
 })
 ```
 
-**Parameters** — `options`: an object containing the event name and payload. The
+**Parameters**: `options`: an object containing the event name and payload. The
 payload can be any valid object. Both the payload and event name are forwarded
 as-is to the `v1/session-events` endpoint.
 
-**Response** — on success:
+**Response**: on success:
 
 ```javascript
 { "success": true, "message": "Event processed successfully", "logId": "[log id]" }
@@ -76,12 +76,12 @@ Sets the z-index of the discourse widget.
 onemind.v1.setWidgetZIndex({ zIndex: 9999 })
 ```
 
-**Parameters** — `zIndex` must be a valid integer; the value is applied directly
+**Parameters**: `zIndex` must be a valid integer; the value is applied directly
 to the widget container.
 
-**Response** — on success: `void`. On error: `Error: onemind: widget is not loaded yet`
+**Response**: on success: `void`. On error: `Error: onemind: widget is not loaded yet`
 
-**Example** — raise above a modal, then reset:
+**Example**: raise above a modal, then reset:
 
 ```javascript
 function openModal() {
@@ -102,9 +102,9 @@ Programmatically starts a conversation with the discourse widget.
 onemind.v1.startConversation()
 ```
 
-**Parameters** — none. It triggers the widget to start a conversation flow directly.
+**Parameters**: none. It triggers the widget to start a conversation flow directly.
 
-**Response** — on success: `void`. On error: `Error: onemind: widget is not loaded yet`
+**Response**: on success: `void`. On error: `Error: onemind: widget is not loaded yet`
 
 **Example:**
 
@@ -123,7 +123,7 @@ onemind.v1.startConversation()
 ### `showPrompt`
 
 Shows a short text bubble above the collapsed widget. Use it to nudge a visitor
-based on what they are doing on your page — for example, offering a walkthrough
+based on what they are doing on your page, for example, offering a walkthrough
 of the feature they just scrolled past.
 
 ```javascript
@@ -133,14 +133,14 @@ const result = await onemind.v1.showPrompt({
 })
 ```
 
-**Parameters** — `payload`: an object.
+**Parameters**: `payload`: an object.
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
-| `text` | string | Yes | — | The message to show. 1–200 characters after surrounding whitespace is trimmed. Longer copy is rejected, never truncated. |
+| `text` | string | Yes |, | The message to show. 1–200 characters after surrounding whitespace is trimmed. Longer copy is rejected, never truncated. |
 | `durationMs` | number | No | `0` | `0` keeps the prompt on screen until it is dismissed or replaced. A positive integer auto-hides it after that many milliseconds. Must be a whole number between `0` and `2147483647` (about 24.8 days). |
 
-**Response** — resolves to `{ shown: true }` once the bubble is on screen, or
+**Response**: resolves to `{ shown: true }` once the bubble is on screen, or
 `{ shown: false, reason }` when it is not. The promise rejects only when the
 widget never became reachable at all.
 
@@ -153,12 +153,12 @@ widget never became reachable at all.
 | `prompt_surface_unavailable` | No collapsed widget was on screen to hold the bubble. |
 | `superseded` | A newer `showPrompt` call replaced this one while it was still waiting for the widget to load. |
 
-**When a prompt can show** — the widget must be collapsed. A prompt is refused
+**When a prompt can show**: the widget must be collapsed. A prompt is refused
 with `prompt_surface_unavailable` while the widget is expanded or in a
 conversation, and on deployment types that have no collapsed state, such as
 full-screen experiences.
 
-**How a prompt goes away** — any of the following clears it:
+**How a prompt goes away**: any of the following clears it:
 
 - The visitor closes it with the bubble's own close control.
 - `durationMs` elapses, when you set one.
@@ -169,18 +169,18 @@ There is no `hidePrompt` method. A prompt sent with the default `durationMs` of
 `0` stays until one of the above happens, so pass a `durationMs` when you want
 the bubble to retire on its own.
 
-**Relationship to the configured teaser** — while a host prompt is on screen it
+**Relationship to the configured teaser**: while a host prompt is on screen it
 takes the place of the deployment's configured welcome teaser. The two keep
 separate dismiss state: closing a host prompt does not suppress the teaser for
 the rest of the visit, and a visitor who already dismissed the teaser can still
 receive host prompts.
 
-**Timing** — you can call `showPrompt` before the widget has finished loading.
+**Timing**: you can call `showPrompt` before the widget has finished loading.
 The SDK retries for a few seconds while the widget boots. If you fire prompts
 from browsing behavior, only the newest call reaches the visitor; earlier calls
 still waiting resolve with `superseded` rather than showing a stale message.
 
-**Example** — send a prompt when a visitor lingers on a pricing section:
+**Example**: send a prompt when a visitor lingers on a pricing section:
 
 ```javascript
 try {
@@ -208,7 +208,7 @@ the event occurs; an object with event-relevant data is passed in.
 | `onConversationEnded` | The user session ends | `{ timestamp, conversationStartTimestamp, conversationEndTimestamp, conversationId, userMessagesCount, userVoiceMessagesCount, agentRepliesCount }` |
 | `onChatMessageSent` | The user sends a message (voice or text) | `{ timestamp, conversationStartTimestamp, conversationId, userMessagesCount, userVoiceMessagesCount, agentRepliesCount }` |
 | `onChatMessageReceived` | The user receives a message from the Superhuman | `{ timestamp }` |
-| `onUrlClicked` | The user clicks a URL in the chat | — |
+| `onUrlClicked` | The user clicks a URL in the chat |, |
 
 **Syntax:**
 

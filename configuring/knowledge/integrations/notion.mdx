@@ -6,7 +6,7 @@ status: "published"
 public: true
 ---
 
-The Notion integration brings your Notion **pages and database entries** — including the images inside them — directly into the 1mind Knowledge Hub. Once connected, the pages you select sync into the Hub on a schedule, and any images in a page are processed so they can be shown in conversation. When a page changes in Notion, the Hub picks it up on the next sync, so you no longer have to export or re-upload knowledge content by hand.
+The Notion integration brings your Notion **pages and database entries**: including the images inside them, directly into the 1mind Knowledge Hub. Once connected, the pages you select sync into the Hub on a schedule, and any images in a page are processed so they can be shown in conversation. When a page changes in Notion, the Hub picks it up on the next sync, so you no longer have to export or re-upload knowledge content by hand.
 
 This guide walks through connecting Notion step by step. The whole setup takes a few minutes; after that, the sync runs on its own.
 
@@ -16,17 +16,17 @@ This guide walks through connecting Notion step by step. The whole setup takes a
 
 Before you start, have this ready:
 
-- **Access to your Notion workspace** — you'll sign in to Notion during setup and authorize the connection with your own account.
-- **The pages you want to sync** — know which Notion pages hold the knowledge you want in the Hub. You can pick them by browsing your Teamspaces, Shared, and Private sections, or by searching page titles.
+- **Access to your Notion workspace**: you'll sign in to Notion during setup and authorize the connection with your own account.
+- **The pages you want to sync**: know which Notion pages hold the knowledge you want in the Hub. You can pick them by browsing your Teamspaces, Shared, and Private sections, or by searching page titles.
 
-<Note>You authorize the connection through Notion's own secure window. 1mind never sees or stores your Notion password — you grant access directly with Notion, and you choose exactly which pages to share.</Note>
+<Note>You authorize the connection through Notion's own secure window. 1mind never sees or stores your Notion password, you grant access directly with Notion, and you choose exactly which pages to share.</Note>
 
 ## Step-by-step setup
 
 <Steps>
   <Step title="Open the Notion integration in the Console">
 
-    In the 1mind Console, go to **Integrations → Knowledge Integrations** and open the **Notion** card. Under **Content Types**, **Pages & database entries** is selected by default — this is the content the Hub will pull from Notion.
+    In the 1mind Console, go to **Integrations → Knowledge Integrations** and open the **Notion** card. Under **Content Types**, **Pages & database entries** is selected by default, this is the content the Hub will pull from Notion.
 
     <Frame>
       <img src="/images/knowledge/notion/01-notion-integration-card.png" alt="Notion integration card" />
@@ -35,7 +35,7 @@ Before you start, have this ready:
   </Step>
   <Step title="Turn on image processing (optional), then connect">
 
-    If you want images in your pages to be processed and shown in conversation, turn on the **Presentable documents** toggle — this generates page images for in-conversation display. Then click **Connect Notion**.
+    If you want images in your pages to be processed and shown in conversation, turn on the **Presentable documents** toggle, this generates page images for in-conversation display. Then click **Connect Notion**.
 
     <Tip>Turn on **Presentable documents** *before* you connect. It applies to new and updated documents and overrides per-document Presentable settings when a page syncs an update.</Tip>
 
@@ -73,7 +73,7 @@ Before you start, have this ready:
   </Step>
   <Step title="Confirm the connection in the Console">
 
-    Back in the Console, the Notion card shows a **Connected** status, along with the current configuration — **Sync State**, sync **Frequency**, and whether **Presentable** is on. A **Synced Files** section appears below; it will be empty until the first sync brings content in.
+    Back in the Console, the Notion card shows a **Connected** status, along with the current configuration, **Sync State**, sync **Frequency**, and whether **Presentable** is on. A **Synced Files** section appears below; it will be empty until the first sync brings content in.
 
     <Frame>
       <img src="/images/knowledge/notion/06-console-connected-status.png" alt="Console connected status" />
@@ -91,7 +91,7 @@ Before you start, have this ready:
   </Step>
   <Step title="Verify your pages in the Knowledge Hub">
 
-    Once the sync runs, open the **Knowledge Hub**. Your Notion pages appear with **Source: Notion**. Open one of the synced documents to confirm the content came through — and, if you enabled **Presentable documents**, that the page's images were processed and included (you'll see the image and its metadata, and tags such as **text** and **presentable** on the document). That confirms the page made it into the Hub with all the content it's supposed to have.
+    Once the sync runs, open the **Knowledge Hub**. Your Notion pages appear with **Source: Notion**. Open one of the synced documents to confirm the content came through, and, if you enabled **Presentable documents**, that the page's images were processed and included (you'll see the image and its metadata, and tags such as **text** and **presentable** on the document). That confirms the page made it into the Hub with all the content it's supposed to have.
 
     <Frame>
       <img src="/images/knowledge/notion/08-processed-document-with-image.png" alt="Processed document with image" />
@@ -104,10 +104,10 @@ Before you start, have this ready:
 | What you're seeing | What to check |
 | --- | --- |
 | The connection tests don't pass | Reopen the Notion connection window and complete authorization again, making sure you click **Allow access** on the page-selection screen. If it keeps failing, disconnect and reconnect. |
-| No data has appeared yet | Give it time — the first sync isn't instant, and data can take **up to an hour** **or two** to land depending on volume. Confirm the connection shows a **Connected** status and its sync is scheduled. |
+| No data has appeared yet | Give it time, the first sync isn't instant, and data can take **up to an hour** **or two** to land depending on volume. Confirm the connection shows a **Connected** status and its sync is scheduled. |
 | Documents are stuck on Processing | Processing runs after files sync in; larger or image-heavy pages take longer. Wait for it to finish, then refresh the Knowledge Hub. |
 | Pages synced but images are missing | Make sure **Presentable documents** was turned on **before** connecting. If it was added later, let a fresh sync run so new and updated pages are processed with images. |
-| A page you expected isn't there | Confirm the page was included in your selection on the **Allow access** screen. Notion only shares the pages you explicitly select — reopen the connection and add any missing pages. |
+| A page you expected isn't there | Confirm the page was included in your selection on the **Allow access** screen. Notion only shares the pages you explicitly select, reopen the connection and add any missing pages. |
 | A document failed | A page may fail to process for its own reasons; the rest of the batch is unaffected. Re-check on the next sync, and flag persistent failures to your 1mind contact. |
 
 ## FAQ
@@ -118,7 +118,7 @@ Your Notion **pages**, based on the pages you select during setup. Images inside
 
 **Do images from my pages come through?**
 
-Yes — turn on **Presentable documents** before connecting. It generates page images so page visuals can be shown in conversation, and image metadata is pulled through as part of the document.
+Yes, turn on **Presentable documents** before connecting. It generates page images so page visuals can be shown in conversation, and image metadata is pulled through as part of the document.
 
 **How do I choose what gets synced?**
 

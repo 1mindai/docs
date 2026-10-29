@@ -1,14 +1,14 @@
 ---
 title: "Data API: Amazon Redshift implementation"
-description: "Load 1mind Data API output into Amazon Redshift — S3 staging, COPY, the SUPER type, and MERGE."
+description: "Load 1mind Data API output into Amazon Redshift, S3 staging, COPY, the SUPER type, and MERGE."
 contentType: "how-to"
 status: "published"
 public: true
 ---
 
-This guide covers loading 1mind data into Amazon Redshift — S3 staging, `COPY`, the `SUPER` type, and `MERGE`. It picks up after you have an Account API Key and an extraction job producing files.
+This guide covers loading 1mind data into Amazon Redshift, S3 staging, `COPY`, the `SUPER` type, and `MERGE`. It picks up after you have an Account API Key and an extraction job producing files.
 
-<Note>**Prerequisite:** authentication, endpoints, query parameters, extraction patterns, and API-level troubleshooting are documented once, in [1mind Data API](/developers/data-api/overview). This page does not repeat them — read it first.</Note>
+<Note>**Prerequisite:** authentication, endpoints, query parameters, extraction patterns, and API-level troubleshooting are documented once, in [1mind Data API](/developers/data-api/overview). This page does not repeat them, read it first.</Note>
 
 ## Flow
 
@@ -18,7 +18,7 @@ This guide covers loading 1mind data into Amazon Redshift — S3 staging, `COPY`
    → validation and deduplication → MERGE into your curated tables
 ```
 
-## Step 1 — Land in S3
+## Step 1, Land in S3
 
 ```text
 s3://your-data/1mind/conversations/load_date=2026-07-02/part-0001.ndjson
@@ -28,7 +28,7 @@ Use date-partitioned prefixes and unique filenames so files can be traced and re
 
 <Warning>**Lambda has a hard execution timeout.** If a backfill window paginates for longer than that, run the extraction as an ECS/Fargate task or a Glue job instead, or split the work into smaller date windows.</Warning>
 
-## Step 2 — Create the staging table
+## Step 2, Create the staging table
 
 Redshift's `SUPER` type holds semi-structured data, the right landing type while the payload schema is still being validated:
 
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS raw.one_mind_reports (
 );
 ```
 
-## Step 3 — Load with `COPY`
+## Step 3, Load with `COPY`
 
 JSON landing files:
 
@@ -52,7 +52,7 @@ FORMAT JSON 'auto'
 REGION 'us-east-1';
 ```
 
-CSV from the export endpoint — the column list must match the actual export headers you receive:
+CSV from the export endpoint, the column list must match the actual export headers you receive:
 
 ```sql
 COPY raw.one_mind_reports_csv
@@ -65,9 +65,9 @@ REGION 'us-east-1';
 
 Use an IAM role attached to the cluster or Serverless workgroup rather than access keys embedded in SQL. Redshift tracks loaded files in its load history, but unique filenames and deterministic prefixes still matter for replay and reconciliation.
 
-<Note>**Alternative:** Redshift Spectrum lets you query the S3 landing zone directly through an external schema over the AWS Glue Data Catalog, without loading — useful for exploratory work on a backfill before you commit to a table design.</Note>
+<Note>**Alternative:** Redshift Spectrum lets you query the S3 landing zone directly through an external schema over the AWS Glue Data Catalog, without loading, useful for exploratory work on a backfill before you commit to a table design.</Note>
 
-## Step 4 — Inspect the payload and decide your mappings
+## Step 4, Inspect the payload and decide your mappings
 
 ```sql
 SET enable_case_sensitive_identifier TO true;
@@ -79,13 +79,13 @@ LIMIT 25;
 
 Field access uses dot and bracket notation on the `SUPER` column, e.g. `payload."some_field"::VARCHAR`.
 
-<Warning>The `enable_case_sensitive_identifier` setting matters here — without it, Redshift lowercases identifiers and lookups against camelCase JSON keys return null. Set it at the session or cluster level for any code touching `SUPER` columns.</Warning>
+<Warning>The `enable_case_sensitive_identifier` setting matters here, without it, Redshift lowercases identifiers and lookups against camelCase JSON keys return null. Set it at the session or cluster level for any code touching `SUPER` columns.</Warning>
 
 From real records, determine your business key, incremental timestamp, which fields become typed columns, which contain personal information, and which malformed records to quarantine.
 
-## Step 5 — Merge into your curated tables
+## Step 5, Merge into your curated tables
 
-Template only — replace `<business_key>` with a field confirmed from actual API output.
+Template only, replace `<business_key>` with a field confirmed from actual API output.
 
 ```sql
 MERGE INTO analytics.conversations AS target
@@ -109,11 +109,11 @@ VALUES (source.conversation_key, source.source_payload, GETDATE(), GETDATE());
 
 On older cluster versions without `MERGE`, use the classic staging pattern inside a single transaction: `DELETE` matching keys from the target, `INSERT` the deduplicated staging rows, then `COMMIT`.
 
-## Step 6 — Schedule, secure, and monitor
+## Step 6, Schedule, secure, and monitor
 
 **Orchestration.** EventBridge Scheduler triggering a Lambda or ECS task covers most extraction jobs; AWS Glue workflows or MWAA suit multi-step pipelines. The Redshift Data API lets you submit SQL steps asynchronously without holding a JDBC connection open.
 
-**Secrets.** AWS Secrets Manager for the Account API Key, read at runtime by the extraction task's execution role. **Access control** — an S3 bucket policy plus a scoped IAM role for `COPY`; schema-level grants; column-level or row-level security for personal information. **Table design** — choose a distribution key and sort key aligned to your confirmed business key and primary timestamp; run `VACUUM` and `ANALYZE` after large merges.
+**Secrets.** AWS Secrets Manager for the Account API Key, read at runtime by the extraction task's execution role. **Access control**: an S3 bucket policy plus a scoped IAM role for `COPY`; schema-level grants; column-level or row-level security for personal information. **Table design**: choose a distribution key and sort key aligned to your confirmed business key and primary timestamp; run `VACUUM` and `ANALYZE` after large merges.
 
 Monitor extraction, reconciliation (`total`/`recordCount`), load (errors and rejected rows in the system load views), data quality, freshness, and cluster health (unsorted-row percentage, disk usage, queue wait times).
 
@@ -121,11 +121,11 @@ Monitor extraction, reconciliation (`total`/`recordCount`), load (errors and rej
 
 For authentication, pagination, missing records, and export-link failures, see *Troubleshooting* in [1mind Data API](/developers/data-api/overview).
 
-- **`SUPER` field lookups return null** — almost always the case-sensitivity setting. Run `SET enable_case_sensitive_identifier TO true;` and double-quote the key exactly as it appears in the payload.
-- **`COPY` fails on oversized values** — `SUPER` has a per-value size limit. If report objects are large (long transcripts), split the payload during extraction or store the oversized field separately.
-- **`COPY` reports rows loaded but the table looks empty** — check that you committed, and that you're querying the same schema the `COPY` targeted (`COPY` runs inside the enclosing transaction).
-- **Access denied on `COPY`** — verify the IAM role is attached to the cluster/workgroup, the role's trust policy allows Redshift, and the bucket policy permits that role.
-- **Merge performance degrades over time** — check the unsorted-row percentage and run `VACUUM`; confirm the sort key supports the merge predicate.
+- **`SUPER` field lookups return null**: almost always the case-sensitivity setting. Run `SET enable_case_sensitive_identifier TO true;` and double-quote the key exactly as it appears in the payload.
+- **`COPY` fails on oversized values**: `SUPER` has a per-value size limit. If report objects are large (long transcripts), split the payload during extraction or store the oversized field separately.
+- **`COPY` reports rows loaded but the table looks empty**: check that you committed, and that you're querying the same schema the `COPY` targeted (`COPY` runs inside the enclosing transaction).
+- **Access denied on `COPY`**: verify the IAM role is attached to the cluster/workgroup, the role's trust policy allows Redshift, and the bucket policy permits that role.
+- **Merge performance degrades over time**: check the unsorted-row percentage and run `VACUUM`; confirm the sort key supports the merge predicate.
 
 ## Related
 

@@ -1,6 +1,6 @@
 ---
 title: "Tool Calls"
-description: "How the 1mind AI invokes external systems during conversations — local handlers, external tool servers, processors, and async Temporal workflows."
+description: "How the 1mind AI invokes external systems during conversations, local handlers, external tool servers, processors, and async Temporal workflows."
 contentType: "reference"
 status: "published"
 public: true
@@ -110,7 +110,7 @@ workflow status can be checked.
 Post-processing. **Features:** automatic retries with configurable policies,
 timeout handling, activity orchestration, state management, error recovery.
 
-**Example — async lead creation:** the AI calls `create_lead` → processor starts a
+**Example, async lead creation:** the AI calls `create_lead` → processor starts a
 workflow that validates data, enriches it, creates the CRM lead, sends a
 notification, and updates session context → the AI acknowledges immediately while
 the workflow completes in the background. Workflows are defined in account settings
@@ -158,6 +158,6 @@ the workflow completes in the background. Workflows are defined in account setti
 The tool-call system supports **local handlers** (fast, synchronous), **external
 tool servers** (custom integrations via JSON-RPC), **processors**
 (customer-specific business logic), and **Temporal workflows** (async, complex
-operations) — enabling real-time interactions, custom integrations, and reliable
+operations), enabling real-time interactions, custom integrations, and reliable
 background processing. For implementation details or support, contact your
 technical representative.

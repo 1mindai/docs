@@ -1,6 +1,6 @@
 ---
 title: "Salesforce Marketing Cloud Account Engagement (Pardot)"
-description: "Connect 1mind to Account Engagement (Pardot) through the 1mind External Client App — how 1mind reads context before a conversation and writes Prospect fields, lists, and activities after."
+description: "Connect 1mind to Account Engagement (Pardot) through the 1mind External Client App, how 1mind reads context before a conversation and writes Prospect fields, lists, and activities after."
 contentType: "reference"
 status: "published"
 public: true
@@ -93,7 +93,7 @@ The write order decides whether 1mind needs the Account Engagement API at all.
   <Step title="Create the integration user">
     In Salesforce **Setup → Users**, create a dedicated user (e.g. `1mind Integration`) with a monitored team mailbox; a *Salesforce Integration* user license is appropriate where available. Assign a permission set granting **API Enabled** and the object access the design needs (Lead, Contact, Task, Campaign Member, and the 1mind conversation object). **Path B:** also make the user an Account Engagement user in the target business unit with permission to create/edit Prospects and use the API. All 1mind writes are attributed to this user.
 
-    <Note>**Scope versus user access.** The `pardot_api` scope belongs to the OAuth app (the 1mind ECA), not to the user. The user needs Account Engagement access in the business unit. Both are required — without the Account Engagement user record, API calls are rejected even when Salesforce access works.</Note>
+    <Note>**Scope versus user access.** The `pardot_api` scope belongs to the OAuth app (the 1mind ECA), not to the user. The user needs Account Engagement access in the business unit. Both are required, without the Account Engagement user record, API calls are rejected even when Salesforce access works.</Note>
   </Step>
   <Step title="Record the Business Unit ID (Path B)">
     In Salesforce **Setup**, search for **Account Engagement → Business Unit Setup**. Copy the 18-character ID that starts with `0Uv` (different from the numeric Pardot account ID). Record staging and production IDs if separate, and share with 1mind. Every Account Engagement API call sends this ID in the `Pardot-Business-Unit-Id` header.
@@ -108,7 +108,7 @@ The write order decides whether 1mind needs the Account Engagement API at all.
     | **IP Relaxation** | Per your security policy (1mind provides egress IPs on request) |
     | **Refresh Token Policy** | Valid until revoked, or per your policy |
 
-    1mind sends an **Authorize** link from the 1mind console. The integration user opens it, signs in to Salesforce, and approves access — once for each 1mind connection the design uses (Salesforce, and Account Engagement for Path B). Salesforce returns the org's address with the approval, so the customer does not provide a My Domain URL or any app credentials.
+    1mind sends an **Authorize** link from the 1mind console. The integration user opens it, signs in to Salesforce, and approves access, once for each 1mind connection the design uses (Salesforce, and Account Engagement for Path B). Salesforce returns the org's address with the approval, so the customer does not provide a My Domain URL or any app credentials.
 
     **Re-authorization** is required if the integration user is deactivated, the refresh token is revoked, or 1mind adds a scope to the ECA (for example, moving from Path A to Path B).
   </Step>
@@ -121,7 +121,7 @@ The write order decides whether 1mind needs the Account Engagement API at all.
     | **Account Engagement** | B | 1mind ECA, authorization code, with `pardot_api` scope | `https://pi.pardot.com` (`https://pi.demo.pardot.com` for developer/demo orgs), with the `Pardot-Business-Unit-Id` header |
   </Step>
   <Step title="Create Prospect custom fields">
-    In **Account Engagement Settings → Object and Field Configuration → Prospect Fields → Custom Fields → + Add Custom Field**. For each approved 1mind field (section 5.3), set the **Field Name**, record the generated **API Field Name** exactly (typically ending in `__c`), the **Type**, the **Salesforce Field Name** mapping, and the **Sync Behavior** per the Step 1 decision. For dropdown fields, record the exact allowed values — 1mind writes the value, not the label.
+    In **Account Engagement Settings → Object and Field Configuration → Prospect Fields → Custom Fields → + Add Custom Field**. For each approved 1mind field (section 5.3), set the **Field Name**, record the generated **API Field Name** exactly (typically ending in `__c`), the **Type**, the **Salesforce Field Name** mapping, and the **Sync Behavior** per the Step 1 decision. For dropdown fields, record the exact allowed values, 1mind writes the value, not the label.
   </Step>
   <Step title="Create lists and (optional) External Activity type (Path B)">
     Create static **Lists** (e.g. `1mind – Qualified Conversation`, `1mind – Nurture`, `1mind – Partner/Support`) and record each **List ID**. Optionally add an **External Activity** type under **Setup → Marketing App Extensions → New** (name `1mind`, activity type e.g. `AI Conversation`) to record each conversation as an engagement event. Record the extension and activity type names exactly.
@@ -153,7 +153,7 @@ flowchart LR
 
 ### 3.1 Pre-conversation
 
-**When it runs:** when the session starts, before the Superhuman speaks (for scheduled meetings, a pre-call workflow runs before the meeting). **What it does:** gathers context so the Superhuman does not ask what the business already knows — URL parameters (UTM, campaign, a known email from an Account Engagement email link), the visitor token, and Salesforce or Account Engagement data. **Typical setup:** read context from **Salesforce** (Lead, Contact, Account, Opportunity, owner). Read the Prospect directly (Path B) only when it holds data Salesforce does not, such as score, grade, or engagement history.
+**When it runs:** when the session starts, before the Superhuman speaks (for scheduled meetings, a pre-call workflow runs before the meeting). **What it does:** gathers context so the Superhuman does not ask what the business already knows, URL parameters (UTM, campaign, a known email from an Account Engagement email link), the visitor token, and Salesforce or Account Engagement data. **Typical setup:** read context from **Salesforce** (Lead, Contact, Account, Opportunity, owner). Read the Prospect directly (Path B) only when it holds data Salesforce does not, such as score, grade, or engagement history.
 
 ### 3.2 In-conversation (tool calls)
 
@@ -178,9 +178,9 @@ flowchart LR
 | **Website product expert** | Salesforce record by email if known | Optional returning-visitor lookup | Lead/Contact or Prospect with summary, topics, product interest; history record | Score product interest; Engagement Studio product track |
 | **Inbound qualification and meeting booking** | Salesforce owner and routing context | Booking link (Salesforce owner / booking tool) | Qualification and meeting fields; list `1mind – Qualified` (Path B); history record with discovery detail | Salesforce assignment (Path A) or automation rule assigns and syncs (Path B) |
 | **Email or campaign follow-up** | Prospect or Lead by the email in the email link; UTM/campaign | Optional opt-out check | Intent and next step; External Activity (Path B) | Engagement Studio branch on field or activity; alert assigned user |
-| **Event or webinar follow-up** | Lead/Contact and event context | — | Qualification fields; External Activity (Path B); history record | Post-event program; high-intent alert |
+| **Event or webinar follow-up** | Lead/Contact and event context |, | Qualification fields; External Activity (Path B); history record | Post-event program; high-intent alert |
 | **Re-engagement of cold leads** | Prior 1mind fields, score, grade | Optional returning-visitor lookup | Re-engagement reason and objections | Re-score; notify assigned user |
-| **Partner, support, or careers deflection** | — | — | Status `Partner`/`Support`; partner list (Path B) | Route to partner/support process; no sales assignment |
+| **Partner, support, or careers deflection** |, |, | Status `Partner`/`Support`; partner list (Path B) | Route to partner/support process; no sales assignment |
 
 ## 5. Data model and field options
 
@@ -195,7 +195,7 @@ flowchart LR
 | **Salesforce `AI_Conversation__c`** (recommended history layer) | **One record per conversation** with full detail | Upserted by conversation ID | Reporting, sales view, follow-up content |
 | **External transcript (1mind)** | Full transcript and recording | Governed by retention policy | Audit; link stored on the history record |
 
-### 5.2 Prospect — default fields
+### 5.2 Prospect, default fields
 
 | Account Engagement field | API v5 name | 1mind source | Default write rule |
 | --- | --- | --- | --- |
@@ -212,12 +212,12 @@ flowchart LR
 | Industry | `industry` | Captured industry | Optional |
 | Employees | `employees` | Captured company size | Optional |
 | Source | `source` | `1mind` (first touch only) | Write if empty |
-| Score / Grade | `score` / `grade` | — | **Read only.** Owned by Account Engagement scoring and grading. |
-| Assigned User | `assignedToUser` | — | **Read only.** Owned by assignment automation. |
+| Score / Grade | `score` / `grade` |, | **Read only.** Owned by Account Engagement scoring and grading. |
+| Assigned User | `assignedToUser` |, | **Read only.** Owned by assignment automation. |
 
 On Path A, 1mind writes the matching Salesforce Lead/Contact fields and the connector carries them to the Prospect.
 
-### 5.3 Prospect — 1mind custom fields (options)
+### 5.3 Prospect, 1mind custom fields (options)
 
 Create only the fields your automation will use. Map each to a Salesforce Lead/Contact field when the value must reach Sales (always, on Path A).
 
@@ -250,7 +250,7 @@ Account Engagement has no custom data objects, so conversation history lives in 
 
 A common design is **A + C**: the Salesforce object holds the detail; the External Activity drives Account Engagement automation.
 
-### 5.5 Salesforce `AI_Conversation__c` — core fields
+### 5.5 Salesforce `AI_Conversation__c`, core fields
 
 | Field | API name | Type | Source |
 | --- | --- | --- | --- |
@@ -315,7 +315,7 @@ Keep one path to Salesforce; extend existing automation rather than building a s
 
 **Acceptance:** all scenarios pass, no duplicate Leads/Prospects/history records, automation fires as designed, and Marketing Ops signs off.
 
-## Appendix A — Account Engagement API v5 reference used by 1mind
+## Appendix A, Account Engagement API v5 reference used by 1mind
 
 All Account Engagement calls include:
 

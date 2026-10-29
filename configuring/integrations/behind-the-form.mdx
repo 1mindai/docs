@@ -19,10 +19,10 @@ Setting this up comes down to four decisions.
 
 Two standard options:
 
-- **Replaces the form in place** — after submission, the Superhuman appears where the form was; the fields disappear and the Superhuman takes over.
-- **Redirects to a "Thank You" page** — the user is sent to a confirmation page where the Superhuman is embedded and ready to engage.
+- **Replaces the form in place**: after submission, the Superhuman appears where the form was; the fields disappear and the Superhuman takes over.
+- **Redirects to a "Thank You" page**: the user is sent to a confirmation page where the Superhuman is embedded and ready to engage.
 
-Your web or marketing-ops team usually knows which fits your flow. Confirm early —
+Your web or marketing-ops team usually knows which fits your flow. Confirm early, 
 it affects how the launcher script is configured.
 
 ## 2. How form inputs are passed to the Superhuman
@@ -31,7 +31,7 @@ For the Superhuman to reference what the prospect submitted (name, company, use
 case), the data must be passed from the form into the Superhuman. Two supported
 methods:
 
-**Option A — Custom data attributes via the launcher script (preferred).** When
+**Option A, Custom data attributes via the launcher script (preferred).** When
 the 1mind script initializes on the page, custom data attributes are populated with
 the values the user entered. Your dev/marketing-ops team sets it up so the launcher
 is (re)initialized with those values injected on the post-submit state. Best for
@@ -39,7 +39,7 @@ in-place replacements or when you control script initialization. See
 [Customizing with attributes](/configuring/integrations/website-embed) for the
 implementation pattern.
 
-**Option B — URL parameters after submission.** After submission, your site
+**Option B, URL parameters after submission.** After submission, your site
 appends URL parameters (populated with the form values) to the destination URL
 where the Superhuman is embedded; 1mind reads them when the conversation starts.
 Best for redirect-to-thank-you setups. Your team must append the parameters
@@ -66,8 +66,8 @@ Munchkin ID, Salesforce campaign ID, UTM source/medium).
 
 Not every field needs to appear in the live conversation. Confirm which fields are:
 
-- **Conversation values** — actively referenced/personalized during the conversation (e.g., first name, company, use-case interest).
-- **Metadata only** — captured and stored but not spoken or referenced (e.g., hidden fields, campaign IDs, lead-scoring values).
+- **Conversation values**: actively referenced/personalized during the conversation (e.g., first name, company, use-case interest).
+- **Metadata only**: captured and stored but not spoken or referenced (e.g., hidden fields, campaign IDs, lead-scoring values).
 
 This helps configure the conversation logic correctly and avoids surfacing
 irrelevant or sensitive data.

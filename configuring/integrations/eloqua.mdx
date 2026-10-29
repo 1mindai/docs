@@ -1,6 +1,6 @@
 ---
 title: "Oracle Eloqua"
-description: "Connect 1mind to Oracle Eloqua through an AppCloud OAuth app — how 1mind reads context before a conversation and writes Contact fields and a Conversation Custom Data Object (CDO) after."
+description: "Connect 1mind to Oracle Eloqua through an AppCloud OAuth app, how 1mind reads context before a conversation and writes Contact fields and a Conversation Custom Data Object (CDO) after."
 contentType: "reference"
 status: "published"
 public: true
@@ -77,7 +77,7 @@ Confirm this decision in **Step 1** of the technical setup, before any credentia
     With Marketing Ops, RevOps, and the CRM administrator, confirm: where leads are created and routed today (Eloqua or CRM); whether and how Eloqua syncs to the CRM, and the direction per field; whether 1mind may **create** net-new Contacts or only **update**; which stages use Eloqua; and which Eloqua programs, segments, or scoring models act on 1mind data. **Output:** a one-page decision recorded in the customer's 1mind solution blueprint.
   </Step>
   <Step title="Create a dedicated integration user">
-    Create a named Eloqua user used only by 1mind, under **Settings → Users** (e.g. `1mind Integration` with a monitored team mailbox). Add it to a security group granting **API access**, read/edit on **Contacts**, and read/create/edit on the **1mind Conversation CDO** (granted after Step 8). Do not share the password with 1mind — the user signs in once during OAuth consent in Step 7.
+    Create a named Eloqua user used only by 1mind, under **Settings → Users** (e.g. `1mind Integration` with a monitored team mailbox). Add it to a security group granting **API access**, read/edit on **Contacts**, and read/create/edit on the **1mind Conversation CDO** (granted after Step 8). Do not share the password with 1mind, the user signs in once during OAuth consent in Step 7.
 
     <Note>If your Eloqua instance uses SSO, confirm the integration user can complete an interactive Eloqua sign-in. The OAuth consent screen requires it.</Note>
   </Step>
@@ -91,7 +91,7 @@ Confirm this decision in **Step 1** of the technical setup, before any credentia
     | **Icon** | An HTTPS URL to a square image (1mind provides one on request) |
     | **Enable URL** | Provided by your 1mind engineer (required placeholder; 1mind does not use AppCloud lifecycle callbacks) |
     | **Status URL** | Provided by your 1mind engineer (same reason) |
-    | **OAuth Callback URL** | `https://launcher.1mind.com/v1/oauth/integration-credentials/callback` — must match exactly; confirm the value for your 1mind environment before saving |
+    | **OAuth Callback URL** | `https://launcher.1mind.com/v1/oauth/integration-credentials/callback`, must match exactly; confirm the value for your 1mind environment before saving |
 
     Save the app and record the **Client ID** and **Client Secret**. No catalog installation is required; 1mind uses only the OAuth credentials.
   </Step>
@@ -131,7 +131,7 @@ Confirm this decision in **Step 1** of the technical setup, before any credentia
     Token lifecycle (per Oracle documentation; confirm against your release): authorization code ~60 seconds (exchanged immediately); access token ~8 hours (refreshed automatically, serialized per credential); refresh token long-lived and rotated on use (1mind stores the newest after every refresh). **Re-authorization is required** if the integration user is disabled or loses API access, the Client Secret is regenerated, the app is deleted, or the refresh token is revoked or expires.
   </Step>
   <Step title="Create the 1mind Conversation Custom Data Object (CDO)">
-    The CDO holds **one record per conversation** — the historical, reportable record. Contact fields hold only the latest state (Part 5). A separate session covers the full field list with your Marketing/Sales Ops team; the fields here are an example subset.
+    The CDO holds **one record per conversation**: the historical, reportable record. Contact fields hold only the latest state (Part 5). A separate session covers the full field list with your Marketing/Sales Ops team; the fields here are an example subset.
 
     Under **Audience → Custom Objects → New Custom Object**, name it (e.g. `Conversation1mind`, or follow your object naming standards), add the **core fields** from section 5.4 (plus approved optional groups), and configure:
 
@@ -147,7 +147,7 @@ Confirm this decision in **Step 1** of the technical setup, before any credentia
     <Note>**Field length rules.** Eloqua *Text* fields hold a maximum of **250 characters** (251+ returns HTTP 400). *Large Text* fields hold up to **32,000 characters**. 1mind truncates every value to the field's limit before sending.</Note>
   </Step>
   <Step title="Prepare Contact fields">
-    Decide which standard Contact fields 1mind may update (section 5.2) and whether it may overwrite existing values. If the design includes latest-state snapshot fields on the Contact (section 5.3), create them under **Settings → Fields & Views → Contact Fields** with a consistent prefix (e.g. `1mind – Qualification Status`). For pick-list fields, record the exact option **values** (1mind writes the value, not the label — e.g. ISO-style country codes `US`, `GB`, `DE`). Confirm CRM sync direction per field; fields that sync **from** the CRM must not be overwritten by 1mind if the CRM is the system of record.
+    Decide which standard Contact fields 1mind may update (section 5.2) and whether it may overwrite existing values. If the design includes latest-state snapshot fields on the Contact (section 5.3), create them under **Settings → Fields & Views → Contact Fields** with a consistent prefix (e.g. `1mind – Qualification Status`). For pick-list fields, record the exact option **values** (1mind writes the value, not the label, e.g. ISO-style country codes `US`, `GB`, `DE`). Confirm CRM sync direction per field; fields that sync **from** the CRM must not be overwritten by 1mind if the CRM is the system of record.
   </Step>
   <Step title="1mind configures the Eloqua connection">
     1mind creates a Generic API connection that maps each Eloqua resource to its REST path (review only):
@@ -161,7 +161,7 @@ Confirm this decision in **Step 1** of the technical setup, before any credentia
     | Conversation CDO | Create | POST | `/api/REST/2.0/data/customObject/{cdoId}/instance` |
     | Conversation CDO | Update | PUT | `/api/REST/2.0/data/customObject/{cdoId}/instance/{id}` |
 
-    The 1mind engineer confirms the REST version and the exact contact search expression against your instance. The **CDO find-by-conversation-ID mapping is required** — without it, 1mind cannot check for an existing record and stops before writing rather than risk a duplicate.
+    The 1mind engineer confirms the REST version and the exact contact search expression against your instance. The **CDO find-by-conversation-ID mapping is required**: without it, 1mind cannot check for an existing record and stops before writing rather than risk a duplicate.
   </Step>
   <Step title="Smoke-test the connection">
     Run in the test instance first, then production: `GET https://login.eloqua.com/id` returns the site, user, and `urls.base`; find a known Contact by email; update a test field; create a CDO record for a test conversation ID; re-send the same ID (same record updated, no duplicate); send an over-limit value (1mind truncates, write succeeds); run a full test conversation.
@@ -186,7 +186,7 @@ flowchart LR
 
 ### 3.1 Pre-conversation
 
-**When it runs:** when the session starts, before the Superhuman speaks (a pre-call workflow runs before a scheduled meeting). **What it does:** gathers context — URL parameters (UTM, campaign IDs, a known email from an Eloqua email link), the visitor token, and CRM or marketing-automation data. **Eloqua's role (optional):** look up the Eloqua Contact by email when one is known; typical fields read are name, company, title, country, lead score/rating, product interest, and 1mind snapshot fields from a prior conversation. Many customers read pre-conversation context from **Salesforce** instead, because the CRM holds ownership and opportunity data; read Eloqua only when it holds context the CRM does not.
+**When it runs:** when the session starts, before the Superhuman speaks (a pre-call workflow runs before a scheduled meeting). **What it does:** gathers context, URL parameters (UTM, campaign IDs, a known email from an Eloqua email link), the visitor token, and CRM or marketing-automation data. **Eloqua's role (optional):** look up the Eloqua Contact by email when one is known; typical fields read are name, company, title, country, lead score/rating, product interest, and 1mind snapshot fields from a prior conversation. Many customers read pre-conversation context from **Salesforce** instead, because the CRM holds ownership and opportunity data; read Eloqua only when it holds context the CRM does not.
 
 ### 3.2 In-conversation (tool calls)
 
@@ -221,18 +221,18 @@ If the write-order decision is **CRM first**, 1mind writes Salesforce before ste
 | **Website product expert** | Contact by email if known; otherwise anonymous | Optional returning-visitor lookup | Contact upsert + CDO with summary, topics, product interest | Score product interest; add to product nurture |
 | **Inbound qualification and meeting booking** | CRM owner and routing context; Eloqua Contact optional | Booking link (CRM/booking tool) | Contact upsert + CDO with qualification, MEDDPICC fields, meeting date, owner ID | Program Canvas routes qualified records; CRM sync creates/updates the Lead |
 | **Email or campaign follow-up** | Contact by email from the Eloqua email link; campaign from UTM | Optional subscription check | CDO with campaign/source URL, intent, next step | Change campaign path; suppress or accelerate nurture |
-| **Event or webinar follow-up** | Contact and event-attendance context | — | CDO with key questions, product interest, qualification | Move attendees to post-event track; alert Sales on high intent |
+| **Event or webinar follow-up** | Contact and event-attendance context |, | CDO with key questions, product interest, qualification | Move attendees to post-event track; alert Sales on high intent |
 | **Re-engagement of cold leads** | Contact plus prior 1mind snapshot fields | Optional returning-visitor lookup | Contact snapshot + CDO with re-engagement reason and objections | Re-score; notify existing owner via CRM sync |
-| **Partner, support, or careers deflection** | — | — | CDO with status `PARTNER` / `SUPPORT` and summary | Route to partner/support program; exclude from sales scoring |
-| **Sales follow-up content** | — | — | CDO with recommended opening, key quotes, follow-up email body | Sales cadence tool or Eloqua email uses the stored follow-up text |
+| **Partner, support, or careers deflection** |, |, | CDO with status `PARTNER` / `SUPPORT` and summary | Route to partner/support program; exclude from sales scoring |
+| **Sales follow-up content** |, |, | CDO with recommended opening, key quotes, follow-up email body | Sales cadence tool or Eloqua email uses the stored follow-up text |
 
 ### 4.2 Use-case detail
 
-**Inbound qualification and meeting booking** — qualify the visitor and book a meeting with discovery already captured. Pre-conversation reads Salesforce ownership/routing; in-conversation uses a booking-link tool call; post-processing (Eloqua-first) updates/creates the Contact and writes the CDO with status, qualification and discovery fields, meeting date, and the booked host's Salesforce User ID; a program listening for new 1mind CDO records with a booked meeting sets lead status, updates score, and lets the Eloqua-to-CRM integration create/update the Lead with the correct owner. Measure conversation-to-meeting rate, show rate, accepted pipeline, time-to-first-touch.
+**Inbound qualification and meeting booking**: qualify the visitor and book a meeting with discovery already captured. Pre-conversation reads Salesforce ownership/routing; in-conversation uses a booking-link tool call; post-processing (Eloqua-first) updates/creates the Contact and writes the CDO with status, qualification and discovery fields, meeting date, and the booked host's Salesforce User ID; a program listening for new 1mind CDO records with a booked meeting sets lead status, updates score, and lets the Eloqua-to-CRM integration create/update the Lead with the correct owner. Measure conversation-to-meeting rate, show rate, accepted pipeline, time-to-first-touch.
 
-**Email or campaign follow-up** — turn an email click into a conversation and capture intent. Reads the Contact by the email in the link plus UTM/campaign; post-processing writes the CDO with source URL, campaign context, topics, and next best action; automation branches the campaign path on CDO values and routes high-intent records to Sales.
+**Email or campaign follow-up**: turn an email click into a conversation and capture intent. Reads the Contact by the email in the link plus UTM/campaign; post-processing writes the CDO with source URL, campaign context, topics, and next best action; automation branches the campaign path on CDO values and routes high-intent records to Sales.
 
-**Partner, support, or careers deflection** — keep non-sales conversations out of sales routing. Post-processing writes the CDO with a normalized status (e.g. `PARTNER`) and summary and no lead-score change; automation routes to the partner/support program and excludes from MQL logic.
+**Partner, support, or careers deflection**: keep non-sales conversations out of sales routing. Post-processing writes the CDO with a normalized status (e.g. `PARTNER`) and summary and no lead-score change; automation routes to the partner/support program and excludes from MQL logic.
 
 ## 5. Data model and field options
 
@@ -246,7 +246,7 @@ If the write-order decision is **CRM first**, 1mind writes Salesforce before ste
 
 **Recommended default:** standard Contact fields + a small set of 1mind snapshot fields on the Contact + the 1mind Conversation CDO for everything conversation-specific.
 
-### 5.2 Contact — standard fields
+### 5.2 Contact, standard fields
 
 | Eloqua field | Internal name | REST attribute | 1mind source | Default write rule |
 | --- | --- | --- | --- | --- |
@@ -260,7 +260,7 @@ If the write-order decision is **CRM first**, 1mind writes Salesforce before ste
 | State or Province | `C_State_Prov` | `province` | Captured state, as a postal abbreviation | Write if empty |
 | City | `C_City` | `city` | Captured city | Optional |
 
-### 5.3 Contact — optional 1mind snapshot fields
+### 5.3 Contact, optional 1mind snapshot fields
 
 Create these as custom Contact fields only if Eloqua segmentation or scoring needs the latest 1mind state on the Contact. Custom Contact fields are written by field ID.
 
@@ -275,23 +275,23 @@ Create these as custom Contact fields only if Eloqua segmentation or scoring nee
 | 1mind – Last Summary | Large Text | Conversation summary (≤ 32,000) | Personalization and sales view |
 | 1mind – Times Engaged | Numeric | Count of conversations | Engagement scoring |
 
-### 5.4 1mind Conversation CDO — core fields (required)
+### 5.4 1mind Conversation CDO, core fields (required)
 
 | CDO field | Type | Max | 1mind source | Notes |
 | --- | --- | --- | --- | --- |
 | **1mind Conversation ID** | Text | 100 | Session ID | **Unique Code Field.** Upsert key. Required. |
 | **Email Address** | Text | 250 | Contact email | **Email Address Field** for Contact linkage. If no email was captured, 1mind writes an approved placeholder or skips the record, per the signed design. |
-| Conversation Date | Date | — | Conversation start time | Sent as epoch seconds. |
+| Conversation Date | Date |, | Conversation start time | Sent as epoch seconds. |
 | Conversation Status | Text | 250 | Extracted status (`QUALIFIED`, `NURTURE`, `PARTNER`, …) | Normalized to approved values. |
 | Conversation Summary | Large Text | 5,000 | Summary | Business-readable. |
 | Conversation Transcript | Large Text | 32,000 | Readable transcript | Capped at 32,000; the full transcript remains in 1mind. |
 | Source URL | Text | 250 | Page URL, else referrer | Truncated to 250. |
-| Duration (seconds) | Numeric | — | Conversation duration | |
-| Turns | Numeric | — | Number of exchanges | |
+| Duration (seconds) | Numeric |, | Conversation duration | |
+| Turns | Numeric |, | Number of exchanges | |
 | Environment | Text | 250 | Deployment environment | Separates test and production records. |
 | 1mind Visitor Token | Text | 100 | Visitor token | Links repeat visits. |
 
-### 5.5 1mind Conversation CDO — optional field groups
+### 5.5 1mind Conversation CDO, optional field groups
 
 Choose the groups that match the approved use cases. Each field is optional; empty values are omitted, or written with an approved placeholder such as `Not provided` so reporting can distinguish "not discussed" from "not processed."
 
@@ -301,9 +301,9 @@ Choose the groups that match the approved use cases. Each field is optional; emp
 
 **Objections and risk:** Objections Raised (Large Text, 2,000), Concerns About Vendor (Large Text, 1,000), Unanswered Questions (Large Text, 2,000).
 
-**Meeting and hand-off:** Meeting Date (Date, booked meetings only), Demo Requested / POC Requested / Trial Requested (`true`/`false`), SFDC Lead Owner ID (Text, 250 — Salesforce User ID of the booked host).
+**Meeting and hand-off:** Meeting Date (Date, booked meetings only), Demo Requested / POC Requested / Trial Requested (`true`/`false`), SFDC Lead Owner ID (Text, 250, Salesforce User ID of the booked host).
 
-## Appendix A — Eloqua REST reference used by 1mind
+## Appendix A, Eloqua REST reference used by 1mind
 
 **Contact search**
 

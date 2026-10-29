@@ -9,7 +9,7 @@ public: true
 ## Overview
 
 With 1mind's Superhumans + LeanData BookIt, a qualified visitor can talk, qualify,
-and book in a single flow — accelerating pipeline and routing intelligently on
+and book in a single flow, accelerating pipeline and routing intelligently on
 CRM/MAP data.
 
 **Who does what:**
@@ -26,33 +26,33 @@ CRM/MAP data.
 
 ## What you must provide
 
-1. **Org ID** — LeanData BookIt → Settings.
-2. **Trigger Node name (`nodeName`)** — from the FlowBuilder Trigger Node.
-3. **All mapped fields from the LeanData Canvas** that BookIt expects at that Trigger Node — with field label/description, type (string, email, picklist…), required/optional, and an example value.
+1. **Org ID**: LeanData BookIt → Settings.
+2. **Trigger Node name (`nodeName`)**: from the FlowBuilder Trigger Node.
+3. **All mapped fields from the LeanData Canvas** that BookIt expects at that Trigger Node, with field label/description, type (string, email, picklist…), required/optional, and an example value.
 4. **SFDC/MAP object & field** where the **BookIt Log ID** should be written.
 
 ## Technical setup
 
-### Step 1 — Unique BookIt Log ID
+### Step 1, Unique BookIt Log ID
 
 Each session requires a UUID (e.g., `sessionID` + random number) that ties the
 booking event to the correct lead/contact. 1mind generates the UUID and posts it to
 your SFDC or MAP contact/lead record. **You provide** the object and field name
 where it should be written. Example: `session12345-random6789`.
 
-### Step 2 — Smart Booking Link format
+### Step 2, Smart Booking Link format
 
 ```text
 https://app.leandata.com/r?id=<OrgID>&nodeName=<TriggerNode>&chat=1mind&isUsingHerokuId=true&uid=<BookItLogID>
 ```
 
-- **OrgID** — LeanData → BookIt → Settings.
-- **nodeName (TriggerNode)** — the exact FlowBuilder Trigger Node name.
-- **BookItLogID** — the generated UUID per session.
+- **OrgID**: LeanData → BookIt → Settings.
+- **nodeName (TriggerNode)**: the exact FlowBuilder Trigger Node name.
+- **BookItLogID**: the generated UUID per session.
 
-<Note>1mind constructs the link only after receiving your Org ID, exact `nodeName`, and full mapped-field list — links can't be finalized without these.</Note>
+<Note>1mind constructs the link only after receiving your Org ID, exact `nodeName`, and full mapped-field list, links can't be finalized without these.</Note>
 
-### Step 3 — Add routing parameters
+### Step 3, Add routing parameters
 
 Append fields that drive BookIt routing. Parameter **keys must match the Trigger
 Node field names** defined in your LeanData Canvas mapping. Example:

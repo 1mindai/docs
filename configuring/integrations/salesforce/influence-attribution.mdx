@@ -6,15 +6,15 @@ status: "published"
 public: true
 ---
 
-Influence attribution syncs Accounts, Leads, Contacts, and Opportunities from your CRM with 1mind conversations, so you can monitor the pipeline and revenue your Superhuman influenced — at the Workspace and Account level — directly within 1mind.
+Influence attribution syncs Accounts, Leads, Contacts, and Opportunities from your CRM with 1mind conversations, so you can monitor the pipeline and revenue your Superhuman influenced, at the Workspace and Account level, directly within 1mind.
 
 ## Requirements
 
 - **Salesforce CRM** (HubSpot is in development).
-- **Salesforce Admin privileges** — the person who installs the package and authenticates with 1mind must be the Salesforce admin for your production instance, and must also be invited as a Workspace Admin in the [1mind Console](https://app.1mind.com).
+- **Salesforce Admin privileges**: the person who installs the package and authenticates with 1mind must be the Salesforce admin for your production instance, and must also be invited as a Workspace Admin in the [1mind Console](https://app.1mind.com).
 - **Read access** to Accounts, Contacts, Leads, and Opportunities for the connected CRM instance.
 
-<Note>**This is a separate connection from your pre- and post-processing CRM integration.** Influence attribution reads pipeline and account data for 1mind — a different data flow from the CRM connection your Superhuman uses for personalization and write-back. Even if you already connect Salesforce for [Pre & Post Processing](/developers/pre-post-processing), influence attribution still needs to be set up as a separate connection.</Note>
+<Note>**This is a separate connection from your pre- and post-processing CRM integration.** Influence attribution reads pipeline and account data for 1mind, a different data flow from the CRM connection your Superhuman uses for personalization and write-back. Even if you already connect Salesforce for [Pre & Post Processing](/developers/pre-post-processing), influence attribution still needs to be set up as a separate connection.</Note>
 
 <Tip>Use a **dedicated Salesforce integration user** rather than an individual employee account, so the connection survives role changes and departures. See [Salesforce integration](/configuring/integrations/salesforce/overview) for the recommended integration-user configuration.</Tip>
 
@@ -29,7 +29,7 @@ After both steps, allow **12 to 24 hours** for the initial record sync, dependin
 
 ## How influence is defined
 
-You can adjust the threshold to fit your definition of influence — your metrics adjust accordingly. A conversation counts toward influence once it reaches the number of turns you've chosen:
+You can adjust the threshold to fit your definition of influence, your metrics adjust accordingly. A conversation counts toward influence once it reaches the number of turns you've chosen:
 
 | Threshold | Conversation depth |
 | --- | --- |
@@ -37,17 +37,17 @@ You can adjust the threshold to fit your definition of influence — your metric
 | Meaningful *(default)* | 4 or more turns |
 | Influenced | 10 or more turns |
 
-1mind defaults to **Meaningful** — sustained back-and-forth rather than a one-off exchange. Opportunities that closed *before* a 1mind conversation took place are automatically excluded from the influence report.
+1mind defaults to **Meaningful**: sustained back-and-forth rather than a one-off exchange. Opportunities that closed *before* a 1mind conversation took place are automatically excluded from the influence report.
 
 ## Frequently asked questions
 
 **Who can see our data, and how is it stored?** You connect your CRM with read permissions on accounts, contacts, leads, and opportunities for necessary fields only. 1mind can only read what the connected CRM user can access. By default, records sync back to your 1mind org creation date. Data is scoped to your 1mind account and accessible only to your Workspace Admin role members, and is treated the same as any other record in 1mind per your Terms of Service.
 
-**How does account matching work?** By default, 1mind cross-references the account domain in 1mind against the account website field in your CRM. If CRM hygiene is imperfect, some accounts may not match and relevant Opportunities won't be included — the report's accuracy reflects the records in the CRM. (Roadmap: customizable matching logic and tiebreaker rules when multiple accounts share a domain.)
+**How does account matching work?** By default, 1mind cross-references the account domain in 1mind against the account website field in your CRM. If CRM hygiene is imperfect, some accounts may not match and relevant Opportunities won't be included, the report's accuracy reflects the records in the CRM. (Roadmap: customizable matching logic and tiebreaker rules when multiple accounts share a domain.)
 
 **How do you distinguish "1mind influenced this deal" from "1mind just happened to be present"?** Timeline: only opportunities opened or still active *after* a first meaningful 1mind conversation at that account are counted. 1mind never claims credit for deals that predated its first touch.
 
-**An enterprise account with subsidiaries and multiple open opportunities — does one chat influence all of them?** Not necessarily. Where subsidiaries have distinct domains, matching happens at that level and attribution stays scoped to a single account record. Where subsidiaries share a domain, the first account returned is used today (which may miss some influenced opportunities until configurable tiebreaker rules ship).
+**An enterprise account with subsidiaries and multiple open opportunities, does one chat influence all of them?** Not necessarily. Where subsidiaries have distinct domains, matching happens at that level and attribution stays scoped to a single account record. Where subsidiaries share a domain, the first account returned is used today (which may miss some influenced opportunities until configurable tiebreaker rules ship).
 
 **Which objects and fields are synced?**
 
