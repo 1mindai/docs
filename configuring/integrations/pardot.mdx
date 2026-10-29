@@ -178,9 +178,9 @@ flowchart LR
 | **Website product expert** | Salesforce record by email if known | Optional returning-visitor lookup | Lead/Contact or Prospect with summary, topics, product interest; history record | Score product interest; Engagement Studio product track |
 | **Inbound qualification and meeting booking** | Salesforce owner and routing context | Booking link (Salesforce owner / booking tool) | Qualification and meeting fields; list `1mind – Qualified` (Path B); history record with discovery detail | Salesforce assignment (Path A) or automation rule assigns and syncs (Path B) |
 | **Email or campaign follow-up** | Prospect or Lead by the email in the email link; UTM/campaign | Optional opt-out check | Intent and next step; External Activity (Path B) | Engagement Studio branch on field or activity; alert assigned user |
-| **Event or webinar follow-up** | Lead/Contact and event context |, | Qualification fields; External Activity (Path B); history record | Post-event program; high-intent alert |
+| **Event or webinar follow-up** | Lead/Contact and event context | | Qualification fields; External Activity (Path B); history record | Post-event program; high-intent alert |
 | **Re-engagement of cold leads** | Prior 1mind fields, score, grade | Optional returning-visitor lookup | Re-engagement reason and objections | Re-score; notify assigned user |
-| **Partner, support, or careers deflection** |, |, | Status `Partner`/`Support`; partner list (Path B) | Route to partner/support process; no sales assignment |
+| **Partner, support, or careers deflection** | | | Status `Partner`/`Support`; partner list (Path B) | Route to partner/support process; no sales assignment |
 
 ## 5. Data model and field options
 
@@ -212,8 +212,8 @@ flowchart LR
 | Industry | `industry` | Captured industry | Optional |
 | Employees | `employees` | Captured company size | Optional |
 | Source | `source` | `1mind` (first touch only) | Write if empty |
-| Score / Grade | `score` / `grade` |, | **Read only.** Owned by Account Engagement scoring and grading. |
-| Assigned User | `assignedToUser` |, | **Read only.** Owned by assignment automation. |
+| Score / Grade | `score` / `grade` | | **Read only.** Owned by Account Engagement scoring and grading. |
+| Assigned User | `assignedToUser` | | **Read only.** Owned by assignment automation. |
 
 On Path A, 1mind writes the matching Salesforce Lead/Contact fields and the connector carries them to the Prospect.
 

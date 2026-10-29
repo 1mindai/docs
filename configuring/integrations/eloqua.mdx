@@ -221,10 +221,10 @@ If the write-order decision is **CRM first**, 1mind writes Salesforce before ste
 | **Website product expert** | Contact by email if known; otherwise anonymous | Optional returning-visitor lookup | Contact upsert + CDO with summary, topics, product interest | Score product interest; add to product nurture |
 | **Inbound qualification and meeting booking** | CRM owner and routing context; Eloqua Contact optional | Booking link (CRM/booking tool) | Contact upsert + CDO with qualification, MEDDPICC fields, meeting date, owner ID | Program Canvas routes qualified records; CRM sync creates/updates the Lead |
 | **Email or campaign follow-up** | Contact by email from the Eloqua email link; campaign from UTM | Optional subscription check | CDO with campaign/source URL, intent, next step | Change campaign path; suppress or accelerate nurture |
-| **Event or webinar follow-up** | Contact and event-attendance context |, | CDO with key questions, product interest, qualification | Move attendees to post-event track; alert Sales on high intent |
+| **Event or webinar follow-up** | Contact and event-attendance context | | CDO with key questions, product interest, qualification | Move attendees to post-event track; alert Sales on high intent |
 | **Re-engagement of cold leads** | Contact plus prior 1mind snapshot fields | Optional returning-visitor lookup | Contact snapshot + CDO with re-engagement reason and objections | Re-score; notify existing owner via CRM sync |
-| **Partner, support, or careers deflection** |, |, | CDO with status `PARTNER` / `SUPPORT` and summary | Route to partner/support program; exclude from sales scoring |
-| **Sales follow-up content** |, |, | CDO with recommended opening, key quotes, follow-up email body | Sales cadence tool or Eloqua email uses the stored follow-up text |
+| **Partner, support, or careers deflection** | | | CDO with status `PARTNER` / `SUPPORT` and summary | Route to partner/support program; exclude from sales scoring |
+| **Sales follow-up content** | | | CDO with recommended opening, key quotes, follow-up email body | Sales cadence tool or Eloqua email uses the stored follow-up text |
 
 ### 4.2 Use-case detail
 
@@ -281,13 +281,13 @@ Create these as custom Contact fields only if Eloqua segmentation or scoring nee
 | --- | --- | --- | --- | --- |
 | **1mind Conversation ID** | Text | 100 | Session ID | **Unique Code Field.** Upsert key. Required. |
 | **Email Address** | Text | 250 | Contact email | **Email Address Field** for Contact linkage. If no email was captured, 1mind writes an approved placeholder or skips the record, per the signed design. |
-| Conversation Date | Date |, | Conversation start time | Sent as epoch seconds. |
+| Conversation Date | Date | | Conversation start time | Sent as epoch seconds. |
 | Conversation Status | Text | 250 | Extracted status (`QUALIFIED`, `NURTURE`, `PARTNER`, …) | Normalized to approved values. |
 | Conversation Summary | Large Text | 5,000 | Summary | Business-readable. |
 | Conversation Transcript | Large Text | 32,000 | Readable transcript | Capped at 32,000; the full transcript remains in 1mind. |
 | Source URL | Text | 250 | Page URL, else referrer | Truncated to 250. |
-| Duration (seconds) | Numeric |, | Conversation duration | |
-| Turns | Numeric |, | Number of exchanges | |
+| Duration (seconds) | Numeric | | Conversation duration | |
+| Turns | Numeric | | Number of exchanges | |
 | Environment | Text | 250 | Deployment environment | Separates test and production records. |
 | 1mind Visitor Token | Text | 100 | Visitor token | Links repeat visits. |
 

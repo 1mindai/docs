@@ -19,16 +19,16 @@ The 1mind Data API, documented as the **Integration Reports API**, gives your te
 | Area | You / your ETL partner own | 1mind provides |
 | --- | --- | --- |
 | API access | Storing and rotating your Account API Key | Provisioning the key through a secure channel; reissuing on request |
-| Documentation |, | This page, the platform guides, and clarification of documented API behavior |
+| Documentation | | This page, the platform guides, and clarification of documented API behavior |
 | Extraction | Calling the API on a schedule, handling pagination, downloading export files | Availability of the data through the documented endpoints |
-| Landing zone | Your cloud storage location, retention policy, and file naming |, |
-| Warehouse objects | Stages, external locations, volumes, raw and curated tables |, |
-| Data model | Target schema, field mappings, typed columns, your unique business key |, |
-| Load logic | Incremental logic, checkpoints, deduplication, transformations, upserts, backfill |, |
-| Data quality | Validation rules, quarantining malformed records, reconciliation |, |
-| Orchestration | Scheduling, retries, monitoring, alerting, failure recovery |, |
-| Security & privacy | Personal-information handling, retention and deletion, access control |, |
-| Cost | Warehouse compute and storage |, |
+| Landing zone | Your cloud storage location, retention policy, and file naming | |
+| Warehouse objects | Stages, external locations, volumes, raw and curated tables | |
+| Data model | Target schema, field mappings, typed columns, your unique business key | |
+| Load logic | Incremental logic, checkpoints, deduplication, transformations, upserts, backfill | |
+| Data quality | Validation rules, quarantining malformed records, reconciliation | |
+| Orchestration | Scheduling, retries, monitoring, alerting, failure recovery | |
+| Security & privacy | Personal-information handling, retention and deletion, access control | |
+| Cost | Warehouse compute and storage | |
 | Support | Ongoing maintenance of your pipeline | Support for retrieving the source data; escalation of API defects |
 
 ## What this API does not provide
@@ -87,13 +87,13 @@ Retrieves your integration reports as a paginated list.
 
 | Parameter | Required | Default | Format / values | Notes |
 | --- | --- | --- | --- | --- |
-| `flow` | Optional |, | String | Workflow flow filter. Use `conversation` for conversation-related reports. |
-| `start-date` | Optional |, | `YYYY-MM-DD` or ISO 8601 | Start of the filter window. |
-| `end-date` | Optional |, | `YYYY-MM-DD` or ISO 8601 | End of the filter window. |
+| `flow` | Optional | | String | Workflow flow filter. Use `conversation` for conversation-related reports. |
+| `start-date` | Optional | | `YYYY-MM-DD` or ISO 8601 | Start of the filter window. |
+| `end-date` | Optional | | `YYYY-MM-DD` or ISO 8601 | End of the filter window. |
 | `limit` | Optional | `100` | Integer | Maximum records per request. |
 | `offset` | Optional | `0` | Integer | Records to skip, for pagination. |
 | `sort-by` | Optional | `created_at` | Field name | Field used for sorting. |
-| `sort-order` | Optional |, | `asc` or `desc` | Sort direction. |
+| `sort-order` | Optional | | `asc` or `desc` | Sort direction. |
 
 <Note>Note the **hyphenated** parameter names, `start-date`, `end-date`, `sort-by`, `sort-order`. They are not snake_case. This is a common source of silently-ignored filters when query strings are built from a config object.</Note>
 
