@@ -152,6 +152,7 @@
                   "configuring/integrations/salesforce/influence-attribution"
                 ]
               },
+              "configuring/integrations/hubspot",
               "configuring/integrations/calendars",
               "configuring/integrations/marketo",
               "configuring/integrations/pardot",
