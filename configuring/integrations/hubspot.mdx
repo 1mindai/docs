@@ -303,18 +303,23 @@ For help, contact 1mind Services with your Hub ID, the conversation ID, and the 
 
 ## Ride-Along
 
-Ride-Along joins a scheduled or live call alongside your rep, solutions engineer, CSM, or support specialist. A single call can include several members of your team and several customer attendees.
+This section describes how to configure the HubSpot integration for a Ride-Along Superhuman. Ride-Along joins a scheduled or live call alongside your rep, solutions engineer, CSM, or support specialist. A single call can include several members of your team and several customer attendees.
+
+The integration runs two workflows:
+
+- **Pre-call workflow:** Retrieves CRM context from HubSpot to prepare a meeting briefing.
+- **Post-call workflow:** Writes selected conversation outcomes back to HubSpot. The objects, fields, matching rules, associations, and permitted updates are defined by your configured workflows. The optional custom-object setup below stores meeting and participant outcomes in dedicated **RIDEALONG** and **RIDEALONG ATTENDEE** objects.
 
 ### How it works
 
 | Stage | What happens |
 | --- | --- |
-| **Before the call** | 1mind reads the selected Contact, Company, Deal, and owner to brief your team. With manual launch, your rep selects these records. With automatic mode, 1mind matches attendees by exact email address and leaves ambiguous matches unmatched. |
+| **Before the call** | The pre-call workflow reads the selected Contact, Company, Deal, and owner to brief your team. With manual launch, your rep selects these records. With automatic mode, 1mind matches attendees by exact email address and leaves ambiguous matches unmatched. |
 | **During the call** | Your rep leads. Ride-Along assists in Active, Passive, or Silent mode and never shows seller-only CRM context to prospects. |
-| **After the call** | 1mind creates one **RIDEALONG** record for the meeting and one **RIDEALONG ATTENDEE** record per participant, then associates them to the Contacts and Company selected before the call. |
+| **After the call** | The post-call workflow writes the outcomes you've selected back to HubSpot. With the optional custom-object setup, it creates one **RIDEALONG** record for the meeting and one **RIDEALONG ATTENDEE** record per participant, then associates them to the Contacts and Company selected before the call. |
 
 <Note>
-  By default, RideAlong does not write to Contacts, Companies, or Deals. It does not create Contacts, change deal stage, or send email. Follow-up email drafts remain drafts for your rep to edit and send.
+  Ride-Along only writes the updates your workflows are configured to make. It never sends email: follow-up email drafts remain drafts for your rep to edit and send.
 </Note>
 
 ### Permissions
@@ -325,13 +330,19 @@ Ride-Along joins a scheduled or live call alongside your rep, solutions engineer
 | `crm.objects.contacts.read` | Read attendee Contacts for the pre-call brief |
 | `crm.objects.companies.read` | Read the account for the pre-call brief |
 | `crm.objects.deals.read` | Read the Deal for the pre-call brief (Sales Engineer profile) |
-| `crm.objects.custom.read` | Find existing RideAlong records to prevent duplicates |
-| `crm.objects.custom.write` | Create RideAlong records and their associations |
-| `crm.schemas.custom.read` | Read the two RideAlong object schemas |
+| `crm.objects.custom.read` | Custom-object setup only. Find existing Ride-Along records to prevent duplicates |
+| `crm.objects.custom.write` | Custom-object setup only. Create Ride-Along records and their associations |
+| `crm.schemas.custom.read` | Custom-object setup only. Read the two Ride-Along object schemas |
 
-No Contact, Company, or Deal write scopes are required. Schema write access is needed only if you ask 1mind to create the objects for you through the API.
+If your post-call workflow updates standard records such as Contacts, Companies, or Deals, the matching write scopes are also required. Schema write access is needed only if you ask 1mind to create the custom objects for you through the API.
 
-### Setup
+### Optional custom-object setup
+
+Follow these steps if you want to store meeting and participant outcomes in the RIDEALONG and RIDEALONG ATTENDEE objects.
+
+<Note>
+  Custom objects require a **HubSpot Enterprise** subscription with available custom-object capacity.
+</Note>
 
 <Steps>
   <Step title="Create the two custom objects">
@@ -365,7 +376,7 @@ No Contact, Company, or Deal write scopes are required. Schema write access is n
     1. In the 1mind Console, go to **Integrations → CRM → HubSpot**.
     2. Select **Connect** and sign in to HubSpot.
     3. Select the correct account and verify the Hub ID.
-    4. Review the RideAlong permissions listed above and approve.
+    4. Review the Ride-Along permissions listed above and approve.
     5. Confirm the 1mind Console shows the correct Hub ID.
   </Step>
   <Step title="Confirm configuration with 1mind Services">
@@ -413,11 +424,11 @@ Every participant receives an attendee record, even without a matching Contact. 
 ### Verify your setup
 
 - The 1mind Console shows the correct Hub ID.
-- Each call creates one RIDEALONG record and one RIDEALONG ATTENDEE record per participant.
+- With the custom-object setup, each call creates one RIDEALONG record and one RIDEALONG ATTENDEE record per participant.
 - Matched attendees are associated to the correct Contact and Company. Unmatched attendees still have a record, without a Contact association.
 - Internal attendees have no buying-role or champion fields populated.
 - Reprocessing the same meeting updates the existing records instead of creating new ones.
-- No Contact, Company, or Deal fields changed, and no email was sent.
+- Only the records and fields your workflows are configured to update changed, and no email was sent.
 - Restricted fields are hidden from users who shouldn't see them.
 
 ### Troubleshooting
@@ -426,7 +437,7 @@ Every participant receives an attendee record, even without a matching Contact. 
 | --- | --- | --- |
 | Custom objects can't be created | The account isn't on HubSpot Enterprise or has no remaining custom-object capacity | Check your HubSpot subscription |
 | No records appear after a call | Property internal names don't match, or a required property is missing | Compare internal names in HubSpot to this guide and share them with 1mind Services |
-| Records appear but aren't associated | An association pair isn't enabled | Review the associations in setup step 2 |
+| Records appear but aren't associated | An association pair isn't enabled | Review the associations in step 2 of the custom-object setup |
 | Errors after the integration was working | The app was uninstalled or the connecting user lost access | Reconnect in the 1mind Console |
 
 For help, contact 1mind Services with your Hub ID, the meeting ID, and the approximate time of the call.
