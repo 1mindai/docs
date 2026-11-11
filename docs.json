@@ -155,7 +155,8 @@
               {
                 "group": "Hubspot",
                 "pages": [
-                  "configuring/integrations/hubspot"
+                  "configuring/integrations/hubspot",
+                  "untitled-page"
                 ]
               },
               "configuring/integrations/calendars",
