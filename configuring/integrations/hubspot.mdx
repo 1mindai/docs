@@ -1,14 +1,14 @@
 ---
 title: "HubSpot"
-description: "How 1mind connects your Superhumans to HubSpot, what data flows in each direction, and the decisions you'll make."
+description: "How 1mind connects your Superhumans to HubSpot, what data flows in each direction, and the decisions you'll make with 1mind Services."
 icon: "hubspot"
 ---
 
 1mind connects to HubSpot in two ways, depending on which Superhuman you use. Each has its own permissions, objects, and setup.
 
-|  | **Inbound Website SDR** | **Ride Along** |
+|  | **Inbound Website SDR** | **RideAlong** |
 | --- | --- | --- |
-| **Where it runs** | On your website, talking with a visitor | Inside a scheduled or live Zoom, Google Meet, or Teams call alongside your rep |
+| **Where it runs** | On your website, talking with a single visitor | Inside a scheduled or live Zoom, Google Meet, or Teams call alongside your rep |
 | **Who it knows about** | Often an anonymous visitor who may identify themselves during the conversation | Known invitees, plus a preselected Contact, Company, and Deal |
 | **What it writes** | Updates the Contact and, optionally, creates a conversation record | Creates one meeting record and one record per attendee |
 
@@ -39,8 +39,8 @@ Your answers to these questions are captured in the field mapping worksheet and 
 | Decision | Where it's covered |
 | --- | --- |
 | Which HubSpot fields the Superhuman can reference in conversation | [Deciding what the Superhuman says](#deciding-what-the-superhuman-says) |
-| How hand-raiser information is collected | [Collecting hand-raiser information](#collecting-hand-raiser-information) |
-| How visitors are routed to the right rep's calendar | [Booking meetings](#booking-meetings) |
+| Whether the Superhuman submits your HubSpot forms | [Submitting HubSpot forms](#submitting-hubspot-forms) |
+| How visitors are routed to the right HubSpot Meetings link | [Booking with HubSpot Meetings](#booking-with-hubspot-meetings) |
 | Whether conversation data lives on the Contact, a custom object, or both | [Where conversation data lives](#where-conversation-data-lives) |
 | Which conversation fields to capture | [Recommended fields](#recommended-fields) |
 | How existing Contact data is treated | [Creating and updating Contacts](#creating-and-updating-contacts) |
@@ -52,6 +52,10 @@ Your answers to these questions are captured in the field mapping worksheet and 
 - A HubSpot **sandbox** account (strongly recommended). 1mind connects to your sandbox first, then to production once testing is complete.
 - Your **web development team**, to place the Superhuman on your site.
 
+<Note>
+  The optional 1mind Conversation custom object requires a **HubSpot Enterprise** subscription with available custom-object capacity.
+</Note>
+
 #### Permissions
 
 The connection requests the following HubSpot scopes:
@@ -61,6 +65,7 @@ The connection requests the following HubSpot scopes:
 | `oauth` | Yes | Standard HubSpot app connection |
 | `crm.objects.contacts.read` | Yes | Recognize known visitors and personalize the conversation |
 | `crm.objects.contacts.write` | Yes | Write conversation outcomes to the Contact |
+| `crm.objects.companies.read` | Optional | Required only if Company (account) details are brought into the conversation |
 | `crm.objects.custom.read` | Optional | Required only for the 1mind Conversation custom object. Prevents duplicate records on retry. |
 | `crm.objects.custom.write` | Optional | Required only for the 1mind Conversation custom object. Creates records and associates them to Contacts. |
 | `forms` | Optional | Required only if the Superhuman submits HubSpot forms during the conversation |
@@ -70,7 +75,7 @@ The connection requests the following HubSpot scopes:
 | Phase | When | What 1mind does with HubSpot |
 | --- | --- | --- |
 | **Before the conversation** | The visitor has landed on your site but hasn't started talking | Captures the web session (HubSpot cookie, UTMs, URL values, form values) and looks up the visitor in HubSpot |
-| **During the conversation** | The visitor and the Superhuman are talking | Uses what's known about a Hubspot Contact to tailor the conversation, collects hand-raiser information or book meetings |
+| **During the conversation** | The visitor and the Superhuman are talking | Looks up visitors who identify themselves, submits HubSpot forms, and shows HubSpot Meetings links |
 | **After the conversation** | The conversation has ended | Writes conversation data back to HubSpot: the Contact, the optional 1mind Conversation record, and any custom fields you choose |
 
 ### Deployment types
@@ -104,37 +109,30 @@ You make this decision **field by field**. For each value, choose whether the Su
 
 - A visitor is treated as a known Contact when 1mind has a trusted identifier: a HubSpot cookie match, a HubSpot Contact ID passed by your site, or an email address passed by your site or provided during the conversation.
 - 1mind assigns each visitor a 1mind visitor ID, which can be written to HubSpot to link repeat conversations. The visitor ID is never used on its own to identify a person.
-- In most cases, the conversation starts anonymously.
+- Without a trusted identifier, the conversation starts anonymously.
 
 ### During the conversation
 
-#### Tailoring the conversation
+While the visitor is talking with the Superhuman, 1mind can interact with HubSpot in three ways.
 
-When a visitor is identified, either at the start or partway through, the Superhuman can use the approved HubSpot fields to tailor its questions and recommendations.
+#### Identifying visitors mid-conversation
 
-#### Collecting hand-raiser information
+If 1mind couldn't identify the visitor from the HubSpot cookie before the conversation, it can try again once the visitor shares their email address. 1mind searches HubSpot for a matching Contact and, if one exists, brings the approved Contact details and associated Company (account) information into the Superhuman's context.
 
-There are two ways to capture the information your contact or demo-request form would normally collect:
+The Superhuman can then tailor the rest of the conversation, following the same field-by-field rules you set in [Deciding what the Superhuman says](#deciding-what-the-superhuman-says). If no matching Contact is found, the conversation continues and the visitor's details are written to HubSpot after the conversation, based on your create and overwrite rules.
 
-- **Collect it in conversation (recommended for short forms):** The Superhuman asks the questions naturally, and the answers are written to HubSpot after the conversation, just like a form submission.
-- **Show your HubSpot form in the conversation:** If your form supports URL parameters, the Superhuman pre-fills it with what it already knows, and the visitor reviews and submits it. Your existing form-based workflows in HubSpot continue to run as they do today.
+#### Submitting HubSpot forms
 
-#### Booking meetings
+The Superhuman can display one of your HubSpot forms in the conversation, pre-filled with what it already knows (if the form supports URL parameters). The visitor reviews and submits it, and the submission flows through your existing HubSpot form workflows. This requires the optional `forms` scope.
 
-The Superhuman can present a calendar so visitors book time with your team without leaving the conversation. 1mind supports HubSpot Meetings, Calendly, LeanData BookIt, Chili Piper, and 1mind native calendaring.
+#### Booking with HubSpot Meetings
 
-You control **when** a calendar is offered, for example only after specific qualification questions are answered, or only for visitors who meet your criteria.
+If you use HubSpot Meetings, the Superhuman can show the right meeting link in the conversation in one of two ways:
 
-To route visitors to the right rep, choose one of two approaches:
+- **HubSpot routing:** The Superhuman pre-fills your HubSpot routing form, and HubSpot sends the visitor to the correct rep's meeting link, as it does today.
+- **1mind routing:** 1mind Services configures your routing rules in the Superhuman, which shows the correct HubSpot Meetings link directly.
 
-| Approach | How it works | Best when |
-| --- | --- | --- |
-| **Use your existing HubSpot form routing** | The Superhuman pre-fills your routing form. When the visitor submits it, HubSpot redirects to the correct meeting link as it does today. | Your routing logic is complex or changes often, and you want it to stay in HubSpot. |
-| **Route directly to a meeting link** | You share your routing rules and meeting links with 1mind Services. The Superhuman collects the routing details in conversation and displays the correct calendar, with no form step. | You want the most seamless experience and have a manageable number of meeting links (ideally fewer than 30). |
-
-<Note>
-  With direct routing, notify 1mind Services whenever a rep, territory, or rule changes. Changes are typically completed within three business days.
-</Note>
+Meetings booked through HubSpot Meetings appear in HubSpot as usual. For other calendaring tools and routing options, see [Calendaring](/path-to-calendaring-guide).
 
 ### After the conversation
 
@@ -155,6 +153,8 @@ All fields are optional, but **we strongly recommend creating dedicated fields t
 
 The most valuable fields are the conversation summary, key topics discussed, and pain points. 1mind can also derive other information that matters to your team, such as competitors mentioned, timeline, budget, or suggested follow-up questions for the seller. Create a property for it in HubSpot, and 1mind Services will include it in the integration.
 
+Answers the visitor gives in conversation, such as the questions your demo-request form would normally ask, are written to the Contact fields you choose.
+
 The tables below are a suggested starting point. Your final field list is confirmed in the field mapping worksheet.
 
 **Contact properties**
@@ -166,14 +166,14 @@ Create these in a `1mind` property group on the Contact. Each property holds dat
 | `onemind_visitor_id` | Single-line text | 1mind visitor ID |
 | `onemind_last_conversation_id` | Single-line text | ID of the most recent conversation |
 | `onemind_last_conversation_at` | Date and time | When the most recent conversation ended |
-| `onemind_qualification_status` | Dropdown | Qualification outcome, such as 1QL, Nurture, Disqualified, Support, or No Outcome |
+| `onemind_qualification_status` | Dropdown | Conversation Signal, such as Qualified, Nurture, Disqualified, Support, or No Outcome |
 | `onemind_meeting_booked` | Checkbox | True only when the scheduler confirms a booking |
 | `onemind_last_transcript` | Multi-line text | Full transcript of the most recent conversation |
 | `onemind_last_summary` | Multi-line text | Short summary for sellers |
 | `onemind_last_pain_points` | Multi-line text | Pain points the visitor described |
 | Custom fields | Any | Any additional information you want derived from the conversation |
 
-A `Qualified` is a lead the Superhuman qualified in conversation.
+The qualification status reflects the conversation's **Conversation Signal**. For example, **Qualified** means the visitor met your qualification criteria during the conversation.
 
 **1mind Conversation custom object (optional, requires HubSpot Enterprise)**
 
@@ -188,8 +188,8 @@ One record per conversation, associated to the Contact.
 | `transcript` | Multi-line text | Full conversation transcript |
 | `summary` | Multi-line text | Short summary for sellers |
 | `product_interest`, `pain_points`, `objections`, `next_action` | Multi-line text | Captured only from what the visitor said |
+| `meeting_booked` / `meeting_id` | Checkbox / text | Populated only when the scheduler confirms a booking |
 | `source_url`, `utm_campaign` | Single-line text | Page and campaign where the conversation started |
-| `transcript_url` | Single-line text | a hyperlink to the transcript within the 1mind Console |
 
 #### Creating and updating Contacts
 
@@ -214,7 +214,7 @@ If you use HubSpot alongside Salesforce or another CRM, decide which system crea
 
 Because conversation data is stored in standard HubSpot properties and records, you can use it anywhere HubSpot supports filtering:
 
-- **Workflows:** For example, when `onemind_qualification_status` is `Qualified`, notify the owner and create a follow-up task. When it's Nurture and the Contact has marketing consent, enroll them in a nurture sequence. When it's Support, route to your support team and skip sales alerts.
+- **Workflows:** For example, when `onemind_qualification_status` is Qualified, notify the owner and create a follow-up task. When it's Nurture and the Contact has marketing consent, enroll them in a nurture sequence. When it's Support, route to your support team and skip sales alerts.
 - **Lists and segments:** Build lists of Contacts who spoke with the Superhuman, booked a meeting, or asked about a specific product.
 - **Reports:** Report on conversations, qualification outcomes, and meetings by campaign or source page.
 
@@ -269,7 +269,7 @@ After you disconnect, new conversations no longer sync to HubSpot. Existing Cont
   </Accordion>
 
   <Accordion title="How quickly can routing changes be made?">
-    If you use your existing HubSpot form routing, changes you make in HubSpot take effect immediately. If 1mind routes directly to meeting links, send the change to 1mind Services. Changes are typically completed within three business days.
+    If you use HubSpot routing, changes you make in HubSpot take effect immediately. If 1mind routes to your HubSpot Meetings links, send the change to 1mind Services. Changes are typically completed within three business days.
   </Accordion>
 
   <Accordion title="Why wasn't a Contact created or updated after a conversation?">
