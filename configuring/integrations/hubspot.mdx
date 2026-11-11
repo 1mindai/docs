@@ -303,104 +303,109 @@ For help, contact 1mind Services with your Hub ID, the conversation ID, and the 
 
 ## Ride-Along
 
-This section describes how to configure the HubSpot integration for a Ride-Along Superhuman. Ride-Along joins a scheduled or live call alongside your rep, solutions engineer, CSM, or support specialist. A single call can include several members of your team and several customer attendees.
+The 1mind HubSpot integration connects your Ride-Along Superhuman to HubSpot before and after every call. Ride-Along joins a scheduled or live call alongside your rep, solutions engineer, CSM, or support specialist, and a single call can include several members of your team and several customer attendees.
 
 The integration runs two workflows:
 
-- **Pre-call workflow:** Retrieves CRM context from HubSpot to prepare a meeting briefing.
-- **Post-call workflow:** Writes selected conversation outcomes back to HubSpot. The objects, fields, matching rules, associations, and permitted updates are defined by your configured workflows. The optional custom-object setup below stores meeting and participant outcomes in dedicated **RIDEALONG** and **RIDEALONG ATTENDEE** objects.
+- **Pre-call workflow:** Retrieves CRM context from HubSpot to prepare a meeting briefing for your team.
+- **Post-call workflow:** Writes selected conversation outcomes back to HubSpot.
 
-### How it works
+<Info>
+  1mind Services builds each integration with your team. The objects, fields, matching rules, associations, and permitted updates are defined by your configured workflows.
+</Info>
 
-| Stage | What happens |
+### Ride-Along decisions
+
+Your answers to these questions shape how your Ride-Along integration is built.
+
+| Decision | Where it's covered |
 | --- | --- |
-| **Before the call** | The pre-call workflow reads the selected Contact, Company, Deal, and owner to brief your team. With manual launch, your rep selects these records. With automatic mode, 1mind matches attendees by exact email address and leaves ambiguous matches unmatched. |
-| **During the call** | Your rep leads. Ride-Along assists in Active, Passive, or Silent mode and never shows seller-only CRM context to prospects. |
-| **After the call** | The post-call workflow writes the outcomes back to HubSpot. With the optional custom-object setup, you can create one **RIDEALONG** record for the meeting and one **RIDEALONG ATTENDEE** record per participant, then associates them to the Contacts and Company selected before the call. |
+| Which Ride-Along profile you use: Sales Engineer, CS Onboarding, or Tech Support | [How the Ride-Along integration works](#how-the-ride-along-integration-works) |
+| Whether your rep selects HubSpot records before each call, or 1mind matches attendees automatically | [Before the call](#before-the-call) |
+| Which speaking mode Ride-Along uses: Active, Passive, or Silent | [During the call](#during-the-call) |
+| Whether outcomes are written to standard HubSpot records, custom objects, or both | [Where Ride-Along data lives](#where-ride-along-data-lives) |
+| Which outcomes to capture, and your launch tier: MVP, Advanced, or Comprehensive | [Recommended Ride-Along fields](#recommended-ride-along-fields) |
+| Which teams can see sensitive fields | [Record access](#record-access) |
+
+### Ride-Along requirements
+
+- A HubSpot **Super Admin**, or a user who can install apps, create properties, and (if used) create custom objects and associations.
+- Admin access to your 1mind workspace.
+- A HubSpot **sandbox** account (strongly recommended). 1mind connects to your sandbox first, then to production once testing is complete.
 
 <Note>
-  Ride-Along only writes the updates your workflows are configured to make. It never sends email: follow-up email drafts remain drafts for your rep to edit and send.
+  The optional RIDEALONG and RIDEALONG ATTENDEE custom objects require a **HubSpot Enterprise** subscription with available custom-object capacity.
 </Note>
 
-### Permissions
+#### Ride-Along permissions
 
-| Scope | Purpose |
-| --- | --- |
-| `oauth` | Standard HubSpot app connection |
-| `crm.objects.contacts.read` | Read attendee Contacts for the pre-call brief |
-| `crm.objects.companies.read` | Read the account for the pre-call brief |
-| `crm.objects.deals.read` | Read the Deal for the pre-call brief (Sales Engineer profile) |
-| `crm.objects.custom.read` | Custom-object setup only. Find existing Ride-Along records to prevent duplicates |
-| `crm.objects.custom.write` | Custom-object setup only. Create Ride-Along records and their associations |
-| `crm.schemas.custom.read` | Custom-object setup only. Read the two Ride-Along object schemas |
+The connection requests the following HubSpot scopes:
 
-If your post-call workflow updates standard records such as Contacts, Companies, or Deals, the matching write scopes are also required. Schema write access is needed only if you ask 1mind to create the custom objects for you through the API.
+| Scope | Required | Purpose |
+| --- | --- | --- |
+| `oauth` | Yes | Standard HubSpot app connection |
+| `crm.objects.contacts.read` | Yes | Read attendee Contacts for the pre-call briefing |
+| `crm.objects.companies.read` | Yes | Read the account for the pre-call briefing |
+| `crm.objects.deals.read` | Optional | Required only if the briefing includes Deal context, such as with the Sales Engineer profile |
+| `crm.objects.custom.read` | Optional | Required only for the custom objects. Finds existing Ride-Along records to prevent duplicates. |
+| `crm.objects.custom.write` | Optional | Required only for the custom objects. Creates Ride-Along records and their associations. |
+| `crm.schemas.custom.read` | Optional | Required only for the custom objects. Reads the two Ride-Along object schemas. |
 
-### Optional custom-object setup
+If your post-call workflow updates standard records such as Contacts, Companies, or Deals, the matching write scopes are also required.
 
-Follow these steps if you want to store meeting and participant outcomes in the RIDEALONG and RIDEALONG ATTENDEE objects.
+### How the Ride-Along integration works
 
-<Note>
-  Custom objects require a **HubSpot Enterprise** subscription with available custom-object capacity.
-</Note>
+| Phase | When | What 1mind does with HubSpot |
+| --- | --- | --- |
+| **Before the call** | The meeting is scheduled or about to start | Reads the relevant Contacts, Company, Deal, and owner to prepare a briefing for your team |
+| **During the call** | Your team and the customer are meeting | Uses the briefing to assist your team. Seller-only CRM context is never shown to prospects. |
+| **After the call** | The meeting has ended | Writes the outcomes you've selected back to HubSpot: standard records, the optional custom objects, or both |
 
-<Steps>
-  <Step title="Create the two custom objects">
-    In HubSpot, go to **Settings → Data Management → Objects → Custom Objects** and create:
+Your Ride-Along profile (Sales Engineer, CS Onboarding, or Tech Support) determines what's included in the briefing and which outcomes are captured. For example, the Sales Engineer profile includes Deal context and deal progression recommendations.
 
-    | Object | Internal name | Unique key (primary display property) | One record per |
-    | --- | --- | --- | --- |
-    | RIDEALONG | `ridealong` | `ridealong_key` | Meeting |
-    | RIDEALONG ATTENDEE | `ridealong_attendee` | `attendance_key` | Participant |
+### Before the call
 
-    Record the object type ID for each object in each HubSpot account.
-  </Step>
-  <Step title="Enable associations">
-    Required:
+The pre-call workflow identifies the HubSpot records related to the meeting and reads the fields you approve. There are two ways to identify them:
 
-    - RIDEALONG ↔ Contact
-    - RIDEALONG ↔ Company
-    - RIDEALONG ↔ RIDEALONG ATTENDEE
-    - RIDEALONG ATTENDEE ↔ Contact
-    - RIDEALONG ATTENDEE ↔ Company
+- **Manual launch:** Your rep selects the Contact, Company, and Deal before the call.
+- **Automatic matching:** 1mind matches attendees to HubSpot Contacts by exact email address. Ambiguous matches are left unmatched rather than guessed.
 
-    Optional: **RIDEALONG ↔ Deal**, if you want meetings to appear on the Deal record. Without it, meetings remain visible from the Contact and Company.
-  </Step>
-  <Step title="Add the properties">
-    Add the properties for the tier you're launching. The MVP minimum is listed in the [MVP field reference](#mvp-field-reference) below.
-  </Step>
-  <Step title="Set record access">
-    Restrict recording URLs, transcript URLs, and attendee profile fields (such as sentiment, buying role, and champion likelihood) to the teams that should see them.
-  </Step>
-  <Step title="Connect HubSpot in 1mind">
-    1. In the 1mind Console, go to **Integrations → CRM → HubSpot**.
-    2. Select **Connect** and sign in to HubSpot.
-    3. Select the correct account and verify the Hub ID.
-    4. Review the Ride-Along permissions listed above and approve.
-    5. Confirm the 1mind Console shows the correct Hub ID.
-  </Step>
-  <Step title="Confirm configuration with 1mind Services">
-    - Launch tier: MVP, Advanced, or Comprehensive
-    - Profile: Sales Engineer, CS Onboarding, or Tech Support
-    - Manual launch or automatic matching
-    - Speaking mode: Active, Passive, or Silent
-    - Whether to enable the RIDEALONG ↔ Deal association
-  </Step>
-</Steps>
+#### What 1mind reads
 
-### MVP field reference
-
-**Read before the call**
-
-| Object | Fields |
+| Object | Example fields |
 | --- | --- |
 | Contact | `hs_object_id`, `email`, `firstname`, `lastname`, `jobtitle` |
 | Company | `hs_object_id`, `name` |
 | Deal | `hs_object_id`, `dealname`, `pipeline`, `dealstage`, `amount`, `closedate`, `hs_next_step`, `description` |
 
-**Written after the call: RIDEALONG (one per meeting)**
+Your final list of fields is confirmed with 1mind Services.
 
-| Internal name | Type | Contents |
+### During the call
+
+Your rep leads the meeting. Ride-Along assists using the context gathered before the call, in the speaking mode you choose: Active, Passive, or Silent.
+
+Seller-only CRM context from the briefing is never shared with prospects.
+
+### After the call
+
+When the call ends, the post-call workflow writes the outcomes you've selected back to HubSpot.
+
+#### Where Ride-Along data lives
+
+| Option | Benefits | Considerations |
+| --- | --- | --- |
+| **Standard HubSpot records** | Uses the Contacts, Companies, and Deals your team already works in. Available on any HubSpot plan. | Holds only the most recent call's values in each field, and mixes Ride-Along data with your core fields. |
+| **RIDEALONG and RIDEALONG ATTENDEE custom objects** | One record per meeting and one per participant, preserving full history. Captures what each attendee cared about. Keeps Ride-Along data separate from core fields. | Requires HubSpot Enterprise and additional setup, including associations to Contacts and Companies. |
+
+With the custom objects, every participant receives an attendee record, even without a matching Contact. Unmatched participants are never created as new Contacts. You can optionally associate meetings to the Deal so they appear on the Deal record.
+
+#### Recommended Ride-Along fields
+
+The tables below are the MVP starting point. Advanced and Comprehensive tiers add further fields, and your final field list is confirmed with 1mind Services.
+
+**RIDEALONG (one per meeting)**
+
+| Property | Type | Contents |
 | --- | --- | --- |
 | `ridealong_key` | Single-line text, unique | Provider and meeting ID, for example `zoom:83920123456` |
 | `meeting_provider`, `provider_meeting_id`, `meeting_title` | Single-line text | Meeting details |
@@ -409,9 +414,9 @@ Follow these steps if you want to store meeting and participant outcomes in the 
 | `deal_progression_plan`, `critical_unknowns_validation_plan` | Multi-line text | Recommendations for the rep to review |
 | `customer_follow_up_email_draft`, `next_meeting_strategy` | Multi-line text | Drafts only. Never sent automatically. |
 
-**Written after the call: RIDEALONG ATTENDEE (one per participant)**
+**RIDEALONG ATTENDEE (one per participant)**
 
-| Internal name | Type | Contents |
+| Property | Type | Contents |
 | --- | --- | --- |
 | `attendance_key` | Single-line text, unique | Meeting key plus participant ID |
 | `attendee_email`, `attendee_full_name` | Single-line text | Who attended |
@@ -419,26 +424,83 @@ Follow these steps if you want to store meeting and participant outcomes in the 
 | `attended` | Checkbox | Whether the participant joined |
 | `stakeholder_perspective`, `recommended_rep_approach` | Multi-line text | What this person cared about in the meeting, and how to follow up |
 
-Every participant receives an attendee record, even without a matching Contact. Unmatched participants are never created as new Contacts.
+#### Updating standard records
 
-### Verify your setup
+If your post-call workflow writes to Contacts, Companies, or Deals, you define the rules field by field, such as filling empty fields only or overwriting with the latest call's outcome.
 
-- The 1mind Console shows the correct Hub ID.
-- With the custom-object setup, each call creates one RIDEALONG record and one RIDEALONG ATTENDEE record per participant.
-- Matched attendees are associated to the correct Contact and Company. Unmatched attendees still have a record, without a Contact association.
-- Internal attendees have no buying-role or champion fields populated.
-- Reprocessing the same meeting updates the existing records instead of creating new ones.
-- Only the records and fields your workflows are configured to update changed, and no email was sent.
-- Restricted fields are hidden from users who shouldn't see them.
+<Note>
+  Ride-Along only writes the updates your workflows are configured to make. It never sends email: follow-up email drafts remain drafts for your rep to edit and send.
+</Note>
 
-### Troubleshooting
+#### Record access
 
-| Symptom | Likely cause | Resolution |
-| --- | --- | --- |
-| Custom objects can't be created | The account isn't on HubSpot Enterprise or has no remaining custom-object capacity | Check your HubSpot subscription |
-| No records appear after a call | Property internal names don't match, or a required property is missing | Compare internal names in HubSpot to this guide and share them with 1mind Services |
-| Records appear but aren't associated | An association pair isn't enabled | Review the associations in step 2 of the custom-object setup |
-| Errors after the integration was working | The app was uninstalled or the connecting user lost access | Reconnect in the 1mind Console |
+Recording URLs, transcript URLs, and attendee profile fields (such as sentiment, buying role, and champion likelihood) can be sensitive. Restrict them in HubSpot to the teams that should see them.
+
+### Using Ride-Along data in HubSpot
+
+- **Deal and account reviews:** See every meeting, its decisions, and next steps from the Contact, Company, or Deal record.
+- **Workflows:** For example, create tasks from action items, or alert the owner when a meeting surfaces a new stakeholder.
+- **Reports:** Report on meetings by account, Deal, or meeting type, and track who attended.
+
+### How the Ride-Along integration is built
+
+<Steps>
+  <Step title="Integrations session">
+    1mind Services walks your team through the pre-call and post-call workflows and confirms your profile, launch tier, matching mode, and speaking mode.
+  </Step>
+  <Step title="Field mapping">
+    Your team confirms which HubSpot fields 1mind reads before the call, which outcomes it writes after the call, where they're stored, and your update rules. Use HubSpot internal names, not display labels.
+  </Step>
+  <Step title="HubSpot properties and connection">
+    Your team creates the HubSpot properties (and, optionally, the custom objects and associations), then connects your sandbox and production accounts from the 1mind Console. See the [HubSpot connection guide](/path-to-hubspot-connection-guide).
+  </Step>
+  <Step title="Build">
+    1mind Services builds the integration.
+  </Step>
+  <Step title="Test and go live">
+    Both teams test with sandbox meetings, iterate as needed, then connect production.
+  </Step>
+</Steps>
+
+### Disconnecting HubSpot from Ride-Along
+
+To stop syncing, go to **Integrations → CRM → HubSpot** in the 1mind Console and select **Disconnect**.
+
+To remove the 1mind app from HubSpot entirely, uninstall it from **Connected Apps** in HubSpot. See [HubSpot's guide to uninstalling apps](https://knowledge.hubspot.com/marketplace/install-apps-in-the-hubspot-marketplace#uninstall-an-app).
+
+After you disconnect, new meetings no longer sync to HubSpot. Existing records remain in HubSpot.
+
+### Ride-Along FAQs and troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Does Ride-Along create new Contacts?">
+    No. Attendees who don't match a HubSpot Contact are never created as new Contacts. With the custom objects, they still receive an attendee record, without a Contact association.
+  </Accordion>
+
+  <Accordion title="Can prospects see our CRM data?">
+    No. Seller-only CRM context from the pre-call briefing is never shared with prospects during the call.
+  </Accordion>
+
+  <Accordion title="Does Ride-Along send follow-up emails?">
+    No. Follow-up emails are saved as drafts for your rep to review, edit, and send.
+  </Accordion>
+
+  <Accordion title="Why aren't Ride-Along records appearing after a call?">
+    Confirm that the property internal names in HubSpot match your field mapping and that no required property is missing. If you use the custom objects, confirm your account is on HubSpot Enterprise and has available custom-object capacity.
+  </Accordion>
+
+  <Accordion title="Why are records appearing but not associated?">
+    An association pair may not be enabled. Confirm that RIDEALONG and RIDEALONG ATTENDEE are both associated to Contact and Company, and to each other.
+  </Accordion>
+
+  <Accordion title="Will running the same meeting twice create duplicates?">
+    No. Reprocessing a meeting updates the existing records instead of creating new ones.
+  </Accordion>
+
+  <Accordion title="The integration was working and has stopped.">
+    The app may have been uninstalled in HubSpot, or the user who connected it may have lost access. Contact 1mind Services to reconnect.
+  </Accordion>
+</AccordionGroup>
 
 For help, contact 1mind Services with your Hub ID, the meeting ID, and the approximate time of the call.
 
