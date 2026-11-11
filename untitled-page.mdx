@@ -1,1 +1,171 @@
+---
+title: "Connect HubSpot"
+sidebarTitle: "Connect HubSpot"
+description: "Authorize 1mind to access your HubSpot sandbox and production accounts from the 1mind Console."
+icon: "plug"
+---
 
+This guide walks you through connecting HubSpot to 1mind. The same connection is used by the Inbound Website SDR and Ride-Along Superhumans. For what each integration reads and writes, see:
+
+- [HubSpot: Inbound Website SDR](/path-to-inbound-hubspot-guide)
+- [HubSpot: Ride-Along](/path-to-ride-along-hubspot-guide)
+
+## Before you begin
+
+Make sure you have:
+
+- **Access to the 1mind Console.** Your 1mind Customer Success Manager provides access.
+- **A HubSpot integration user.** We recommend a dedicated HubSpot user for the 1mind connection rather than an individual's account, so the connection isn't affected when someone changes roles or leaves. The user must be a **Super Admin**, or have permission to install apps.
+- **Your HubSpot sandbox and production accounts.** We recommend connecting your sandbox first, testing, then connecting production.
+- **The required HubSpot properties and custom objects created**, as agreed with 1mind Services in your field mapping.
+
+<Note>
+  Custom objects require a **HubSpot Enterprise** subscription. If your integration uses them, create the objects before connecting so 1mind can access them.
+</Note>
+
+## Step 1: Review the requested permissions
+
+During authorization, HubSpot asks you to approve the scopes 1mind needs. The exact scopes depend on which Superhumans you use and how your integration is configured.
+
+| Scope | Used by | Purpose |
+| --- | --- | --- |
+| `oauth` | All | Standard HubSpot app connection |
+| `crm.objects.contacts.read` | All | Read Contacts |
+| `crm.objects.contacts.write` | Inbound Website SDR | Write conversation outcomes to Contacts |
+| `crm.objects.companies.read` | Ride-Along, Inbound Website SDR (optional) | Read Company (account) details |
+| `crm.objects.deals.read` | Ride-Along (optional) | Read Deal context for the pre-call briefing |
+| `crm.objects.custom.read` / `crm.objects.custom.write` | Optional | Read and write 1mind custom object records |
+| `crm.schemas.custom.read` | Ride-Along (optional) | Read the Ride-Along custom object schemas |
+| `forms` | Inbound Website SDR (optional) | Submit HubSpot forms during the conversation |
+
+## Step 2: Connect HubSpot from the 1mind Console
+
+Your 1mind Customer Success Manager can walk you through authenticating into HubSpot.
+
+<Steps>
+  <Step title="Add a connection">
+    In the 1mind Console, go to **Workspace → Integrations** and click **\+ Add Connection**.
+
+    <Frame>
+      <img
+        src="/images/integrations/hubspot-oauth/01-add-connection.png"
+        alt="Add Connection in the Console Integrations tab"
+      />
+    </Frame>
+  </Step>
+  <Step title="Select HubSpot">
+    Choose **HubSpot** from the list of connections.
+
+    <Frame>
+      <img
+        src="/images/integrations/hubspot-oauth/02-select-hubspot.png"
+        alt="Select HubSpot connection"
+      />
+    </Frame>
+  </Step>
+  <Step title="Choose the environment and create the connection">
+    Select which environment to connect first (Sandbox or Production) and click **Create Connection**.
+
+    <Frame>
+      <img
+        src="/images/integrations/hubspot-oauth/03-create-connection.png"
+        alt="Select environment and create connection"
+      />
+    </Frame>
+  </Step>
+  <Step title="Sign in with your integration user">
+    You are redirected to HubSpot. Sign in with your **integration user**.
+
+    <Frame>
+      <img
+        src="/images/integrations/hubspot-oauth/04-hubspot-sign-in.png"
+        alt="Sign in to HubSpot with the integration user"
+      />
+    </Frame>
+  </Step>
+  <Step title="Select the HubSpot account">
+    If your user has access to more than one HubSpot account, choose the account that matches the environment you selected. Check the **Hub ID** to make sure you're connecting the right one.
+
+    <Frame>
+      <img
+        src="/images/integrations/hubspot-oauth/05-select-account.png"
+        alt="Choose the HubSpot account"
+      />
+    </Frame>
+  </Step>
+  <Step title="Approve the permissions">
+    Review the permissions 1mind is requesting and click **Connect app**.
+
+    <Frame>
+      <img
+        src="/images/integrations/hubspot-oauth/06-approve-scopes.png"
+        alt="Approve the requested HubSpot permissions"
+      />
+    </Frame>
+  </Step>
+  <Step title="Confirm the connection">
+    Return to the Console (**Integrations** section) and confirm the authenticated environment shows **Connected** at the top right of the tile.
+
+    <Frame>
+      <img
+        src="/images/integrations/hubspot-oauth/07-connected-tile.png"
+        alt="Connected status on the HubSpot tile"
+      />
+    </Frame>
+  </Step>
+</Steps>
+
+<Note>
+  To connect the second environment: in the Console, go to **Workspace → Integrations**, select the HubSpot connection, and click **Authorize** on the other tile (for example, Production after Sandbox).
+</Note>
+
+## Verifying the connection
+
+In each connected HubSpot account:
+
+1. Go to **Settings → Integrations → Connected Apps**.
+2. Confirm the **1mind** app is listed.
+
+Your 1mind contact can confirm on their end that API calls into your HubSpot account are succeeding.
+
+## Disconnecting
+
+To remove the integration:
+
+1. Ask your 1mind contact to revoke access from 1mind's side.
+2. In HubSpot, go to **Settings → Integrations → Connected Apps**.
+3. Next to the **1mind** app, open **Actions** and select **Uninstall**.
+4. Follow the prompts to confirm.
+
+After you disconnect, new conversations and meetings no longer sync to HubSpot. Existing records and property values stay in HubSpot.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="I can't install the app in HubSpot">
+    The HubSpot user needs to be a Super Admin or have permission to install apps. Ask a Super Admin to grant the permission, or to complete the connection themselves.
+  </Accordion>
+
+  <Accordion title="The wrong HubSpot account was connected">
+    In the account selector, HubSpot lists every account your user can access. Disconnect the incorrect account, reconnect, and check the Hub ID before approving.
+  </Accordion>
+
+  <Accordion title="The connection succeeds but 1mind can't access data">
+    Confirm that the required properties and custom objects exist with the internal names in your field mapping. If your integration uses custom objects, confirm the account is on HubSpot Enterprise. If the issue persists, contact 1mind support.
+  </Accordion>
+
+  <Accordion title="The success message doesn't appear after authorizing">
+    Check for browser pop-up blockers or try a different browser. If the issue persists, contact your 1mind account manager.
+  </Accordion>
+
+  <Accordion title="The connection was working and has stopped">
+    The app may have been uninstalled in HubSpot, or the integration user may have been deactivated or lost permissions. Reconnect from the Console, or contact 1mind support.
+  </Accordion>
+</AccordionGroup>
+
+## Support
+
+For help with connecting or authorizing HubSpot:
+
+- **Email:** [support@1mind.com](mailto:support@1mind.com)
+- **1mind account manager:** use your existing channel
