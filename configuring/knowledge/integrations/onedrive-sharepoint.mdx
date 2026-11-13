@@ -10,6 +10,10 @@ The OneDrive integration syncs files from a OneDrive folder you choose, includin
 
 OneDrive and SharePoint share the same connector in the Console, so the same steps work for either source. This guide walks through connecting OneDrive step by step. The whole setup takes a few minutes; after that, the sync runs on its own.
 
+<Note>
+**This page is in review and not yet approved (DOCS-26).** It carries drafted changes and is not final. Remove this banner before publishing.
+</Note>
+
 ## What you'll need
 
 Before you start, have this ready:
@@ -98,6 +102,18 @@ Before you start, have this ready:
 
   </Step>
 </Steps>
+## Remove synced content
+
+You can remove OneDrive or SharePoint content from 1mind yourself in the Knowledge Hub. You do not need to open a support request, and removing content in 1mind never changes your files in OneDrive or SharePoint. The integration has read access only.
+
+Choose the option that matches what you want:
+
+- **Remove specific documents, keep your source files.** Delete the documents in the Knowledge Hub. Your source files are untouched. A document you delete in the Hub stays deleted even if the source file is edited later, and a later sync of the same connection does not bring it back.
+- **Stop syncing new changes, keep what is already in.** Disconnect the source. Disconnecting stops future syncs and leaves the documents already ingested in place.
+- **Remove a document everywhere by removing the original.** Deleting the file at the source removes it from 1mind on the next sync. This is the only option that also loses your original, so use it last.
+
+To remove this source from one Superhuman without deleting it from the workspace, disable it for that Superhuman instead. See [Superhuman Knowledge](/configuring/knowledge/superhuman-knowledge) and the destructive actions in the [Knowledge overview](/configuring/knowledge/overview).
+
 ## Troubleshooting
 
 | What you're seeing | What to check |
