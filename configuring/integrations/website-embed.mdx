@@ -6,14 +6,22 @@ status: "published"
 public: true
 ---
 
+<Note>
+**This page is in review and not yet approved (DOCS-19).** It carries drafted changes and is not final. Remove this banner before publishing.
+</Note>
+
+<Warning>
+**One page carries one deployment.** A single page runs one 1mind deployment. If two load on the same page (a widget and an embed, two widgets, or a sandbox and a production deployment together), the launcher starts whichever downloads first and skips the rest, so what a visitor sees depends on download order. Put one deployment on a page. To make a page look or behave differently, see [Giving different pages a different experience](#giving-different-pages-a-different-experience) below.
+</Warning>
+
 ## 1. Getting Started
 
-We suggest creating a few pages in your website editor where you will be able to test:
+We suggest creating one test page per deployment in your website editor, so a single page never loads more than one deployment:
 
-1. Sandbox page
-2. Production page
+1. A Sandbox test page
+2. A Production test page
 
-Once you have your pages created, let's focus first on the "Sandbox" page.
+Keep each environment on its own page. If you need to test a widget and an embed, or two widgets, give each its own page. With your pages created, start with the "Sandbox" page.
 
 To start, include the following `<script>` block in the `<head>`, `<footer>`, or `<body>` section of your HTML page. 
 
@@ -50,8 +58,8 @@ If your deployment is configured as an **embed**, include the following `<div>` 
 
 For the **best web experience**, we recommend setting the parent container dimensions as follows:
 
-- **Width:** 80% – 85% of the viewport width (vw)
-- **Height:** 70% – 80% of the viewport height (vh)
+- **Width:** 80% to 85% of the viewport width (vw)
+- **Height:** 70% to 80% of the viewport height (vh)
 
 <Steps>
   <Step title="Valid Examples for Embed Placement">
@@ -102,6 +110,9 @@ For the **best web experience**, we recommend setting the parent container dimen
 
   </Step>
 </Steps>
+
+{/* TODO (DOCS-19, confirm with Services/Product): the embed container examples above use only `#onemind-widget`. The launcher finds an embed container by `#onemind-widget` then `#onemind-embed` in widget mode, while managed "experience" mode requires `#onemind-embed`. Confirm which id each embed mode needs before changing these examples. */}
+
 ## 3. Customizing with Attributes
 
 You can pass additional parameters to the launcher script depending on your integration needs. These attributes allow you to control the script's behavior directly on your page, as well as leverage user and page context in the conversation.
@@ -130,6 +141,12 @@ You can pass additional parameters to the launcher script depending on your inte
 ## 4. How It Works
 
 When the script is loaded, it reads the custom attributes, as well as any other configured page context/cookies, and initiates the appropriate conversation for the specific page/user/workflow. The experience is then loaded in an iframe where the user can interact.
+
+### Single-page sites and in-app navigation
+
+On a single-page site, where moving between pages does not fully reload the browser, the launcher starts the next page's deployment after the in-app navigation. If different pages load different deployments, a visitor moving between them sees each page's own deployment. Two deployments on the same page are unchanged: the first to load wins.
+
+{/* TODO (DOCS-19, confirm with Services): a launcher script written into the page as raw HTML (rather than injected by the snippet above) may not run after an in-app page change. Reported untested by Engineering on 2026-10-22. Confirm before documenting as guidance. */}
 
 ## 5. Deploying via Google Tag Manager
 
@@ -205,6 +222,19 @@ if (!excludedPaths.includes(window.location.pathname)) {
 
 In the above example, we are skipping the home page (`/`) and the about us page (`about-us`). This sample site also has an `.html` version that exists, so that was included additionally to prevent it from loading on those versions as well.
 
+## Giving different pages a different experience
+
+Because one page carries one deployment, do not add a second deployment to change how a page looks or behaves. Use one of these instead.
+
+**Page awareness (one deployment, per-page overrides).** Page awareness lets a single deployment, running on every page, change its welcome copy per page (and start the Pro widget minimized on a given page). This is the supported way to make one page differ from another without a second deployment. See [Page awareness](/using/deployments/page-awareness).
+
+**When page awareness does not fit.** If pages need genuinely different setups (an embed on one page and a widget on another, or different personas or flows per page), keep the second deployment off the pages it should not run on. Two ways to do this:
+
+- A per-page trigger or exclusion in your tag manager, so each deployment's script loads only on its intended pages (see [Adding Exceptions](#6-adding-exceptions-excluding-pages) above).
+- The console's **Blocked pages** on a deployment's Access tab, which keeps that deployment from launching on the pages you list, from 1mind's side, without relying on your script or tag manager.
+
+{/* TODO (DOCS-19, confirm with Services/Product): Blocked pages has not yet been tested on a customer page. Confirm before presenting it as the primary method. */}
+
 ## 7. Example Usage in HTML
 
 Here's a full example to illustrate how the script and custom attributes can be used in a real page setup:
@@ -239,8 +269,8 @@ Here's a full example to illustrate how the script and custom attributes can be 
 - **Create a dedicated page:** The Superhuman will live on this page only (similar to [1mind.com](http://1mind.com)) so you can easily direct traffic to it. Putting the Superhuman embedded on your home page will allow your Superhuman to be more effective in helping your users accordingly.
 - **Wide container width (embeds):** We suggest making the container you embed the 1mind Superhuman on your site to be set near the maximum width of the page. This allows for a larger viewing experience for your users when speaking with the Superhuman.
 - **Parent Container Sizing (Recommended for embeds):** For **web breakpoints**, we recommend:
-    - **Width:** 70% – 75% of the viewport width (vw)
-    - **Height:** 70% – 80% of the viewport height (vh)
+    - **Width:** 70% to 75% of the viewport width (vw)
+    - **Height:** 70% to 80% of the viewport height (vh)
 
 <Note>These values are recommendations only. Our UI is fully responsive and designed to adapt dynamically to any container size or breakpoint. For optimal experiences on other breakpoints such as tablet or mobile, we encourage adjusting the width and height values accordingly.</Note>
 
