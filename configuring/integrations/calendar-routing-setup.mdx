@@ -1,0 +1,77 @@
+---
+title: "Set up calendar routing"
+sidebarTitle: "Routing setup"
+description: "How an admin takes an account from invited reps to validated calendar routing: the setup sequence, who owns each step, and how to check connections before go-live."
+contentType: "how-to"
+status: "draft"
+---
+
+<Note>
+**This page is in review and not yet approved (DOCS-4).** It is a new draft, gated until a named reviewer approves it on the preview. Remove this banner before publishing.
+</Note>
+
+This guide covers how an admin sets up calendar routing end to end, so meetings booked through your Superhuman reach the right rep. It is the setup companion to the [Calendars integration](/configuring/integrations/calendars) and the [Calendar routing](/using/sub-agents/calendar-routing) reference.
+
+## Who does what
+
+- **Reps (Member role)** connect their own calendar and meeting provider, set their availability, and opt in to auto-join where the workspace allows it. Every role manages its own scheduling profile.
+- **Admins (Workspace Admin or Super Admin)** invite reps, create meeting types and teams, manage round-robin, and configure auto-join for a workspace. These two roles are the only ones with the Scheduling and Meetings permission.
+- **Org admins (Super Admin)** turn auto-join on for the organization, which has to happen before any workspace can use it.
+- **1mind Services** builds and validates the routing workflow with you.
+
+For the full workspace roles table, see the roles reference.
+
+{/* TODO (DOCS-4, item 6): link to the workspace roles page (DOCS-14) once published. */}
+
+## The setup sequence
+
+1. **The admin invites reps** into the workspace.
+2. **Each rep connects** their own calendar and meeting provider, and sets availability. A rep who has not connected both a calendar and a meeting provider is skipped by routing, with no warning, so confirm connections before go-live.
+3. **The admin creates meeting types and teams**, including any round-robin teams.
+4. **The customer writes down its routing rules** and gives them to Services (see below).
+5. **Services builds the routing and validates it** with you before launch.
+
+## What to give Services in writing
+
+Before routing can be built, give Services your routing rules in writing: which meeting types exist, which teams or reps each type should route to, the round-robin or priority order within a team, and any fallback when no one matches.
+
+{/* TODO (DOCS-4, item 2): confirm the exact field list Services expects on the intake, from the Services Onboarding Guide, before this goes public. */}
+
+## Check which reps have connected
+
+Routing skips a rep who has not connected, and it does not warn you, so check connections before go-live and again afterward. Each team's member list shows who has connected a calendar, and so does the **Add Teammate** picker when you build a team.
+
+Admins cannot connect a rep's calendar for them. Each rep connects their own.
+
+## Practices Product recommends
+
+- Keep a **backstop team** so a meeting still routes when no primary match is available.
+- Use **one team per routing branch**, so each decision in your rules maps to a single team.
+- **Check connections before launch**, and after any change to the team.
+
+## What is not self-serve yet
+
+Services configures routing workflows today. Self-serve route troubleshooting is planned.
+
+{/* TODO (DOCS-4, blocked on Product): Michael Bissani said on 2026-10-30 that route troubleshooting would be self-serve by end of November. Confirm whether it has shipped before publishing, and update this section to match. */}
+
+If you use a third-party routing or booking tool alongside 1mind, link to its own page rather than duplicating it here.
+
+{/* TODO (DOCS-4, item 5): link to the third-party routing pages (Chili Piper, LeanData) once the relationship between 1mind routing and a third-party tool is documented. Those tools are out of scope for this page. */}
+
+## Related pages
+
+As each step's detailed page is published, this guide links to it at the point a reader needs it:
+
+- Connect your calendar (rep guide): DOCS-17
+- Microsoft admin approval: DOCS-18
+- Manage a round-robin team: DOCS-3
+- Ride-along auto-join (admins and reps): DOCS-23
+- Calendar and routing reference: DOCS-28
+- Scheduling links and the meetings dashboard: DOCS-29
+
+{/* TODO (DOCS-4, item 6): convert the list above to real links as each sub-task page lands. */}
+
+## Decisions owed before publishing
+
+{/* TODO (DOCS-4): (1) Visibility: public or behind console sign-in. Owed from Tom. (2) Whether self-serve routing ships before this guide publishes. Owed from Michael Bissani. */}
