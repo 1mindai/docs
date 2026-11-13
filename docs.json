@@ -153,10 +153,10 @@
                 ]
               },
               {
-                "group": "Hubspot",
+                "group": "HubSpot",
                 "pages": [
                   "configuring/integrations/hubspot",
-                  "untitled-page"
+                  "configuring/integrations/hubspot-connection"
                 ]
               },
               "configuring/integrations/calendars",
