@@ -1,305 +1,520 @@
 ---
 title: "HubSpot Integration"
-description: "How the 1mind Superhuman reads from and writes to HubSpot to personalize conversations, qualify buyers, and hand off to your revenue teams while preserving your routing and workflows."
-contentType: "reference"
-status: "draft"
+description: "How 1mind connects your Superhumans to HubSpot, what data flows in each direction, and the decisions you'll make with 1mind Services."
+icon: "hubspot"
+public: true
 ---
 
+1mind connects to HubSpot in two ways, depending on which Superhuman you use. Each has its own permissions, objects, and setup.
+
+|  | **Inbound Website SDR** | **RideAlong** |
+| --- | --- | --- |
+| **Where it runs** | On your website, talking with a single visitor | Inside a scheduled or live Zoom, Google Meet, or Teams call alongside your rep |
+| **Who it knows about** | Often an anonymous visitor who may identify themselves during the conversation | Known invitees, plus a preselected Contact, Company, and Deal |
+| **What it writes** | Updates the Contact and, optionally, creates a conversation record | Creates one meeting record and one record per attendee |
+
+<CardGroup cols={2}>
+  <Card title="Inbound Website SDR" icon="message" href="#inbound-website-sdr">
+    Website conversations, lead capture, meeting booking, and CRM write-back.
+  </Card>
+
+  <Card title="RideAlong" icon="video" href="#ridealong">
+    Pre-call briefs and post-call meeting and attendee records.
+  </Card>
+</CardGroup>
+
+---
+
+## Inbound Website SDR
+
+The 1mind HubSpot integration connects your Inbound Website SDR to HubSpot at three points in every conversation: before it starts, while it's happening, and after it ends. Your sellers see what the Superhuman learned directly on the Contact record, and your HubSpot workflows can act on it.
+
+<Info>
+  1mind Services builds each integration with your team, based on the data you want captured, your business rules, and how your HubSpot account is configured.
+</Info>
+
+### Decisions you'll make
+
+Your answers to these questions are captured in the field mapping worksheet and shape how your integration is built.
+
+| Decision | Where it's covered |
+| --- | --- |
+| Which HubSpot fields the Superhuman can reference in conversation | [Deciding what the Superhuman says](#deciding-what-the-superhuman-says) |
+| Whether the Superhuman submits your HubSpot forms | [Submitting HubSpot forms](#submitting-hubspot-forms) |
+| How visitors are routed to the right HubSpot Meetings link | [Booking with HubSpot Meetings](#booking-with-hubspot-meetings) |
+| Whether conversation data lives on the Contact, a custom object, or both | [Where conversation data lives](#where-conversation-data-lives) |
+| Which conversation fields to capture | [Recommended fields](#recommended-fields) |
+| How existing Contact data is treated | [Creating and updating Contacts](#creating-and-updating-contacts) |
+
+### Requirements
+
+- A HubSpot **Super Admin**, or a user who can install apps, create properties, and (if used) create custom objects.
+- Admin access to your 1mind workspace.
+- A HubSpot **sandbox** account (strongly recommended). 1mind connects to your sandbox first, then to production once testing is complete.
+- Your **web development team**, to place the Superhuman on your site.
+
 <Note>
-Ops starts with the setup runbook below. Confirm the HubSpot account, routing owner, OAuth access, object entitlement, properties, associations, and workflow triggers before configuring any conversation use case. Every name and value in this guide is illustrative until the customer's mapping worksheet is approved.
+  The optional 1mind Conversation custom object requires a **HubSpot Enterprise** subscription with available custom-object capacity.
 </Note>
 
-## Introduction
+#### Permissions
 
-1mind Superhumans use approved customer data to personalize a website conversation and return structured outcomes to the systems that own sales and marketing action. HubSpot can serve as the CRM and marketing system, or as the marketing layer synchronized with Salesforce or another CRM. This guide helps prospective customers and their operations, customer success, and implementation teams plan access, create fields and objects, preserve routing, and validate the end-to-end integration.
+The connection requests the following HubSpot scopes:
 
-The lifecycle has three points of integration:
-
-- **PRE** resolves a known visitor and reads a limited Contact, Company, Deal, or owner context.
-- **IN CONVERSATION** uses approved tool calls for fresh lookup, scheduler/routing, forms, or ticket handoff when needed.
-- **POST PROCESSING** writes a current Contact snapshot, a durable per-conversation record when available, and optional behavioral events or legitimate CRM activities.
-
-Customer-owned HubSpot workflows then assign, notify, score, nurture, or sync according to the existing business process.
-
-### Preserve the customer's workflow and first write
-
-Choose the first-person write from routing ownership:
-
-- When **HubSpot owns assignment**, 1mind writes the approved Contact data and `onemind_visitor_id` to HubSpot; HubSpot workflows and the existing CRM sync route downstream.
-- When **Salesforce or another CRM owns Lead assignment first**, 1mind writes there first and lets the customer's sync populate HubSpot. Do not create the same person independently in both systems.
-- When **HubSpot is only a downstream marketing destination**, its Ops team maps the 1mind visitor ID through the normal sync.
-
-A browser ID is a correlation value, not proof of identity. Store it only after the customer's consent and matching rules permit it.
-
-### Setup decision table
-
-| Decision | Ops choice | Result |
+| Scope | Required | Purpose |
 | --- | --- | --- |
-| First-write system | HubSpot / Salesforce-first / another MAP-first | Prevents duplicate person creation and preserves routing |
-| HubSpot account | Sandbox or test account, production Hub ID, tier | Determines valid connection and object features |
-| History model | Approved app object, customer-defined Conversation custom object, or Contact + Note/event fallback | Determines what Ops must provision |
-| Activities | Actual Meeting, Call, Task, or Ticket only when semantically true | Keeps CRM reporting reliable |
+| `oauth` | Yes | Standard HubSpot app connection |
+| `crm.objects.contacts.read` | Yes | Recognize known visitors and personalize the conversation |
+| `crm.objects.contacts.write` | Yes | Write conversation outcomes to the Contact |
+| `crm.objects.companies.read` | Optional | Required only if Company (account) details are brought into the conversation |
+| `crm.objects.custom.read` | Optional | Required only for the 1mind Conversation custom object. Prevents duplicate records on retry. |
+| `crm.objects.custom.write` | Optional | Required only for the 1mind Conversation custom object. Creates records and associates them to Contacts. |
+| `forms` | Optional | Required only if the Superhuman submits HubSpot forms during the conversation |
 
-## Technical setup: HubSpot Ops runbook
+### How the integration works
 
-### Prerequisites
+| Phase | When | What 1mind does with HubSpot |
+| --- | --- | --- |
+| **Before the conversation** | The visitor has landed on your site but hasn't started talking | Captures the web session (HubSpot cookie, UTMs, URL values, form values) and looks up the visitor in HubSpot |
+| **During the conversation** | The visitor and the Superhuman are talking | Looks up visitors who identify themselves, submits HubSpot forms, and shows HubSpot Meetings links |
+| **After the conversation** | The conversation has ended | Writes conversation data back to HubSpot: the Contact, the optional 1mind Conversation record, and any custom fields you choose |
 
-- A HubSpot admin who can inspect account ID, subscription, Connected Apps, properties, custom objects, associations, workflows, and API access.
-- The correct 1mind workspace and current 1mind Console install flow; an approved test account or sandbox and separate production authorization.
-- A signed mapping worksheet listing source of truth, internal property names, types, options, null/overwrite rules, sensitivity, retention, and triggered workflows.
-- Agreed person matching (HubSpot record ID preferred; otherwise verified email or another approved unique key), a create-versus-update rule, and a consent policy. Never infer an email or person from a browser cookie alone.
+### Deployment types
+
+Where the Superhuman lives on your site determines what it knows at the start of a conversation. Integration work carries over between deployment types, so many teams deploy more than one.
+
+- **Widget:** Floats in the corner of your pages as the visitor scrolls. You choose which pages it appears on.
+- **Embedded:** Lives on a dedicated landing page. Well suited to campaigns that drive traffic to a single page.
+- **Behind the form:** Appears after a visitor submits one of your forms, typically on the thank-you page. The submitted values are passed to the Superhuman, so the conversation starts with context about who the visitor is.
+
+### Before the conversation
+
+#### What 1mind can capture
+
+- **HubSpot tracking cookie (`hubspotutk`):** If a visitor has been cookied by HubSpot, for example by submitting a form or clicking a marketing email, 1mind can look up their Contact and read the fields you approve.
+- **UTMs and URL values:** Campaign, source, medium, and other values in the page URL. These are written back after the conversation for attribution.
+- **Other session values:** Anything else your site stores in the session, such as first-party cookies or data from de-anonymization tools like 6sense.
+- **Form values (behind-the-form only):** The fields the visitor just submitted.
+
+#### Deciding what the Superhuman says
+
+Knowing something about a visitor doesn't mean the Superhuman should mention it. For example, if the HubSpot cookie returns a first name, should the Superhuman greet the visitor by name before they've introduced themselves?
+
+You make this decision **field by field**. For each value, choose whether the Superhuman can reference it in conversation, or use it only in the background and write it back to HubSpot afterward.
+
+<Tip>
+  Start conservative and expand over time as you see how visitors respond.
+</Tip>
+
+#### How 1mind treats identity
+
+- A visitor is treated as a known Contact when 1mind has a trusted identifier: a HubSpot cookie match, a HubSpot Contact ID passed by your site, or an email address passed by your site or provided during the conversation.
+- 1mind assigns each visitor a 1mind visitor ID, which can be written to HubSpot to link repeat conversations. The visitor ID is never used on its own to identify a person.
+- Without a trusted identifier, the conversation starts anonymously.
+
+### During the conversation
+
+While the visitor is talking with the Superhuman, 1mind can interact with HubSpot in three ways.
+
+#### Identifying visitors mid-conversation
+
+If 1mind couldn't identify the visitor from the HubSpot cookie before the conversation, it can try again once the visitor shares their email address. 1mind searches HubSpot for a matching Contact and, if one exists, brings the approved Contact details and associated Company (account) information into the Superhuman's context.
+
+The Superhuman can then tailor the rest of the conversation, following the same field-by-field rules you set in [Deciding what the Superhuman says](#deciding-what-the-superhuman-says). If no matching Contact is found, the conversation continues and the visitor's details are written to HubSpot after the conversation, based on your create and overwrite rules.
+
+#### Submitting HubSpot forms
+
+The Superhuman can display one of your HubSpot forms in the conversation, pre-filled with what it already knows (if the form supports reading from URL parameters). The visitor reviews and submits it, and the submission flows through your existing HubSpot form workflows.  1mind can also submit the form via API by posting to the Hubspot Forms API after the conversation ends. 1mind will need to Form GUID and Hubspot Portal Id. This requires the optional `forms` scope and RECAPTCHA turned off on that Form.
+
+#### Booking with HubSpot Meetings
+
+If you use HubSpot Meetings, the Superhuman can show the right meeting link in the conversation in one of two ways:
+
+- **HubSpot routing:** The Superhuman pre-fills your HubSpot routing form if your form accepts reading from URL parameters, and HubSpot sends the visitor to the correct rep's meeting link, as it does today.
+- **1mind routing:** 1mind Services configures your routing rules in the Superhuman, which shows the correct HubSpot Meetings link directly.
+
+Meetings booked through HubSpot Meetings appear in HubSpot as usual. For other calendaring tools and routing options, see [Calendaring](/path-to-calendaring-guide).
+
+### After the conversation
+
+When the conversation ends, 1mind writes what it captured in the conversation back to HubSpot. You decide where that data lives, which fields to capture, and how existing data is handled.
+
+#### Where conversation data lives
+
+| Option | Benefits | Considerations |
+| --- | --- | --- |
+| **Contact properties** | Simple to set up, easy for sellers to find, available on any HubSpot plan | Holds only the most recent conversation. Each new conversation replaces the previous values. |
+| **1mind Conversation custom object** | One record per conversation, preserving full history. Keeps Superhuman data separate from core Contact fields. The most common choice among 1mind customers. | Requires HubSpot Enterprise and additional setup, including making records easy for sellers to find from the Contact. |
+
+Many teams use both: a few key fields on the Contact for quick reference, and full detail on the custom object. 1mind Services can review your HubSpot account with you to determine the best fit.
+
+#### Recommended fields
+
+All fields are optional, but **we strongly recommend creating dedicated fields to capture conversation data**. Without them, conversation data has nowhere to land in HubSpot, and sellers would need to read full transcripts to understand each conversation.
+
+The most valuable fields are the conversation summary, key topics discussed, and pain points. 1mind can also derive other information that matters to your team, such as competitors mentioned, timeline, budget, or suggested follow-up questions for the seller. Create a property for it in HubSpot, and 1mind Services will include it in the integration.
+
+Answers the visitor gives in conversation, such as the questions your demo-request form would normally ask, are written to the Contact fields you choose.
+
+The tables below are a suggested starting point. Your final field list is confirmed in the field mapping worksheet.
+
+**Contact properties**
+
+Create these in a `1mind` property group on the Contact. Each property holds data from the most recent conversation.
+
+| Property | Type | Contents |
+| --- | --- | --- |
+| `onemind_visitor_id` | Single-line text | 1mind visitor ID |
+| `onemind_last_conversation_id` | Single-line text | ID of the most recent conversation |
+| `onemind_last_conversation_at` | Date and time | When the most recent conversation ended |
+| `onemind_qualification_status` | Dropdown | Conversation Signal, such as Qualified, Nurture, Disqualified, Support, or No Outcome |
+| `onemind_meeting_booked` | Checkbox | True only when the scheduler confirms a booking |
+| `onemind_last_transcript` | Multi-line text | Full transcript of the most recent conversation |
+| `onemind_last_summary` | Multi-line text | Short summary for sellers |
+| `onemind_last_pain_points` | Multi-line text | Pain points the visitor described |
+| Custom fields | Any | Any additional information you want derived from the conversation |
+
+The qualification status reflects the conversation's **Conversation Signal**. For example, **Qualified** means the visitor met your qualification criteria during the conversation.
+
+**1mind Conversation custom object (optional, requires HubSpot Enterprise)**
+
+One record per conversation, associated to the Contact.
+
+| Property | Type | Contents |
+| --- | --- | --- |
+| `onemind_conversation_id` | Single-line text, unique | Conversation ID |
+| `onemind_visitor_id` | Single-line text | 1mind visitor ID |
+| `started_at` / `ended_at` | Date and time | Conversation start and end |
+| `qualification_status` | Dropdown | Same values as the Contact property |
+| `transcript` | Multi-line text | Full conversation transcript |
+| `summary` | Multi-line text | Short summary for sellers |
+| `product_interest`, `pain_points`, `objections`, `next_action` | Multi-line text | Captured only from what the visitor said |
+| `meeting_booked` / `meeting_id` | Checkbox / text | Populated only when the scheduler confirms a booking |
+| `source_url`, `utm_campaign` | Single-line text | Page and campaign where the conversation started |
+
+<Info>
+  You'll need to share the custom object Id with 1mind Services 
+</Info>
+
+#### Creating and updating Contacts
+
+You define how 1mind handles existing Contacts, **field by field**:
+
+- **Fill empty fields only:** Common for standard fields such as first name, last name, and email.
+- **Overwrite with what the visitor said:** Useful for fields that go out of date, such as job title.
+- **Conditional rules:** Rules can reference other HubSpot fields. For example, if `customer_type` is Partner, leave the Contact unchanged and log the conversation only on the 1mind Conversation record.
+
+Visitors who share an email address can be created as new Contacts if you allow it.
+
+If you use HubSpot alongside Salesforce or another CRM, decide which system creates new people first. This prevents duplicate records and keeps your routing intact.
+
+| If | Then 1mind |
+| --- | --- |
+| HubSpot owns lead creation and assignment | Writes the Contact (and the conversation record, if used) directly to HubSpot |
+| Salesforce or another CRM owns lead assignment | Writes to that CRM first. Your existing sync brings the data into HubSpot, and 1mind does not also create the person in HubSpot. |
+
+1mind does not change owner, lifecycle stage, lead status, lead score, or deal stage unless you request it. Your HubSpot workflows continue to handle downstream routing, alerts, nurture, etc. 
+
+### Using 1mind data in HubSpot
+
+Because conversation data is stored in standard HubSpot properties and records, you can use it anywhere HubSpot supports filtering:
+
+- **Workflows:** For example, when `onemind_qualification_status` is Qualified, notify the owner and create a follow-up task. When it's Nurture and the Contact has marketing consent, enroll them in a nurture sequence. When it's Support, route to your support team and skip sales alerts.
+- **Lists and segments:** Build lists of Contacts who spoke with the Superhuman, booked a meeting, or asked about a specific product.
+- **Reports:** Report on conversations, qualification outcomes, and meetings by campaign or source page.
+
+<Tip>
+  If a workflow depends on the 1mind Conversation record, trigger it from that record rather than from the Contact. The Contact can update slightly before the conversation record is written.
+</Tip>
+
+### How the integration is built
 
 <Steps>
-  <Step title="Confirm system of record, routing, and feature entitlement">
-    Record the Hub ID, subscription tier, sync direction to Salesforce/other CRM, person owner, Deal owner, scheduler, support routing, and whether 1mind may create new Contacts. Check existing 1mind or attribution app objects before creating another. Customer-defined HubSpot custom objects require an eligible Enterprise subscription; app objects require HubSpot approval for the app and must be confirmed in the installed release. If neither exists, choose Contact snapshots plus a Note and/or custom event where enabled. Do not promise a custom object from an install that does not include one.
+  <Step title="Integrations session">
+    1mind Services walks your team through the three conversation phases, confirms your deployment types, and shares a field mapping worksheet.
   </Step>
-  <Step title="Review access and authorize the current 1mind app">
-    1. In the 1mind Console, select the intended workspace and go to **Integrations → CRM → HubSpot** for the test environment. Follow the authorization flow generated for the selected 1mind workspace and HubSpot account.
-    2. In HubSpot, verify the selected Hub ID and app publisher. An admin reviews the live consent screen against the approved features: Contact/Company/Deal read, authorized person writes, custom-object record access, associations, event send, and any conditional activity or Ticket access. Record the actual scope names and the approving admin in the change record; the screen and release manifest are authoritative.
-    3. Approve and return to 1mind. Verify the connection displays the correct Hub ID and environment. 1mind stores OAuth tokens server-side and refreshes them; Ops does not paste tokens in a workflow, chat, or ticket.
-    4. Repeat separately for production after sandbox acceptance. Reauthorize when added scopes or app features require it.
-
-    <Note>HubSpot uses OAuth for a multi-account app; static credentials are a distinct, single-account design and require explicit 1mind approval.</Note>
+  <Step title="Field mapping worksheet">
+    Your team completes the worksheet, typically within a week. It's the source of truth for both teams and covers which HubSpot fields 1mind reads, what the Superhuman can reference in conversation, your routing rules and meeting links, which fields 1mind writes after the conversation, and your overwrite rules. Use HubSpot internal names, not display labels.
   </Step>
-  <Step title="Create the Contact property group and approved person fields">
-    In HubSpot **Settings → Properties**, create a `1mind` Contact property group and the fields in [Contact snapshot](#contact-current-snapshot) that the customer actually uses. At minimum for a HubSpot-first person write: `onemind_visitor_id` (single-line text), `onemind_last_conversation_id` (single-line text), `onemind_last_conversation_at` (datetime), `onemind_qualification_status` (dropdown with approved values), and `onemind_last_conversation_url` (text) if a permitted record link is needed. Add summary, intent, product interest, or meeting outcome only when workflows or sellers need them.
-
-    <Warning>The visitor field is **not** a unique person key: shared browsers and changed identities are possible. Do not let a visitor-ID match create or merge a Contact without a trusted identity check. Existing owner, lifecycle stage, score, and Deal stage remain customer-owned unless delegated explicitly.</Warning>
+  <Step title="HubSpot properties and connection">
+    Your team creates the HubSpot properties (and, optionally, the custom object), then connects your sandbox and production accounts from the 1mind Console. See the [HubSpot connection guide](/path-to-hubspot-connection-guide).
   </Step>
-  <Step title="Provision the conversation-history option">
-    - **Preferred when available:** inspect the installed 1mind app for a supported app-defined Conversation object and its schema. If present, map to that schema.
-    - **Customer-defined alternative:** in an eligible Enterprise account, create a `1mind Conversation` custom object. Create a unique `onemind_conversation_id` property; add the required fields in [Conversation](#mind-conversation-per-session-history); define the Contact association and optional Company/Deal/Ticket associations. Record the returned object type ID (`2-...`) and association type IDs. `onemind_conversation_id` is the idempotency key, so retries update one record.
-    - **Fallback:** when no object is available, use a concise Contact snapshot plus a Contact-associated Note or approved custom event; keep full history in the governed 1mind repository.
+  <Step title="Sandbox page">
+    Your web development team places the Superhuman on a sandbox page using the launcher scripts 1mind provides.
   </Step>
-  <Step title="Define optional custom event and legitimate activities">
-    If workflows require a point-in-time trigger, define `onemind_conversation_completed` with `CONTACT` as primary object and the compact fields in [Completion event](#optional-completion-event-and-crm-activities). Confirm the portal's event entitlement, event definition, fully qualified name, and event-send permissions. Use a stable occurrence `uuid` for retry deduplication and the HubSpot Contact `objectId` when known.
-
-    An event is a signal, not the editable conversation record. Create a **Meeting** only for a scheduler-confirmed meeting; a **Call** only for a real call or specifically approved voice interaction; a **Task** only for a human follow-up. A website conversation that requested a meeting is not itself a Meeting.
+  <Step title="Build">
+    1mind Services builds the integration.
   </Step>
-  <Step title="Configure 1mind mappings and customer-owned HubSpot automation">
-    The 1mind implementation team maps approved PRE reads, IN tool calls, and POST writes to the exact portal IDs, property names, and object type. Ops supplies qualification enum values, association rules, and workflow enrollment criteria. Decide whether HubSpot workflows create Tasks/Tickets/Deals and whether the scheduler creates the Meeting. Prefer one creator per logical activity. For a CRM-sync customer, document field ownership and exclude duplicate Salesforce/HubSpot writes. Record null handling (no blank overwrite), per-conversation idempotency, retry, and API-rate behavior.
-  </Step>
-  <Step title="Smoke-test in the test account, then promote">
-    Resolve one known Contact, run one anonymous session, complete one qualified session and one nurture session, and repeat the same POST to prove no duplicate Conversation/event/Task. Inspect the Contact snapshot, `onemind_visitor_id`, associations, event timeline, the actual Meeting if booked, and the customer workflow result. Validate a required-field failure, denied scope, revoked token, and CRM-sync loop. Promote with separate production authorization and rerun a controlled test. Record Hub ID, object IDs, mapping version, and support owner.
+  <Step title="Test and go live">
+    Both teams test the conversation experience and HubSpot data in sandbox, iterate as needed, then connect production.
   </Step>
 </Steps>
 
-## The conversation lifecycle and where HubSpot is used
+### Disconnecting HubSpot
 
-### PRE: known-person context
+To stop syncing, go to **Integrations → CRM → HubSpot** in the 1mind Console and select **Disconnect**.
 
-The customer passes a trusted HubSpot Contact ID, authenticated identity, or verified email to 1mind under its consent rules. 1mind reads only approved Contact/Company/Deal fields, such as lifecycle, customer status, owner, segment, or open Deal. A HubSpot tracking cookie or 1mind visitor ID alone does not authorize a Contact lookup. With no reliable match, the conversation starts anonymous. The PRE result controls the greeting and question set; it does not rewrite HubSpot.
+To remove the 1mind app from HubSpot entirely, uninstall it from **Connected Apps** in HubSpot. See [HubSpot's guide to uninstalling apps](https://knowledge.hubspot.com/marketplace/install-apps-in-the-hubspot-marketplace#uninstall-an-app).
 
-### IN CONVERSATION: tool calls
+After you disconnect, new conversations no longer sync to HubSpot. Existing Contact properties and 1mind Conversation records remain in HubSpot.
 
-If the visitor supplies a verified identifier, 1mind may refresh HubSpot context. Approved tools may query routing/scheduler availability, submit a customer form, create a real support handoff, or check an existing Deal; each is separately configured. Capture what actually occurred (content delivered, form accepted, meeting requested, booking confirmed). Do not mark a booking or form success from conversation text alone. The customer chooses whether an IN tool makes a durable HubSpot write; otherwise POST handles final outcomes.
-
-### POST PROCESSING: ordered writes
-
-After the session closes, 1mind validates transcript-derived fields against confirmed tool outcomes, then executes the approved write order.
-
-| Order | Operation | Guard and retry key | Ops verification |
-| --- | --- | --- | --- |
-| 1 | Resolve approved Contact and first-write route | Trusted Contact ID or verified email; no ambiguous match | Correct existing person or approved new Contact |
-| 2 | Update Contact snapshot, including `onemind_visitor_id` | Allowlisted properties, field owner, consent, no null overwrite | Latest outcome visible; native owner/lifecycle unchanged unless delegated |
-| 3 | Upsert one 1mind Conversation record | Unique `onemind_conversation_id`; same ID on retry | One record per completed conversation |
-| 4 | Associate Contact and permitted Company/Deal/Ticket | Use resolved object and association type IDs | No unrelated account or duplicate Deal |
-| 5 | Send optional point-in-time custom event | Stable event `uuid` and confirmed Contact `objectId` | One occurrence for the chosen event |
-| 6 | Link real Meeting or create approved follow-up Task/Ticket | Scheduler/Ticket confirmation or customer workflow; one creator | No synthetic Meeting or duplicate Task |
-| 7 | Reconcile and release customer workflow | Persist per-step status and retry only failures | Owner, nurture, CRM sync, and reports reflect one outcome |
-
-For a HubSpot-first route: find or create the approved Contact, write `onemind_visitor_id` and the latest snapshot, create/upsert the Conversation keyed by `onemind_conversation_id`, associate it to the Contact and permitted Company/Deal, then send an optional completion event. A confirmed scheduler Meeting is linked by its actual meeting ID; a request alone does not create one. For Salesforce-first routing, follow that first-write path and let the customer's sync populate HubSpot; write HubSpot history only if the mapping explicitly requires it and avoids duplicates.
-
-<Note>If a HubSpot workflow needs the Conversation or event, enroll it on a final processed signal after associations succeed. A workflow triggered by the first Contact snapshot may run before history is ready.</Note>
-
-### Workflow branches for business teams
-
-- **Qualified buyer:** Write 1QL, intent, urgency, product interest, and a concise next action; HubSpot assigns or validates the owner, alerts the seller, and creates one Task if that is the customer's workflow. A Deal is created or updated only under the customer's Deal rule.
-- **Nurture:** Write Nurture and evidenced topics/content; a consent-aware workflow enrolls or suppresses content. Do not create a sales Task solely because a conversation happened.
-- **Meeting confirmed:** Write the confirmation ID, time, and booked flag; associate the scheduler-created Meeting. An unconfirmed request remains a request.
-- **Non-sales intent:** Write a Support, Partner, or Careers disposition and route to the approved destination; suppress sales qualification and Deal creation.
-
-## Use cases and HubSpot touchpoints
-
-| Use case | PRE / IN | POST | Customer-owned action |
-| --- | --- | --- | --- |
-| Inbound qualification | Read Contact, Company, lifecycle, owner; qualify live | Contact snapshot + Conversation + optional completion event | Assign/alert seller and create Task by approved workflow |
-| Meeting booking | Use routing and scheduler; require booking confirmation | Store outcome and scheduler meeting ID; create Meeting only if not already created | Calendar confirmation and owner follow-up |
-| Campaign/content follow-up | Use approved campaign or UTM context; confirm content delivered | Product interest, content outcome, and event | Nurture/suppression or sales alert |
-| Existing Deal re-engagement | Read matched Contact, open Deal, and owner | Associate Conversation to existing Deal | Notify Deal owner; avoid duplicate Deal |
-| Support/partner/careers | Identify intent and approved handoff tool | Disposition and history; Ticket only if authorized | Route outside sales and suppress sales alerts |
+### FAQs and troubleshooting
 
 <AccordionGroup>
-  <Accordion title="Worked example: anonymous product research becomes a qualified buyer">
-    **PRE:** The browser sends 1mind visitor ID `v_7K2`, source page `/product/security`, and a consented UTM campaign. No trusted Contact ID or verified email exists, so 1mind starts anonymously and does not read a Contact.
-
-    **IN:** The Superhuman presents a security brief, answers integration questions, and collects a voluntarily supplied, verified business email. The buyer asks for a demo. The scheduler confirms `M-104`; a request without confirmation would leave `meeting_booked=false`.
-
-    **POST:** Under a HubSpot-first route, resolve or create the Contact under the approved email policy. Write `onemind_visitor_id=v_7K2`, `onemind_last_conversation_id=c_104`, `1QL`, and product interest. Upsert Conversation `c_104`, associate it to the Contact, link the confirmed Meeting, and send the optional completion event. HubSpot routes to the owner and creates a preparation Task if configured.
-
-    **Acceptance:** One Contact, one Conversation, one real Meeting, one owner action; replay does not multiply records.
+  <Accordion title="Will my sellers need to read the full transcript?">
+    No. The recommended fields, such as the summary, key topics, and pain points, give sellers the highlights at a glance. The full transcript is available when they need more detail. If access to the 1mind console is granted to your seller, they can view the transcript in the 1mind Console. 
   </Accordion>
-  <Accordion title="Worked example: campaign click and interactive content">
-    **PRE:** A verified Contact `60142` arrives with UTM campaign `cloud_q4`. Read lifecycle, approved list/campaign context, and last product interest.
 
-    **IN:** Present the requested whitepaper in the conversation, record the actual sections shown, answer questions, and note a request for a specialist.
-
-    **POST:** Update the Contact's latest interest and next action, create one Conversation with `content_presented`, `content_topic`, and `campaign_id` fields if approved, and emit the completion event. The customer's workflow chooses nurture or a sales alert using intent and consent.
-
-    **Acceptance:** The Contact is not re-created; no content-view claim appears for material merely offered; attribution is tied to the actual campaign key.
+  <Accordion title="Will the Superhuman greet visitors by name?">
+    Only if you allow it. You choose field by field which HubSpot values the Superhuman can reference. All other values are used only in the background and written back to HubSpot.
   </Accordion>
-  <Accordion title="Worked example: existing Deal with changed requirements">
-    **PRE:** Resolve Contact `60142`, Company, and open Deal `D-19`; read owner, stage, and permitted prior objections.
 
-    **IN:** The buyer describes a new security requirement and says timing moved to next quarter.
-
-    **POST:** Write changed requirements, timing, objection, and next action to Conversation `c_105`; associate it to `D-19` and alert the existing owner. Update Contact only with the latest snapshot.
-
-    **Acceptance:** No new Deal, no stage change without the owner rule, and prior history remains intact.
+  <Accordion title="Can the conversation replace a short form?">
+    Yes. If your form asks only a few questions, the Superhuman can collect the answers in conversation and write them to HubSpot afterward, just like a form submission.
   </Accordion>
-  <Accordion title="Worked example: non-sales intent">
-    **PRE:** Read customer/Ticket status only after a verified match.
 
-    **IN:** A visitor asks for product support, a partner inquiry, or careers help; show the appropriate approved path.
+  <Accordion title="How quickly can routing changes be made?">
+    If you use HubSpot routing, changes you make in HubSpot take effect immediately. If 1mind routes to your HubSpot Meetings links, send the change to 1mind Services. Changes are typically completed within three to five business days.
+  </Accordion>
 
-    **POST:** Write the disposition and concise handoff context. Create a Ticket only if the customer explicitly enabled that tool and the Ticket API confirms creation. Suppress 1QL, sales Task, and Deal paths.
+  <Accordion title="Why wasn't a Contact created or updated after a conversation?">
+    Confirm that the visitor provided a trusted identifier. Anonymous visitors who never share an email address don't create or update a Contact. Contact 1mind Services to initiate an investigation into the session. Provide the 1mind Session Id or timeframe. 
+  </Accordion>
 
-    **Acceptance:** The destination team receives the handoff and the sales funnel stays clean.
+  <Accordion title="Why am I seeing duplicate Contacts?">
+    This usually happens when both 1mind and a CRM sync create the same person. Review which system creates people first under [Creating and updating Contacts](#creating-and-updating-contacts).
+  </Accordion>
+
+  <Accordion title="Why didn't my workflow run?">
+    Compare the workflow's enrollment criteria to the exact values 1mind writes, including capitalization. If the workflow is triggered by the Contact but depends on data from the conversation record, trigger it from the 1mind Conversation record instead.
+  </Accordion>
+
+  <Accordion title="Why aren't 1mind Conversation records appearing?">
+    This applies only if you use the optional custom object. Confirm that your account is on HubSpot Enterprise, the custom object exists with the expected property internal names, and the Conversation-to-Contact association is enabled.
+  </Accordion>
+
+  <Accordion title="Why wasn't a HubSpot form submitted?">
+    Form submission is optional. Confirm that it's enabled for your Superhuman and that the connection was approved with the `forms` scope.
+  </Accordion>
+
+  <Accordion title="The integration was working and has stopped.">
+    The app may have been uninstalled in HubSpot, or the user who connected it may have lost access. Contact 1mind Services to reconnect.
   </Accordion>
 </AccordionGroup>
 
-## HubSpot object and field options
+For help, contact 1mind Services with the conversation ID, and the approximate time of the conversation.
 
-Every property name below is a suggestion; the signed mapping worksheet is authoritative. Create only the fields a seller, workflow, or report will use.
+---
 
-### Contact: current snapshot
+## Ride-Along
 
-| Internal property example | Type | Write rule / purpose |
+The 1mind HubSpot integration connects your Ride-Along Superhuman to HubSpot before and after every call. Ride-Along joins a scheduled or live call alongside your rep, solutions engineer, CSM, or support specialist, and a single call can include several members of your team and several customer attendees.
+
+The integration runs two workflows:
+
+- **Pre-call workflow:** Retrieves CRM context from HubSpot to prepare a meeting briefing for your team.
+- **Post-call workflow:** Writes selected conversation outcomes back to HubSpot.
+
+<Info>
+  1mind Services builds each integration with your team. The objects, fields, matching rules, associations, and permitted updates are defined by your configured workflows.
+</Info>
+
+### Ride-Along decisions
+
+Your answers to these questions shape how your Ride-Along integration is built.
+
+| Decision | Where it's covered |
+| --- | --- |
+| Which Ride-Along profile you use: Sales Engineer, CS Onboarding, or Tech Support | [How the Ride-Along integration works](#how-the-ride-along-integration-works) |
+| Whether your rep selects HubSpot records before each call, or 1mind matches attendees automatically | [Before the call](#before-the-call) |
+| Which speaking mode Ride-Along uses: Active, Passive, or Silent | [During the call](#during-the-call) |
+| Whether outcomes are written to standard HubSpot records, custom objects, or both | [Where Ride-Along data lives](#where-ride-along-data-lives) |
+| Which outcomes to capture, and your launch tier: MVP, Advanced, or Comprehensive | [Recommended Ride-Along fields](#recommended-ride-along-fields) |
+| Which teams can see sensitive fields | [Record access](#record-access) |
+
+### Ride-Along requirements
+
+- A HubSpot **Super Admin**, or a user who can install apps, create properties, and (if used) create custom objects and associations.
+- Admin access to your 1mind workspace.
+- A HubSpot **sandbox** account (strongly recommended). 1mind connects to your sandbox first, then to production once testing is complete.
+
+<Note>
+  The optional RIDEALONG and RIDEALONG ATTENDEE custom objects require a **HubSpot Enterprise** subscription with available custom-object capacity.
+</Note>
+
+#### Ride-Along permissions
+
+The connection requests the following HubSpot scopes:
+
+| Scope | Required | Purpose |
 | --- | --- | --- |
-| `onemind_visitor_id` | Text | Approved 1mind browser correlation value; do not use as a unique person match |
-| `onemind_last_conversation_id` | Text | Most recent conversation ID |
-| `onemind_last_conversation_at` | Datetime | Last completed session time |
-| `onemind_qualification_status` | Dropdown | Approved values such as 1QL, Nurture, Disqualified, Support, No Outcome |
-| `onemind_last_conversation_url` | Text | Governed link to full detail, if approved |
-| `onemind_last_summary` | Multi-line text | Optional concise seller summary; not a transcript archive |
-| `onemind_primary_intent`, `onemind_product_interest` | Dropdown / multi-select | Optional workflow or reporting signal |
-| `onemind_meeting_booked` | Boolean | True only after scheduler confirmation |
+| `oauth` | Yes | Standard HubSpot app connection |
+| `crm.objects.contacts.read` | Yes | Read attendee Contacts for the pre-call briefing |
+| `crm.objects.companies.read` | Yes | Read the account for the pre-call briefing |
+| `crm.objects.deals.read` | Optional | Required only if the briefing includes Deal context, such as with the Sales Engineer profile |
+| `crm.objects.custom.read` | Optional | Required only for the custom objects. Finds existing Ride-Along records to prevent duplicates. |
+| `crm.objects.custom.write` | Optional | Required only for the custom objects. Creates Ride-Along records and their associations. |
+| `crm.schemas.custom.read` | Optional | Required only for the custom objects. Reads the two Ride-Along object schemas. |
 
-Company-level 1mind fields are optional rollups only; write them after the Company association is verified. Never overwrite native owner, lifecycle, lead status, score, or Deal stage without explicit field ownership.
+If your post-call workflow updates standard records such as Contacts, Companies, or Deals, the matching write scopes are also required.
 
-### 1mind Conversation: per-session history
+### How the Ride-Along integration works
 
-| Property example | Type | Requirement |
+| Phase | When | What 1mind does with HubSpot |
 | --- | --- | --- |
-| `onemind_conversation_id` | Unique text | Required; stable upsert/retry key |
-| `onemind_visitor_id` | Text | Required when consent permits |
-| `started_at`, `ended_at`, `channel` | Datetime / enum | Required lifecycle metadata |
-| `qualification_status`, `summary` | Enum / multi-line text | Approved seller-facing outcome |
-| `product_interest`, `pain_points`, `objections`, `next_action` | Text | Optional, derived only from evidence |
-| `meeting_booked`, `meeting_id` | Boolean / text | Only if the scheduler confirms |
-| `transcript_url`, `source_url`, `utm_campaign` | Text | Optional approved link and attribution; do not store an unrestricted transcript |
-| `schema_version`, `processing_status` | Text / enum | Required for support and reconciliation |
+| **Before the call** | The meeting is scheduled or about to start | Reads the relevant Contacts, Company, Deal, and owner to prepare a briefing for your team |
+| **During the call** | Your team and the customer are meeting | Uses the briefing to assist your team. Seller-only CRM context is never shown to prospects. |
+| **After the call** | The meeting has ended | Writes the outcomes you've selected back to HubSpot: standard records, the optional custom objects, or both |
 
-Define the Contact association in the schema; add Company/Deal/Ticket only when match logic is approved. If the app-managed object uses different names, map to its real schema rather than creating duplicates.
+Your Ride-Along profile (Sales Engineer, CS Onboarding, or Tech Support) determines what's included in the briefing and which outcomes are captured. For example, the Sales Engineer profile includes Deal context and deal progression recommendations.
 
-### Optional completion event and CRM activities
+### Before the call
 
-The `onemind_conversation_completed` event can carry `conversation_id`, `visitor_id`, `qualification_status`, `primary_intent`, `meeting_booked`, `deployment_id`, and the occurrence time. Link to the known Contact via `objectId`; use a stable `uuid`. A Note can display a concise summary on a Contact when no Conversation object exists. A Task is a follow-up assignment; a Meeting is the confirmed calendar item; a Call represents a real call. These are separate records with separate owners and dedupe rules.
+The pre-call workflow identifies the HubSpot records related to the meeting and reads the fields you approve. There are two ways to identify them:
 
-### Mapping worksheet for Ops approval
+- **Manual launch:** Your rep selects the Contact, Company, and Deal before the call.
+- **Automatic matching:** 1mind matches attendees to HubSpot Contacts by exact email address. Ambiguous matches are left unmatched rather than guessed.
 
-For every field above, record the source signal, destination object/property, type/length/enumeration, read-versus-write permission, ownership (1mind, HubSpot workflow, CRM sync, or seller), identity key, null policy, consent/retention, trigger condition, and an acceptance example. Verify the actual internal names and required associations in the customer's portal before 1mind configuration.
+#### What 1mind reads
 
-## Example write contract and automation
+| Object | Example fields |
+| --- | --- |
+| Contact | `hs_object_id`, `email`, `firstname`, `lastname`, `jobtitle` |
+| Company | `hs_object_id`, `name` |
+| Deal | `hs_object_id`, `dealname`, `pipeline`, `dealstage`, `amount`, `closedate`, `hs_next_step`, `description` |
 
-**Illustrative Contact update** (approved properties only):
+Your final list of fields is confirmed with 1mind Services.
 
-```json
-{
-  "properties": {
-    "onemind_visitor_id": "v_7K2",
-    "onemind_last_conversation_id": "c_104",
-    "onemind_qualification_status": "1QL",
-    "onemind_meeting_booked": "true"
-  }
-}
-```
+### During the call
 
-**Illustrative Conversation create/upsert** through the deployed custom-object type (`2-...`):
+Your rep leads the meeting. Ride-Along assists using the context gathered before the call, in the speaking mode you choose: Active, Passive, or Silent.
 
-```json
-{
-  "properties": {
-    "onemind_conversation_id": "c_104",
-    "onemind_visitor_id": "v_7K2",
-    "started_at": "2026-10-22T14:00:00Z",
-    "ended_at": "2026-10-22T14:12:00Z",
-    "qualification_status": "1QL",
-    "summary": "Buyer requested a product demo; scheduler confirmed a meeting.",
-    "meeting_booked": "true",
-    "meeting_id": "M-104",
-    "schema_version": "1"
-  }
-}
-```
+Seller-only CRM context from the briefing is never shared with prospects.
 
-The connector searches/upserts by the unique conversation property and applies the Contact association using the IDs returned by HubSpot.
+### After the call
 
-**Illustrative event occurrence:**
+When the call ends, the post-call workflow writes the outcomes you've selected back to HubSpot.
 
-```json
-{
-  "eventName": "pe1234567_onemind_conversation_completed",
-  "objectId": "60142",
-  "uuid": "5d956e92-36de-4f07-8bb5-b0160418765a",
-  "occurredAt": "2026-10-22T14:12:00Z",
-  "properties": {
-    "conversation_id": "c_104",
-    "visitor_id": "v_7K2",
-    "qualification_status": "1QL",
-    "meeting_booked": "true"
-  }
-}
-```
+#### Where Ride-Along data lives
 
-The example event name and UUID are placeholders. Retrieve the portal's fully qualified name and persist an occurrence UUID per conversation. Customer workflows act on the approved status/event and retain HubSpot's existing owner/routing rules. If a scheduler already created a Meeting, store its ID; do not create a duplicate activity.
+| Option | Benefits | Considerations |
+| --- | --- | --- |
+| **Standard HubSpot records** | Uses the Contacts, Companies, and Deals your team already works in. Available on any HubSpot plan. | Holds only the most recent call's values in each field, and mixes Ride-Along data with your core fields. |
+| **RIDEALONG and RIDEALONG ATTENDEE custom objects** | One record per meeting and one per participant, preserving full history. Captures what each attendee cared about. Keeps Ride-Along data separate from core fields. | Requires HubSpot Enterprise and additional setup, including associations to Contacts and Companies. |
 
-## Testing and acceptance
+With the custom objects, every participant receives an attendee record, even without a matching Contact. Unmatched participants are never created as new Contacts. You can optionally associate meetings to the Deal so they appear on the Deal record.
 
-- [ ] Correct Hub ID, environment, app publisher, consented scopes, and token status recorded; production uses its own authorization.
-- [ ] Subscription and object path verified: app object, customer custom object, or fallback; no duplicate `1mind Conversation` schema.
-- [ ] Contact field group, enum values, unique conversation key, required properties, and association IDs match the signed mapping.
-- [ ] Known PRE lookup returns only allowed data; anonymous and ambiguous visitors do not resolve to a Contact by browser ID alone.
-- [ ] HubSpot-first writes `onemind_visitor_id` to the approved Contact. Salesforce-first/other-first follows the customer's sync and does not create duplicate people.
-- [ ] POST creates one Contact snapshot and one durable history record when enabled; retry remains idempotent. The optional event appears once under the correct Contact.
-- [ ] Meeting, Call, Task, and Ticket appear only when the corresponding real event or approved workflow occurred; CRM sync and routing fire once.
-- [ ] Active required-field and association validation, authorization failures, rate limits, null-overwrite protection, revoked access, and recovery are tested. Monitor write latency, retry queue, and failed records.
+#### Recommended Ride-Along fields
 
-### Implementation and test sequence
+The tables below are the MVP starting point. Advanced and Comprehensive tiers add further fields, and your final field list is confirmed with 1mind Services.
+
+**RIDEALONG (one per meeting)**
+
+| Property | Type | Contents |
+| --- | --- | --- |
+| `ridealong_key` | Single-line text, unique | Provider and meeting ID, for example `zoom:83920123456` |
+| `meeting_provider`, `provider_meeting_id`, `meeting_title` | Single-line text | Meeting details |
+| `meeting_start_time`, `meeting_end_time` | Date and time | When the call took place |
+| `summary`, `decisions`, `next_steps`, `action_items` | Multi-line text | What happened and who owns each next step |
+| `deal_progression_plan`, `critical_unknowns_validation_plan` | Multi-line text | Recommendations for the rep to review |
+| `customer_follow_up_email_draft`, `next_meeting_strategy` | Multi-line text | Drafts only. Never sent automatically. |
+
+**RIDEALONG ATTENDEE (one per participant)**
+
+| Property | Type | Contents |
+| --- | --- | --- |
+| `attendance_key` | Single-line text, unique | Meeting key plus participant ID |
+| `attendee_email`, `attendee_full_name` | Single-line text | Who attended |
+| `person_type`, `meeting_role` | Single-line text | For example, Prospect or Internal; Host or Evaluator |
+| `attended` | Checkbox | Whether the participant joined |
+| `stakeholder_perspective`, `recommended_rep_approach` | Multi-line text | What this person cared about in the meeting, and how to follow up |
+
+#### Updating standard records
+
+If your post-call workflow writes to Contacts, Companies, or Deals, you define the rules field by field, such as filling empty fields only or overwriting with the latest call's outcome.
+
+<Note>
+  Ride-Along only writes the updates your workflows are configured to make. It never sends email: follow-up email drafts remain drafts for your rep to edit and send.
+</Note>
+
+#### Record access
+
+Recording URLs, transcript URLs, and attendee profile fields (such as sentiment, buying role, and champion likelihood) can be sensitive. Restrict them in HubSpot to the teams that should see them.
+
+### Using Ride-Along data in HubSpot
+
+- **Deal and account reviews:** See every meeting, its decisions, and next steps from the Contact, Company, or Deal record.
+- **Workflows:** For example, create tasks from action items, or alert the owner when a meeting surfaces a new stakeholder.
+- **Reports:** Report on meetings by account, Deal, or meeting type, and track who attended.
+
+### How the Ride-Along integration is built
 
 <Steps>
-  <Step title="Design">
-    Confirm the priority use cases, existing CRM/MAP route, known-person match, anonymous fallback, Contact creation rule, object entitlement, field contract, and success measures. Exit when the customer approves the mapping and test cases.
+  <Step title="Integrations session">
+    1mind Services walks your team through the pre-call and post-call workflows and confirms your profile, launch tier, matching mode, and speaking mode.
   </Step>
-  <Step title="Connect and provision">
-    Authorize the intended HubSpot test account; create the selected properties, Conversation history model, associations, and optional event. Exit when the connection can read and write approved test records.
+  <Step title="Field mapping">
+    Your team confirms which HubSpot fields 1mind reads before the call, which outcomes it writes after the call, where they're stored, and your update rules. Use HubSpot internal names, not display labels.
   </Step>
-  <Step title="Configure and validate">
-    Configure PRE lookups, IN tools, POST writes, workflow triggers, retry keys, and one creator for each activity. Run known, net-new, anonymous, nurture, qualified, booking, non-sales, repeat-session, and failure cases. Exit when records, associations, routing, and reporting match expected results without duplicates.
+  <Step title="HubSpot properties and connection">
+    Your team creates the HubSpot properties (and, optionally, the custom objects and associations), then connects your sandbox and production accounts from the 1mind Console. See the [HubSpot connection guide](/path-to-hubspot-connection-guide).
   </Step>
-  <Step title="Launch">
-    Authorize production separately, apply the approved mapping and schema version, run controlled smoke tests, and activate customer workflows in the agreed order. Customer Operations and the 1mind implementation team review and sign off.
+  <Step title="Build">
+    1mind Services builds the integration.
   </Step>
-  <Step title="Operate">
-    Review conversion, qualification, booking, owner response, data quality, and support incidents at the agreed cadence. Version changes to fields, objects, events, and workflow rules before release.
+  <Step title="Test and go live">
+    Both teams test with sandbox meetings, iterate as needed, then connect production.
   </Step>
 </Steps>
 
-## Vendor implementation references
+### Disconnecting HubSpot from Ride-Along
 
-HubSpot documentation: [app authentication](https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/overview), [custom-object records](https://developers.hubspot.com/docs/api-reference/latest/crm/objects/custom-objects/guide), [custom-object entitlement](https://knowledge.hubspot.com/object-settings/create-custom-objects), [app objects](https://developers.hubspot.com/docs/apps/developer-platform/add-features/app-objects/overview), [event definitions](https://developers.hubspot.com/docs/api-reference/latest/events/define-events/guide), and [event occurrences](https://developers.hubspot.com/docs/api-reference/latest/events/send-event-data/guide).
+To stop syncing, go to **Integrations → CRM → HubSpot** in the 1mind Console and select **Disconnect**.
 
-## Related
+To remove the 1mind app from HubSpot entirely, uninstall it from **Connected Apps** in HubSpot. See [HubSpot's guide to uninstalling apps](https://knowledge.hubspot.com/marketplace/install-apps-in-the-hubspot-marketplace#uninstall-an-app).
 
-- [CRM, MAP & Web Visitor Identification](/configuring/integrations/crm-map-setup)
-- [Salesforce Integration](/configuring/integrations/salesforce/overview)
+After you disconnect, new meetings no longer sync to HubSpot. Existing records remain in HubSpot.
+
+### Ride-Along FAQs and troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Does Ride-Along create new Contacts?">
+    No. Attendees who don't match a HubSpot Contact are never created as new Contacts. With the custom objects, they still receive an attendee record, without a Contact association.
+  </Accordion>
+
+  <Accordion title="Can prospects see our CRM data?">
+    No. Seller-only CRM context from the pre-call briefing is never shared with prospects during the call.
+  </Accordion>
+
+  <Accordion title="Does Ride-Along send follow-up emails?">
+    No. Follow-up emails are saved as drafts for your rep to review, edit, and send.
+  </Accordion>
+
+  <Accordion title="Why aren't Ride-Along records appearing after a call?">
+    Confirm that the property internal names in HubSpot match your field mapping and that no required property is missing. If you use the custom objects, confirm your account is on HubSpot Enterprise and has available custom-object capacity.
+  </Accordion>
+
+  <Accordion title="Why are records appearing but not associated?">
+    An association pair may not be enabled. Confirm that RIDEALONG and RIDEALONG ATTENDEE are both associated to Contact and Company, and to each other.
+  </Accordion>
+
+  <Accordion title="Will running the same meeting twice create duplicates?">
+    No. Reprocessing a meeting updates the existing records instead of creating new ones.
+  </Accordion>
+
+  <Accordion title="The integration was working and has stopped.">
+    The app may have been uninstalled in HubSpot, or the user who connected it may have lost access. Contact 1mind Services to reconnect.
+  </Accordion>
+</AccordionGroup>
+
+For help, contact 1mind Services with your Hub ID, the meeting ID, and the approximate time of the call.
+
+---
+
+## HubSpot resources
+
+- [Create custom objects](https://knowledge.hubspot.com/object-settings/create-custom-objects)
+- [App authentication](https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/overview)
+- [Custom object records API](https://developers.hubspot.com/docs/api-reference/latest/crm/objects/custom-objects/guide)
+- [Associations API](https://developers.hubspot.com/docs/api-reference/latest/crm/associations/associate-records/guide)
+- [Uninstall an app](https://knowledge.hubspot.com/marketplace/install-apps-in-the-hubspot-marketplace#uninstall-an-app)

@@ -152,7 +152,13 @@
                   "configuring/integrations/salesforce/influence-attribution"
                 ]
               },
-              "configuring/integrations/hubspot",
+              {
+                "group": "HubSpot",
+                "pages": [
+                  "configuring/integrations/hubspot",
+                  "configuring/integrations/hubspot-connection"
+                ]
+              },
               "configuring/integrations/calendars",
               "configuring/integrations/marketo",
               "configuring/integrations/pardot",
