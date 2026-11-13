@@ -226,9 +226,7 @@ In the above example, we are skipping the home page (`/`) and the about us page 
 
 Because one page carries one deployment, do not add a second deployment to change how a page looks or behaves. Use one of these instead.
 
-**Page awareness (one deployment, per-page overrides).** Page awareness lets a single deployment, running on every page, vary parts of its experience per page. This is the supported way to make one page differ from another without a second deployment. Page awareness is configured in the Console on the deployment.
-
-{/* TODO (DOCS-25, blocked on Product): link to the Page awareness docs page once it is published, and confirm the exact list of what a per-page override can and cannot change plus the console path. Until then this pointer stays plain text. */}
+**Page awareness (one deployment, per-page overrides).** Page awareness lets a single deployment, running on every page, change its welcome copy per page (and start the Pro widget minimized on a given page). This is the supported way to make one page differ from another without a second deployment. See [Page awareness](/using/deployments/page-awareness).
 
 **When page awareness does not fit.** If pages need genuinely different setups (an embed on one page and a widget on another, or different personas or flows per page), keep the second deployment off the pages it should not run on. Two ways to do this:
 
