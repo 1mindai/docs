@@ -1,0 +1,44 @@
+---
+title: "Microsoft admin approval"
+description: "The one-time approval some Microsoft tenants require before reps can connect Outlook, and the permissions it grants."
+contentType: "how-to"
+status: "draft"
+---
+
+<Note>
+**This page is in review and not yet approved (DOCS-18).** It is a new draft, gated until a reviewer approves it on the preview. Remove this banner before publishing.
+</Note>
+
+Some Microsoft tenants do not let users approve third-party apps for themselves. In those tenants, the first rep to connect Outlook sends an approval request for the **1mind Scheduling** app to the company's Microsoft admin, and every rep's connection waits on that one approval.
+
+This is a Microsoft tenant setting, **not** an SSO problem.
+
+## What the rep sees
+
+When the rep connects Outlook in **Profile → Scheduling and meetings**, Microsoft shows an access-request message instead of completing the connection, and routes the request to the company's Microsoft admin. The rep cannot approve it themselves.
+
+## How the Microsoft admin approves
+
+A Microsoft admin approves once for the whole tenant:
+
+1. Open the **Entra admin center**.
+2. Go to **Enterprise applications → Admin consent requests**.
+3. Approve the request for the **1mind Scheduling** app.
+
+After that, every rep in the tenant can connect Outlook.
+
+An admin can clear this up front by connecting their own calendar first, which triggers and lets them approve the request before reps hit it.
+
+<Note>
+An admin cannot connect calendars on a rep's behalf. Connections are per rep. Some Microsoft tenants simply need this one-time approval before reps can connect.
+</Note>
+
+## Permissions the connection requests
+
+{/* TODO (DOCS-18, owed from Vishal Sharma): confirm the exact Microsoft permissions the connection requests today before publish. Two internal sources disagree: Vishal Sharma (2026-07-09) listed Calendars.ReadWrite, User.Read, and offline_access; the TECH-6410 design adds OnlineMeetings.ReadWrite. Also owed: access to the "Microsoft 365 / Azure Setup for 1mind Scheduling" page Vishal drafted, which may cover part of this. */}
+
+Customer IT and security teams often ask which Microsoft permissions the connection requests. This list is being confirmed with Engineering and will be added here before publish.
+
+## Related
+
+- [Connect your calendar](/configuring/integrations/calendars)
