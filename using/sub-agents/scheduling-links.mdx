@@ -1,0 +1,50 @@
+---
+title: "Scheduling links and the meetings dashboard"
+description: "How reps and admins share booking links outside a conversation, and what the meetings dashboard shows."
+contentType: "how-to"
+status: "draft"
+---
+
+<Note>
+**This page is in review and not yet approved (DOCS-29).** It is a new draft, gated until a reviewer approves it on the preview. Remove this banner before publishing.
+</Note>
+
+Scheduling links let a rep or a team share a booking page outside a Superhuman conversation, for sequences and email signatures. The meetings dashboard shows what routing and those links produced.
+
+## Personal links
+
+Each rep has a personal link for each meeting type. A rep copies theirs from their profile, under **Scheduling**. A personal link follows the rep's own availability settings (working hours, time zone, buffers, and minimum notice).
+
+## Team links
+
+A team link books across the team through round-robin, in one of two modes:
+
+- **Strict Round Robin**: the prospect is offered the next rep in the queue.
+- **Flexible Round Robin**: the prospect is offered the team's combined availability, and the rep is assigned from who they pick.
+
+Team-link bookings and Superhuman bookings share **one round-robin queue** per team, so a booking from either source affects the order for both. See [Manage a round-robin team](/configuring/integrations/round-robin-teams).
+
+{/* TODO (DOCS-29, owed from Michael Bissani): confirm link expiry and the link domain before publish. The Scheduling Links PRD says links are valid for 30 days and shows book.1mind.ai, while the customer slides show book.1mind.com. Neither is confirmed in the current product, so the draft omits both. */}
+
+## The meetings dashboard
+
+Admins read the dashboard to see what routing produced, without a Support data pull. It shows:
+
+- Total, cancelled, and rescheduled meetings.
+- Average meetings per rep.
+- Meetings over time, with the change versus the prior period.
+- A rep leaderboard, sorted by meetings booked.
+- A team breakdown by meetings booked.
+- A timeframe filter across all of the above.
+
+### What the dashboard does not cover yet
+
+- Meetings held versus no-shows.
+- Pipeline or revenue attribution.
+- Which page a meeting was booked from.
+
+{/* TODO (DOCS-29, owed from Michael Bissani): confirm where the dashboard lives in the console and which roles can see it, before publish. */}
+
+## Related
+
+- [Manage a round-robin team](/configuring/integrations/round-robin-teams) · [Calendar & Routing](/using/sub-agents/calendar-routing)

@@ -1,0 +1,74 @@
+---
+title: "Manage a round-robin team"
+description: "How the round-robin queue decides who is next, and how admins use Weight, Credit, Skip, and Simulate to keep meeting distribution fair."
+contentType: "how-to"
+status: "draft"
+---
+
+<Note>
+**This page is in review and not yet approved (DOCS-3).** It is a new draft, gated until a reviewer approves it on the preview. Remove this banner before publishing.
+</Note>
+
+A **team** in 1mind is a group of reps who share incoming meetings through round-robin. Only **Workspace Admins** and **Super Admins** can manage teams. This page explains how the queue picks the next rep and how to keep the split fair.
+
+## How the queue picks the next rep
+
+Every rep on a team has a **Level**, and the rep with the lowest Level is up next. Level is driven by two things:
+
+- **Events**: how many meetings they have already received this cycle.
+- **Weight**: how big a share they are supposed to get.
+
+Level is Events divided by Weight (plus any Credit or Skip you have applied), so a rep on 50% Weight climbs twice as fast per meeting as a rep on 100%. When two reps show the same Level, the one who has gone longer since their last meeting wins.
+
+## Weight
+
+Weight is a percentage, and **100% is the standard share**. Set a rep above 100% to give them more meetings than a typical rep; set them below 100% to give them fewer. For example, 200% roughly doubles a rep's volume over time and 50% roughly halves it.
+
+A Weight change takes effect **immediately** and recalculates the rep's place in line using their existing history. A rep can move from last to first the moment you save a new Weight. That is expected, not a bug.
+
+## Credit and Skip
+
+When a rep's Level does not reflect reality, **Credit** and **Skip** adjust one rep by hand without touching anyone else:
+
+- **Credit** moves a rep **up** (sooner). Use it to undo meetings that should not have counted, such as spam leads.
+- **Skip** moves a rep **down** (later). Use it for extra meetings they should not have received, or to delay their next one.
+
+Enter an exact number and apply it in one step; you do not click one at a time. For example, a row showing 3 spam bookings takes `Credit: 3` to move back to where it would have been.
+
+How far a Credit or Skip moves a rep depends on their Weight: the same number shifts a lower-Weight rep further than a higher-Weight rep. To land on an exact spot, click into the **Level** value and type the target number directly.
+
+## Add a rep to a team
+
+A new rep starts near the team's **current average Level**, so they neither jump the line nor wait forever for a first meeting. For example, with the team at Levels 4.0, 4.0, 5.0, 5.3, and 6.0, a new rep starts at about 4.9.
+
+A new rep receives no meetings until they have connected **both** a calendar and a meeting provider, even when it is their turn.
+
+## Preview a change with Simulate
+
+**Simulate** on the team page projects a number of future meetings forward using the current Levels and Weights, and shows the resulting split before you commit. Use it to sanity-check a Weight change or to see when a rep who is behind will start getting meetings again.
+
+## Shared queue
+
+Team scheduling-link bookings and Superhuman bookings share one round-robin queue per team, so a booking from either source affects the order for both.
+
+## Out-of-office, removed users, and reset
+
+{/* TODO (DOCS-3, owed from Michael Bissani): confirm before publish:
+  - How marking a rep out of office affects the queue today. Miguel reported (2026-10-26) the 1mind out-of-office setting removes a rep from round-robin and direct booking entirely, including dates after they return; redesign tracked in TECH-9882. This differs from a calendar OOO block.
+  - Whether reps removed from the console leave their teams automatically.
+  - Whether a reset-levels button exists.
+  Also owed: whether this page is public or behind console sign-in. */}
+
+## Quick reference
+
+| Action | What it does | When to use it |
+| --- | --- | --- |
+| Add a team member | Starts them near the team's average Level; no meetings until calendar and meeting provider are connected | Onboarding a rep to a team |
+| Adjust Weight | Changes their ongoing share vs. the 100% baseline; takes effect immediately | Giving a top performer more volume, or easing in a new hire |
+| Credit | Moves a rep sooner | Spam leads or other one-off corrections in the rep's favor |
+| Skip | Moves a rep later | An extra meeting they should not have received, or delaying their next |
+| Simulate | Projects future meetings forward and shows the split | Sanity-checking a Weight change |
+
+## Related
+
+- [Calendar & Routing](/using/sub-agents/calendar-routing) · [Connect your calendar](/configuring/integrations/calendars)
