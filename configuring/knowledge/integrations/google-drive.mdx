@@ -6,6 +6,10 @@ status: "published"
 public: true
 ---
 
+<Note>
+**This page is in review and not yet approved (DOCS-26).** It carries drafted changes and is not final. Remove this banner before publishing.
+</Note>
+
 The Google Drive integration syncs files from a Drive folder you choose, including everything in its subfolders, directly into the 1mind Knowledge Hub. Once connected, the files under that folder sync into the Hub on the schedule you set, and images in your documents can be processed so they show in conversation. When a file changes in Drive, the Hub picks it up on the next sync, so you no longer have to export or re-upload knowledge content by hand.
 
 This guide walks through connecting Google Drive step by step. The whole setup takes a few minutes; after that, the sync runs on its own.
@@ -98,6 +102,20 @@ Before you start, have this ready:
 
   </Step>
 </Steps>
+## Remove synced content
+
+You can remove Drive content from 1mind yourself in the Knowledge Hub. You do not need to open a support request, and removing content in 1mind never changes your files in Google Drive. The integration has read access only.
+
+Choose the option that matches what you want:
+
+- **Remove specific documents, keep your Drive files.** Delete the documents in the Knowledge Hub. Your Drive files are untouched. A document you delete in the Hub stays deleted even if the source file is edited later, and a later sync of the same connection does not bring it back.
+- **Stop syncing new changes, keep what is already in.** Disconnect the Google Drive source. Disconnecting stops future syncs and leaves the documents already ingested in place.
+- **Remove a document everywhere by removing the original.** Deleting the file in Google Drive removes it from 1mind on the next sync. This is the only option that also loses your original, so use it last.
+
+To remove this source from one Superhuman without deleting it from the workspace, disable it for that Superhuman instead. See [Superhuman Knowledge](/configuring/knowledge/superhuman-knowledge) and the destructive actions in the [Knowledge overview](/configuring/knowledge/overview).
+
+{/* TODO (DOCS-26, blocked on Product): (1) confirm the same removal behavior for Notion, Confluence and Salesforce. Priyank confirmed it for the file connectors (Drive, SharePoint, Box, Dropbox) only on 2026-11-10. (2) Owed: what happens at the next sync to a document disabled for a Superhuman while the connector stays connected (Devon's open question). (3) Part 2a: the "one connector per type / only one folder" wording on this page and in the overview/FAQ conflicts with "each folder its own connection" (CASE-417, Priyank) and needs Product's ruling before correcting. (4) Part 2b: whether the sandbox-draft behavior described in the overview/FAQ matches the Knowledge Hub workspace-source model, unverified. */}
+
 ## Troubleshooting
 
 | What you're seeing | What to check |
@@ -133,4 +151,4 @@ There are no credentials to copy for Google Drive. You authorize through Google'
 
 ## Need help?
 
-If you run into anything during setup, reach out to your 1mind contact or Customer Success team. They can confirm your configuration, walk you through the review step, and help if any part of the connection needs attention.
+If you run into anything during setup, reach out to your 1mind contact or Customer Success team. They can confirm your configuration and help if any part of the connection needs attention.

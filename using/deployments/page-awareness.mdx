@@ -1,0 +1,48 @@
+---
+title: "Page awareness"
+description: "Give different pages a different welcome from a single deployment, with per-URL overrides for the widget's welcome copy and a per-page minimized state."
+contentType: "how-to"
+status: "draft"
+---
+
+<Note>
+**This page is in review and not yet approved (DOCS-25).** It is a new draft, gated until a named reviewer approves it on the preview. Remove this banner before publishing.
+</Note>
+
+Page awareness lets one deployment, running on every page of your site, show a different welcome on the pages that matter. The agent, its knowledge, suggested topics, and analytics stay the same across the site. Only the welcome copy, and whether the widget starts minimized, change per page. Because it is one deployment on every page, a visitor's conversation carries over as they move between pages.
+
+Use page awareness instead of standing up a second deployment for a page, which a single page cannot carry (see [Website embed](/configuring/integrations/website-embed)).
+
+## What you can set per page
+
+In 1mind today, a per-page override can change:
+
+- **Button copy** is the call to action on the widget launcher.
+- **Pre-conversation widget title** is the main line a visitor sees before engaging.
+- **Pre-conversation widget header** is the small label above the title.
+- **Teaser pop-up** is the floating bubble above the launcher.
+- **Stay minimized on this page** (Pro widget) starts the widget minimized on that page. Off is the normal Pro widget.
+
+You set overrides per language, so the same URL can show different copy for each locale. Any field you leave blank falls back to the deployment default, so override only what should differ.
+
+A per-page override does not change the agent's behavior, its suggested topics, or its action buttons. Those are set on the deployment and are the same on every page.
+
+## Where to set it
+
+1. In the Console, open the deployment and go to **Manage Deployments → Experience Builder → Page awareness**.
+2. Select **Add page override** and paste the page URL. The URL is canonicalized, so a trailing slash or query-parameter order does not break the match. Matching is on the exact canonical URL.
+3. Enter the copy you want for that page, and turn on **Stay minimized on this page** if you want the Pro widget to start minimized there.
+4. To clear one field back to the deployment default, use **Reset to deployment default** on that field.
+5. Select **Preview this page** to see the override render, then save. Overrides are live on save.
+
+A deployment supports up to 10 page overrides. Pages you have not overridden show the deployment default.
+
+<Note>
+"Stay minimized on this page" starts the widget minimized on that specific page. It is different from the widget's own behavior where, once a visitor minimizes it on any page, it stays minimized as they move across pages. Point a customer at the per-page toggle when they want a page to open minimized.
+</Note>
+
+{/* TODO (DOCS-25, reviewer check before publish): field names, the per-field character limits, and the 10-override cap are drawn from the Page Awareness enablement guide (last updated 2026-05-19) and the 2026-10-01 launch post. Confirm they still match the current console before publishing. The enablement guide's status reads both "GA" and "Beta"; Product confirmed page awareness is live (2026-09-29 and 2026-10-01). */}
+
+## When page awareness does not fit
+
+If pages need genuinely different setups, an embed on one page and a widget on another, or different agent behavior per page, page awareness does not cover it today. Keep each deployment on its own pages instead. See [Giving different pages a different experience](/configuring/integrations/website-embed#giving-different-pages-a-different-experience).
