@@ -1,0 +1,63 @@
+---
+title: "Ride-along auto-join"
+description: "How admins turn on ride-along auto-join and set its rules, and how hosts opt in or keep the Superhuman out of a meeting."
+contentType: "how-to"
+status: "draft"
+---
+
+<Note>
+**This page is in review and not yet approved (DOCS-23).** It is a new draft, gated until a reviewer approves it on the preview. Remove this banner before publishing.
+</Note>
+
+A ride-along Superhuman joins a call when it is on the meeting invite. Auto-join puts it there for you: a host connects their calendar once, and from then on the Superhuman is added to qualifying meetings on their calendar and joins when the meeting starts, in Silent mode. Google Calendar and Outlook are both supported.
+
+Everything after the invite is unchanged, because auto-join produces what a manual add produces: the Superhuman's email on the invite. Disclosure, recording, and consent are configured on the Superhuman, not here.
+
+## Who sets what
+
+- **Org admin (Super Admin)** turns auto-join on for the organization. Until that happens, a workspace cannot enable it.
+- **Workspace Admin or Super Admin** turns it on for the workspace and sets the rules.
+- **Each host** connects their own calendar and, where the workspace allows it, opts in. An admin cannot connect a host's calendar for them.
+
+## Admin setup, in order
+
+1. **Set your company email domains first.** In **Org Settings → Company info**, add every company email domain (use **Add another domain** for more). External-versus-internal detection depends on this, so confirm the full list with the customer rather than using a website address.
+2. **Turn auto-join on for the organization** (org admin). Until this is done, the workspace switch has no effect.
+3. **Open the workspace settings** at **Settings → Scheduling and meetings → Ride-along**.
+4. **Auto-join meetings**: on or off. On means the Superhuman is added to meetings on your hosts' calendars. Nothing below has any effect until this is on.
+5. **Allow hosts to skip auto-join**: whether a host can turn auto-join off for their own calendar. On means each host opts in for themselves. Off means every host with ride-along access is joined, with no host opt-out. Either way, a host can still remove the Superhuman from a single meeting.
+6. **Meetings to join**: **External only** or **All meetings**. A meeting counts as external when at least one attendee is outside your company domains. External only leaves internal meetings, one-on-ones, and team calls alone.
+7. **Exclude domains**: meetings with an attendee from a listed domain are never joined.
+8. **Excluded title words**: meetings with a listed word in the title (for example `one-on-one`, `interview`, `performance review`) are never joined.
+
+The two exclusion lists override everything else, including external only. They apply to everyone in the workspace, and a host cannot remove them.
+
+## What a host does
+
+1. **Connect a calendar** in **Profile → Scheduling and meetings**. Auto-join does nothing for a host who has not connected.
+2. **Choose whether to participate**, if the workspace allows it: turn auto-join on in your personal Scheduling and meetings settings to opt in, and off to opt out. If the workspace requires auto-join, this toggle is disabled.
+3. **Skip one meeting**: in **Upcoming meetings**, remove the Superhuman from that meeting. This is available whether or not you can turn auto-join off entirely.
+
+## Why a meeting was not joined
+
+A skipped meeting looks the same as a failure from the host's side. Check, in order: all required settings are on (org, workspace, host toggle), the host's calendar is connected, the meeting was not excluded by domain or title word, the meeting is external when the workspace is set to external only, and the meeting was not created inside the 15-minute scan window.
+
+## Known limits
+
+- **The scan runs every 15 minutes**, so a meeting created shortly before it starts may be missed.
+- **One Superhuman per meeting.** When several hosts with auto-join are in the same meeting, one Superhuman joins, not one per host.
+- **Invite visibility.** If a host did not organize the meeting and cannot edit the invite, the Superhuman still joins but does not appear on the organizer's guest list.
+- **Removing then editing a meeting.** Removing the Superhuman in the Console and then editing the original calendar event can leave it booked, so it still joins. Do not rely on Console removal alone for a meeting that is later edited; confirm with Support before the meeting.
+
+## Test before rollout
+
+Create a timed test meeting with a supported conferencing link and allow at least one 15-minute scan before it starts. For external only, test one meeting with an outside attendee and one internal-only meeting; confirm the Superhuman joins the external one in Silent mode and skips the internal one. Also test removing the Superhuman from one upcoming meeting.
+
+{/* TODO (DOCS-23, owed from Sabina Mamedova): confirm before publish:
+  - Whether to document today's controls now or wait for the granular-controls RFC (On / Person chooses / Off at workspace, team, and individual level), which is undecided and not shipped.
+  - Whether Outlook auto-join is on for every account (the release page shows Google live and Outlook ready, but the all-accounts state should be confirmed).
+  - The status of TECH-9358 (the remove-then-edit re-book issue). */}
+
+## Related
+
+- [Ride-along conferencing](/using/superhumans/ride-along/conferencing) · [Connect your calendar](/configuring/integrations/calendars)
