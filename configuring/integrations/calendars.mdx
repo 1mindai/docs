@@ -1,36 +1,93 @@
 ---
 title: "Calendar integration (Google & Outlook)"
-description: "Connect rep calendars and meeting providers so 1mind can read real-time availability and book meetings inside the conversation."
+description: "How a rep connects their calendar and meeting provider, sets availability, and fixes a lost connection so 1mind can book meetings on their behalf."
 contentType: "how-to"
 status: "published"
 ---
 
-For a Superhuman to book meetings, each rep connects their calendar and a meeting provider to 1mind. 1mind then reads their **real-time availability** and books on their actual calendar, attaching a virtual meeting link automatically. This page covers the connection; for how availability and routing surface inside the conversation, see [Calendar & Routing](/using/sub-agents/calendar-routing).
+<Note>
+**This page is in review and not yet approved (DOCS-17).** It carries drafted changes and is not final. Remove this banner before publishing.
+</Note>
+
+For a Superhuman to book meetings, each rep connects their own calendar and a meeting provider to 1mind. 1mind then reads their **real-time availability** and books on their actual calendar, attaching a virtual meeting link automatically. This page is one a CSM can send to a rep: it covers connecting, setting availability, and reconnecting if the connection drops. For how availability and routing surface inside the conversation, see [Calendar & Routing](/using/sub-agents/calendar-routing).
+
+<Warning>
+A rep needs **both** a connected calendar and a connected meeting provider to receive meetings. A rep missing either one is skipped by routing, and nothing warns them. Connect both, then confirm availability.
+</Warning>
 
 ## Prerequisites
 
 - A 1mind Superhuman created and configured for your workspace.
-- Each rep who should receive bookings is invited to the Console (Settings → User Management).
+- Each rep who should receive bookings is invited to the Console (Settings → User Management). Inviting a rep does not connect their calendar; each rep connects their own.
 
 ## Connect a calendar and meeting provider
 
-Each rep completes this in their own account (about 5 minutes):
+Each rep completes this in their own account (about 5 minutes). An admin cannot connect a calendar for someone else.
 
 1. Sign in to the Console at `app.1mind.com`.
 2. Open the **profile icon** (top right) → **My Profile** → **Scheduling & Meeting** settings.
-3. **Connect your calendar.** Supported providers: **Microsoft Outlook** and **Google** (real-time availability via OAuth).
+3. **Connect your calendar.** Supported providers: **Microsoft Outlook** and **Google** (real-time availability via secure sign-in).
 4. **Connect your meeting provider.** Supported providers: **Microsoft Teams**, **Google Meet**, and **Zoom**.
 
-<Note>If you connect Microsoft or Google as your calendar, Microsoft Teams or Google Meet (respectively) is already connected as your meeting provider, no extra step unless you prefer Zoom.</Note>
+<Note>If you connect Microsoft or Google as your calendar, Microsoft Teams or Google Meet (respectively) is already connected as your meeting provider, with no extra step unless you prefer Zoom.</Note>
 
-## Set availability preferences
+Each rep authorizes their own account, so reps in the same workspace can use different providers. One rep on Google and another on Outlook with Zoom is fully supported.
 
-On the same Scheduling & Meeting page, each rep sets their **working hours** and confirms their **working time zone**. Routing combines these preferences with each rep's live calendar availability, so they need to be accurate. Out-of-office blocks are read as busy automatically.
+{/* TODO (DOCS-17): add screenshots for the connect steps and the availability settings from the customer onboarding slides (deck 1hArDaScJeajGdD0Q3HiFYgt7VjnZREenjEJenUWkGTM, steps 2, 3 and 6). */}
+
+## Set your availability
+
+On the same **Scheduling & Meeting** page, each rep sets the preferences routing uses alongside their live calendar. Keep them accurate:
+
+- **Working hours** on each working day.
+- **Working time zone.**
+- **Minimum notice** before a meeting can be booked.
+- **Buffers** before and after meetings.
+- **Date overrides** for days your hours differ from the usual week.
+
+Out-of-office blocks on your own calendar are read as busy automatically, so routing will not book over them.
+
+{/* TODO (DOCS-17): confirm the exact console labels for minimum notice, buffers, and date overrides against the current product before publish. */}
+
+### The 1mind out-of-office setting
+
+The **Scheduling & Meeting** page also has a 1mind out-of-office setting. Today, turning it on blocks **all** bookings, including dates after you return, so use it with care and turn it off when you are back.
+
+{/* TODO (DOCS-17, owed from Michael Bissani): confirm how the 1mind out-of-office setting behaves today and the status of its redesign (TECH-9882), then finalize this section. */}
+
+## Reconnect a lost connection
+
+A connection can drop when access is revoked, a company security change removes it, or a device is reset. When that happens, routing stops booking for that rep until it is reconnected. The rep reconnects it themselves:
+
+1. Open **My Profile → Scheduling & Meeting**.
+2. Reconnect the calendar and meeting provider, signing in again when prompted.
+3. Confirm the connection shows as active.
+
+An admin cannot reconnect on a rep's behalf.
+
+## Find your scheduling links
+
+Each rep has personal scheduling links they can share to let someone book outside a conversation. You find them in your profile under **Scheduling**.
+
+{/* TODO (DOCS-17): link to the scheduling-links and meetings-dashboard page (DOCS-29) once it is published. */}
+
+## If your company uses Microsoft
+
+Some Microsoft tenants require a one-time admin approval before reps can connect Outlook. The first rep to connect sends an approval request to the company's Microsoft admin, and every rep's connection waits on it. This is a Microsoft setting, not an SSO problem.
+
+{/* TODO (DOCS-17): link to the Microsoft admin approval page (DOCS-18) once it is published. */}
+
+## Auto-join for ride-along
+
+If your workspace uses ride-along auto-join, a rep opts in from their scheduling settings so the Superhuman joins qualifying meetings.
+
+{/* TODO (DOCS-17): link to the auto-join page (DOCS-23) once it is published. */}
 
 ## Frequently asked questions
 
-- **If a rep isn't connected, can prospects still book with them?** No. A rep must have a connected calendar and meeting provider before they can receive bookings, 1mind won't send an invite without a virtual meeting link.
-- **Are booked meetings tracked in the Console?** Yes. When availability is presented or a meeting is booked, the event is captured in the conversation transcript, which can also be exported.
+- **If a rep isn't connected, can prospects still book with them?** No. A rep needs a connected calendar and meeting provider before they can receive bookings; 1mind will not send an invite without a virtual meeting link.
+- **Can an admin connect calendars for the whole team at once?** No. Connections are made per rep. An admin can confirm who has connected but cannot authorize on someone else's behalf.
+- **Are booked meetings tracked in the Console?** Yes. When availability is presented or a meeting is booked, the event is captured in the conversation transcript, which can be exported.
 
 ## Related
 
