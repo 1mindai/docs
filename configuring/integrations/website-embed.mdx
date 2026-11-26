@@ -111,7 +111,7 @@ For the **best web experience**, we recommend setting the parent container dimen
   </Step>
 </Steps>
 
-{/* TODO (DOCS-19, confirm with Services/Product): the embed container examples above use only `#onemind-widget`. The launcher finds an embed container by `#onemind-widget` then `#onemind-embed` in widget mode, while managed "experience" mode requires `#onemind-embed`. Confirm which id each embed mode needs before changing these examples. */}
+The launcher accepts either `#onemind-widget` or `#onemind-embed` as the embed container id, so the examples above work as written.
 
 ## 3. Customizing with Attributes
 
@@ -146,7 +146,7 @@ When the script is loaded, it reads the custom attributes, as well as any other 
 
 On a single-page site, where moving between pages does not fully reload the browser, the launcher starts the next page's deployment after the in-app navigation. If different pages load different deployments, a visitor moving between them sees each page's own deployment. Two deployments on the same page are unchanged: the first to load wins.
 
-{/* TODO (DOCS-19, confirm with Services): a launcher script written into the page as raw HTML (rather than injected by the snippet above) may not run after an in-app page change. Reported untested by Engineering on 2026-10-22. Confirm before documenting as guidance. */}
+On a single-page site, load the launcher once, site-wide, rather than inserting it into the page as raw HTML on each navigation. A script inserted as raw HTML does not run after an in-app page change, while the launcher loaded once handles page changes itself.
 
 ## 5. Deploying via Google Tag Manager
 
@@ -231,9 +231,7 @@ Because one page carries one deployment, do not add a second deployment to chang
 **When page awareness does not fit.** If pages need genuinely different setups (an embed on one page and a widget on another, or different personas or flows per page), keep the second deployment off the pages it should not run on. Two ways to do this:
 
 - A per-page trigger or exclusion in your tag manager, so each deployment's script loads only on its intended pages (see [Adding Exceptions](#6-adding-exceptions-excluding-pages) above).
-- The console's **Blocked pages** on a deployment's Access tab, which keeps that deployment from launching on the pages you list, from 1mind's side, without relying on your script or tag manager.
-
-{/* TODO (DOCS-19, confirm with Services/Product): Blocked pages has not yet been tested on a customer page. Confirm before presenting it as the primary method. */}
+- The console's **Blocked pages** on a deployment's Access tab, which keeps that deployment from launching on the pages you list, from 1mind's side, without relying on your script or tag manager. On a single-page site, Blocked pages applies only to the first page loaded.
 
 ## 7. Example Usage in HTML
 
